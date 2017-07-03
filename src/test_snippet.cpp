@@ -11,9 +11,9 @@ using namespace std;
 #include "spectrum.h"
 #include "../lib/lodepng/lodepng.h"
 
-const int num_tiles = 8;
-const int w_tile = 100;
-const int h_tile = 100;
+const int num_tiles = 20;
+const int w_tile = 50;
+const int h_tile = 50;
 const char *color_tiles_path = "color_tiles.png";
 const char *atten_color_tiles_path = "attenuated_color_tiles.png";
 const double dist = 10.0;

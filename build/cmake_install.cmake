@@ -35,5 +35,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "C:/Users/naoka/Source/Repos/Path-Tracer/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "C:/Users/naoka/Source/Repos/Path-Tracer/build/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

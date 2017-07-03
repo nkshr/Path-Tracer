@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="C:\Users\naoka\Source\Repos\Path-Tracer\src\test_snippet.cpp">
+    <ClCompile Include="C:\Users\naoka\Source\Repos\Path-Tracer\src\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="C:\Users\naoka\Source\Repos\Path-Tracer\src\material.cpp">
@@ -102,10 +102,10 @@
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Source Files">
-      <UniqueIdentifier>{0F611EF9-67A8-3ADE-8494-58A0552A1A2F}</UniqueIdentifier>
+      <UniqueIdentifier>{96B0EA06-CCEC-39F9-9AA3-9244DCC62C2C}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files">
-      <UniqueIdentifier>{0047E76B-5247-3AB3-9F24-E3922AED82FD}</UniqueIdentifier>
+      <UniqueIdentifier>{6B612AC8-887C-36E1-8A5A-2E146B63613B}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

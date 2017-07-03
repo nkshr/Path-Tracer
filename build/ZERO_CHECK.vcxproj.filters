@@ -1,13 +1,13 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <CustomBuild Include="C:\Users\naoka\Source\Repos\Path-Tracer\CMakeFiles\44d5e3b816700968b17893dd46e89096\generate.stamp.rule">
+    <CustomBuild Include="C:\Users\naoka\Source\Repos\Path-Tracer\build\CMakeFiles\9b131064b244a8aa48086287a0d677cf\generate.stamp.rule">
       <Filter>CMake Rules</Filter>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="CMake Rules">
-      <UniqueIdentifier>{B53466DA-EF8A-344E-9BE2-7CDFF3C459E8}</UniqueIdentifier>
+      <UniqueIdentifier>{566C5231-8594-32C8-A313-E68708A253A2}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
