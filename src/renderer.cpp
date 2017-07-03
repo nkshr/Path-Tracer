@@ -1,14 +1,16 @@
 #include <vector>
 #include <stdio.h>
 #include <iostream>
+#include <cstdlib>
+#include <algorithm>
 
+using namespace std;
+
+#include "common.h"
 #include "renderer.h"
 #include "../lib/lodepng/lodepng.h"
 
-// Clamp double to min/max of 0/1
-inline double clamp(double x){ return x<0 ? 0 : x>1 ? 1 : x; }
-// Clamp to between 0-255
-inline int toInt(double x){ return int(clamp(x)*255+.5); }
+
 
 Renderer::Renderer(Scene *scene, Camera *camera) {
     m_scene = scene;
@@ -34,7 +36,7 @@ void Renderer::render(int samples) {
 
             for (int a=0; a<samples; a++){
                 Ray ray = m_camera->get_ray(x, y, a>0, Xi);
-                col = col + m_scene->trace_ray(ray,0,Xi);
+                col = col + m_scene->trace_ray(ray, 0,Xi);
             }
 
             m_pixel_buffer[(y)*width + x] = col * samples_recp;
