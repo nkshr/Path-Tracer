@@ -3,6 +3,7 @@
 #include <iterator>
 #include <algorithm>
 #include <iostream>
+#include <cfloat>
 using namespace std;
 
 #include "common.h"

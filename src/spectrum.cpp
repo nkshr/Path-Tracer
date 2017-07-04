@@ -3,6 +3,8 @@
 #include <cstdlib>
 #include <algorithm>
 #include <fstream>
+#include <cfloat>
+#include <cstring>
 
 using namespace std;
 

@@ -5,6 +5,7 @@
 #include <iterator>
 #include <algorithm>
 #include <cstdlib>
+#include <cfloat>
 
 using namespace std;
 
