@@ -1,4 +1,0 @@
-C:/Users/naoka/Source/Repos/Path-Tracer/build/CMakeFiles/pathtracer.dir
-C:/Users/naoka/Source/Repos/Path-Tracer/build/CMakeFiles/test_snippet.dir
-C:/Users/naoka/Source/Repos/Path-Tracer/build/CMakeFiles/ALL_BUILD.dir
-C:/Users/naoka/Source/Repos/Path-Tracer/build/CMakeFiles/ZERO_CHECK.dir
