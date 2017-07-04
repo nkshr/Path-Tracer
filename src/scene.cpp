@@ -58,6 +58,6 @@ Vec Scene::trace_ray(const Ray &ray, int depth, unsigned short*Xi) {
     Ray reflected = isct.m.get_reflected_ray(ray, x, isct.n, Xi);
 
     //return colour.mult( trace_ray(reflected, depth, Xi) );
-	double brdf = reflected.direction.dot(isct.n);
-	return  colour + trace_ray(reflected, depth, Xi) * brdf;
+    double brdf = reflected.direction.dot(isct.n) * 0.2;
+    return  colour + trace_ray(reflected, depth, Xi) * brdf;
 }
