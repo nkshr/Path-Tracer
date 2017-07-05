@@ -8,6 +8,10 @@ private:
 	std::vector<std::pair<double, double> > scat_coefs;
 	std::vector<std::pair<double, double> > atten_coefs;
 
+	bool absorp_loaded;
+	bool scat_loaded;
+	bool atten_loaded;
+	
 	double step;
 
 	bool load(const char *fname, std::vector<std::pair<double, double> > &coefs);
@@ -17,7 +21,7 @@ public:
 	c_atten_coefs(const char *absorp_fname, const char *scat_fname);
 	//c_atten_coefs(const c_atten_coefs & atten) = delete;
 
-	void init(const char *absorp_fname, const char *scat_fname);
+	bool init(const char *absorp_fname, const char *scat_fname);
 
 	void scale(const double s);
 
@@ -25,6 +29,8 @@ public:
 	double get_min_lambda() const;
 	double get_max_lambda() const;
 	double get_step() const;
+
+	bool ready() const;
 };
 
 double calc_atten_coef(c_atten_coefs &atten_coefs, c_smpl_spect &spect);

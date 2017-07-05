@@ -13,55 +13,70 @@ using namespace std;
 #include "attenuation.h"
 
 bool c_atten_coefs::load(const char *fname, vector<pair<double, double> > &coefs){
-	ifstream ifs(fname, ios::in);
-	if (!ifs.good()) {
-		cerr << "Error : Couldn't open " << fname << "." << endl;
-		return false;
-	}
+  coefs.resize(0);
+  ifstream ifs(fname, ios::in);
+  if (!ifs.good()) {
+    cerr << "Warning : Couldn't open " << fname << "." << endl;
+    return false;
+  }
 
-	while(true) {
-		float lambda;
-		ifs >> lambda;
-		if (ifs.eof())
-			break;
+  while(true) {
+    float lambda;
+    ifs >> lambda;
+    if (ifs.eof())
+      break;
 
-		float coef;
-		ifs >> coef;
+    float coef;
+    ifs >> coef;
 
-		coefs.push_back(pair<double, double>(lambda, coef));
-	}
+    coefs.push_back(pair<double, double>(lambda, coef));
+  }
 
-	if (coefs[0].first > coefs[1].first) {
-		for (int i = 0, j = coefs.size() - 1; i < coefs.size(); ++i) {
-			if (i >= j)
-				break;
-			//swap<double>(coefs[i], coefs[j]);
-		}
-	}
-	return true;
+  if (coefs[0].first > coefs[1].first) {
+    for (int i = 0, j = coefs.size() - 1; i < coefs.size(); ++i) {
+      if (i >= j)
+	break;
+      //swap<double>(coefs[i], coefs[j]);
+    }
+  }
+  return true;
 }
 
 c_atten_coefs::c_atten_coefs(const char *absorp_fname, const char *scat_fname) {
 	init(absorp_fname, scat_fname);
 }
 
-void c_atten_coefs::init(const char *absorp_fname, const char *scat_fname) {
-	bool absorp_loaded = load(absorp_fname, absorp_coefs);
-	bool scat_loaded = load(scat_fname, scat_coefs);
+bool c_atten_coefs::init(const char *absorp_fname, const char *scat_fname) {
+  absorp_loaded = false;
+  scat_loaded = false;
+  atten_loaded = false;
+  absorp_loaded = load(absorp_fname, absorp_coefs);
+  scat_loaded = load(scat_fname, scat_coefs);	
 
-	if (absorp_loaded && scat_loaded) {
+  if(!absorp_loaded && !scat_loaded){
+    cerr << "Error : Couldn't calculate attenuation coefficients." << endl;
+    return absorp_loaded;
+  }
+  else if (absorp_loaded && scat_loaded) {
+    
+  }
+  else if (absorp_loaded) {
+    atten_coefs.reserve(absorp_coefs.size());
+    copy(absorp_coefs.begin(), absorp_coefs.end(), back_inserter(atten_coefs));
+  }
+  else {
+    scat_coefs.reserve(absorp_coefs.size());
+    copy(scat_coefs.begin(), scat_coefs.end(), back_inserter(atten_coefs));
+  }
 
-	}
-	else if (absorp_loaded) {
-		atten_coefs.reserve(absorp_coefs.size());
-		copy(absorp_coefs.begin(), absorp_coefs.end(), back_inserter(atten_coefs));
-	}
-	else {
-		scat_coefs.reserve(absorp_coefs.size());
-		copy(scat_coefs.begin(), scat_coefs.end(), back_inserter(atten_coefs));
-	}
-
-	step = (atten_coefs[atten_coefs.size() - 1].first - atten_coefs[0].first) / (atten_coefs.size() - 1);
+  if(atten_coefs.size() > 0){
+    atten_loaded = true;
+  }else{
+    return absorp_loaded;
+  }
+  
+  step = (atten_coefs[atten_coefs.size() - 1].first - atten_coefs[0].first) / (atten_coefs.size() - 1);
+  
 }
 
 void c_atten_coefs::scale(const double s) {
@@ -107,6 +122,10 @@ double c_atten_coefs::get_step() const {
 	return step;
 }
 
+bool c_atten_coefs::ready() const{
+  return atten_loaded;
+}
+
 double calc_atten_coef(c_atten_coefs &atten_coefs, c_smpl_spect &spect) {
 	if (atten_coefs.get_min_lambda() > spect.get_max_lambda())
 		return 0.0;
@@ -125,7 +144,7 @@ double calc_atten_coef(c_atten_coefs &atten_coefs, c_smpl_spect &spect) {
 	spect.shrink(min_lambda, max_lambda, step);
 	spect.normalize();
 
-	spect.write(NULL);
+	//spect.write(NULL);
 
 	double atten = 0.0;
 	for (int i = 0; i < spect.get_num_bins(); ++i) {

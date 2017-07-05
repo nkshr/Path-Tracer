@@ -6,7 +6,8 @@
 #include "objects.h"
 
 Scene::Scene() {
-	atten_coefs.init("data/Pope_absorp.txt", "");
+	atten_coefs.init("../data/Pope_absorp.txt", "");
+	atten_coefs.scale(100);
 }
 
 void Scene::add(Object *object) {
@@ -70,7 +71,7 @@ Vec Scene::trace_ray(const Ray &ray, int depth, unsigned short*Xi) {
     Vec x = ray.origin + ray.direction * isct.u;
     Ray reflected = isct.m.get_reflected_ray(ray, x, isct.n, Xi);
 
-    //return colour.mult( trace_ray(reflected, depth, Xi) );
+    return colour.mult( trace_ray(reflected, depth, Xi) );
     double brdf = reflected.direction.dot(isct.n) * 0.2;
     return  colour + trace_ray(reflected, depth, Xi) * brdf;
 }
