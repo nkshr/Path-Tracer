@@ -23,7 +23,8 @@ int main(int argc, char **argv) {
 	vector<unsigned char> atten_pix_buf;
 	double step = 360.0 / (double)num_tiles;
 	const int num_pixs_per_tile = w_tile * h_tile;
-	c_atten_coefs atten_coefs("resource/Pope_absorp.txt", "");
+	c_atten_coefs atten_coefs;
+	atten_coefs.init("../data/Pope_absorp.txt", "");
 	atten_coefs.scale(100.f);
 	for (int i = 0; i <= num_tiles; ++i) {
 		double r, g, b;
