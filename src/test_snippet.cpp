@@ -9,7 +9,6 @@ using namespace std;
 #include "common.h"
 #include "spectrum.h"
 #include "attenuation.h"
-#include "spectrum.h"
 #include "../lib/lodepng/lodepng.h"
 
 const int num_tiles = 20;
@@ -30,8 +29,8 @@ int main(int argc, char **argv) {
 		double r, g, b;
 		convert_hsv_to_rgb(step * (double)i, 1.0, 1.0, r, g, b);
 		c_smpl_spect spect(r, g, b);
-
 		double atten_coef = calc_atten_coef(atten_coefs, spect);
+
 		cout << step * i << " : " << atten_coef << " " << r << " " << g << "  " << b << endl;
 		double ar = calc_attenuated_value(atten_coef, dist, r);
 		double ag = calc_attenuated_value(atten_coef, dist, g);

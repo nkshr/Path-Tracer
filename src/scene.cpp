@@ -1,5 +1,13 @@
+#include <vector>
+#include <utility>
+#include <cmath>
+
 #include "scene.h"
 #include "objects.h"
+
+Scene::Scene() {
+	atten_coefs.init("data/Pope_absorp.txt", "");
+}
 
 void Scene::add(Object *object) {
     m_objects.push_back( object );
@@ -37,7 +45,12 @@ Vec Scene::trace_ray(const Ray &ray, int depth, unsigned short*Xi) {
     //Vec x = ray.origin + ray.direction * isct.u;
 
     Vec colour = isct.m.get_colour();
-    //return colour * isct.n.dot((Vec(1,-3,8)-x).norm());
+	c_smpl_spect spect(colour.x, colour.y, colour.z);
+	double atten_coef = calc_atten_coef(atten_coefs, spect);
+	colour.x = calc_attenuated_value(atten_coef, isct.u, colour.x);
+	colour.y = calc_attenuated_value(atten_coef, isct.u, colour.y);
+	colour.z = calc_attenuated_value(atten_coef, isct.u, colour.z);
+	//return colour * isct.n.dot((Vec(1,-3,8)-x).norm());
 
     // Calculate max reflection
     double p = colour.x>colour.y && colour.x>colour.z ? colour.x : colour.y>colour.z ? colour.y : colour.z;

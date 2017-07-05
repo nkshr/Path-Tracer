@@ -10,7 +10,6 @@
 using namespace std;
 
 #include "common.h"
-#include "spectrum.h"
 #include "attenuation.h"
 
 bool c_atten_coefs::load(const char *fname, vector<pair<double, double> > &coefs){
@@ -43,6 +42,10 @@ bool c_atten_coefs::load(const char *fname, vector<pair<double, double> > &coefs
 }
 
 c_atten_coefs::c_atten_coefs(const char *absorp_fname, const char *scat_fname) {
+	init(absorp_fname, scat_fname);
+}
+
+void c_atten_coefs::init(const char *absorp_fname, const char *scat_fname) {
 	bool absorp_loaded = load(absorp_fname, absorp_coefs);
 	bool scat_loaded = load(scat_fname, scat_coefs);
 

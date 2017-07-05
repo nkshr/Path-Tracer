@@ -94,6 +94,7 @@ c_smpl_spect::c_smpl_spect(double _r, double _g, double _b) {
 
 c_smpl_spect::~c_smpl_spect() {
 	delete values;
+	delete lambdas;
 }
 
 double c_smpl_spect::sample(double lambda) {

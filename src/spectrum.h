@@ -40,7 +40,7 @@ public:
 	double get_min_lambda() const;
 	double get_max_lambda() const;
 	double get_step() const;
-	pair<double, double> get_elem(const int i) const;
+	std::pair<double, double> get_elem(const int i) const;
 	
 	int get_num_bins() const;
 

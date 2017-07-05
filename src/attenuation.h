@@ -1,18 +1,23 @@
 #pragma once
 
+#include "spectrum.h"
+
 class c_atten_coefs {
 private:
-	vector<pair<double, double> > absorp_coefs;
-	vector<pair<double, double> > scat_coefs;
-	vector<pair<double, double> > atten_coefs;
+	std::vector<std::pair<double, double> > absorp_coefs;
+	std::vector<std::pair<double, double> > scat_coefs;
+	std::vector<std::pair<double, double> > atten_coefs;
 
 	double step;
 
-	bool load(const char *fname, vector<pair<double, double> > &coefs);
+	bool load(const char *fname, std::vector<std::pair<double, double> > &coefs);
 	
 public:
+	c_atten_coefs() {};
 	c_atten_coefs(const char *absorp_fname, const char *scat_fname);
-	c_atten_coefs(const c_atten_coefs & atten) = delete;
+	//c_atten_coefs(const c_atten_coefs & atten) = delete;
+
+	void init(const char *absorp_fname, const char *scat_fname);
 
 	void scale(const double s);
 
@@ -25,5 +30,5 @@ public:
 double calc_atten_coef(c_atten_coefs &atten_coefs, c_smpl_spect &spect);
 
 inline double calc_attenuated_value(const double coef, const double z, const double color) {
-	return color * exp(-coef * z);
+	return color * std::exp(-coef * z);
 }
