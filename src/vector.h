@@ -3,7 +3,7 @@
 #include <algorithm>
 #include <math.h>
 #include <stdint.h>
-
+#include <iostream>
 // Vector 3
 struct Vec {
     double x, y, z;
@@ -28,6 +28,10 @@ struct Vec {
     Vec operator%(Vec&b){return Vec(y*b.z-z*b.y,z*b.x-x*b.z,x*b.y-y*b.x);}      // Cross product
     Vec cross(const Vec&b){return Vec(y*b.z-z*b.y,z*b.x-x*b.z,x*b.y-y*b.x);}    // Cross product
     double mag() const{return sqrt(x*x+y*y+z*z);}                               // Calculate vector magnitude
+  friend std::ostream& operator<<(std::ostream& stream, const Vec& b){
+    stream << b.x << ", " << b.y << ", " << b.z;
+  }
+
 };
 
 #endif // VECTOR_H
