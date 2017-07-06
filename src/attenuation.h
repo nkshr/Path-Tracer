@@ -1,6 +1,7 @@
 #pragma once
 
 #include "spectrum.h"
+#include "cie_xyz.h"
 
 class c_atten_coefs {
 private:

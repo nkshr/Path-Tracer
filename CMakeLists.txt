@@ -22,6 +22,7 @@ set(SOURCE_FILES
     src/renderer.cpp
 	src/spectrum.cpp
 	src/attenuation.cpp
+	src/cie_xyz.cpp
     lib/rand48/rand48.c
     lib/lodepng/lodepng.cpp
     lib/tiny_obj_loader/tiny_obj_loader.cc)
@@ -40,14 +41,23 @@ set(HEADER_FILES
 	src/vector.h
 	src/spectrum.h
 	src/attenuation.h
+	src/cie_xyz.h
 	src/common.h
 	lib/rand48/erand48.h
 	lib/lodepng/lodepng.h
 	lib/tiny_obj_loader/tiny_obj_loader.h
 	)
 
-set(RESOURCES
-	resource/Pope_absorp.txt
+set(DATA
+	data/Pope_absorp.txt
 	)
-add_executable(pathtracer src/main.cpp ${SOURCE_FILES} ${HEADER_FILES} ${RESOURCES})
-add_executable(test_snippet src/test_snippet.cpp ${SOURCE_FILES} ${HEADER_FILES} ${RESOURCES})
+
+add_executable(pathtracer src/main.cpp ${SOURCE_FILES} ${HEADER_FILES} ${DATA})
+add_executable(attenuation_test src/attenuation_test.cpp ${SOURCE_FILES} ${HEADER_FILES} ${DATA})
+add_executable(cie_xyz_test src/cie_xyz_test.cpp ${SOURCE_FILES} ${HEADER_FILES} ${DATA})
+
+enable_testing()
+
+add_test(NAME attenuation_test
+	COMMAND attenuation_test.exe
+	 [WORKING_DIRECTORY build])

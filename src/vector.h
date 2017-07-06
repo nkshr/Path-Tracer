@@ -29,7 +29,7 @@ struct Vec {
     Vec cross(const Vec&b){return Vec(y*b.z-z*b.y,z*b.x-x*b.z,x*b.y-y*b.x);}    // Cross product
     double mag() const{return sqrt(x*x+y*y+z*z);}                               // Calculate vector magnitude
   friend std::ostream& operator<<(std::ostream& stream, const Vec& b){
-    stream << b.x << ", " << b.y << ", " << b.z;
+    return stream << b.x << ", " << b.y << ", " << b.z;
   }
 
 };
