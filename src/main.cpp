@@ -31,7 +31,7 @@ int main(int argc, char *argv[]) {
 
     if (argc == 2) samples = atoi(argv[1]);
 
-    Camera camera = Camera(Vec(0, -5, 2.5), Vec(0,0,1), 160, 120);     // Create camera
+    Camera camera = Camera(Vec(0, -5, 2.5), Vec(0,0,1), 320, 240);     // Create camera
 	Scene scene = Scene();                                              // Create scene
 
     // Add objects to scene
