@@ -1,7 +1,6 @@
 #pragma once
 
 #include "spectrum.h"
-#include "cie_xyz.h"
 
 class c_atten_coefs {
 private:
@@ -32,9 +31,17 @@ public:
 	double get_step() const;
 
 	bool ready() const;
+
+	bool write_atten_coefs(const char *fname);
+	bool write_absorp_coefs(const char *fname);
+
+	double calc_atten_coef(c_smpl_spect &spect);
+	
+	void attenuate(const double dist, c_smpl_spect &spect);
+	double attenuate(const double atten_coef, const double dist, const double orig_inten);
 };
 
-double calc_atten_coef(c_atten_coefs &atten_coefs, c_smpl_spect &spect);
+//double calc_atten_coef(c_atten_coefs &atten_coefs, c_smpl_spect &spect);
 
 inline double calc_attenuated_value(const double coef, const double z, const double color) {
 	return color * std::exp(-coef * z);

@@ -12,52 +12,10 @@ inline bool in_range(const double &min, const double &max, const double &val) {
 	return false;
 }
 
-
-inline void convert_hsv_to_rgb(const double h, const double s, const double v,
-	double &r, double &g, double &b) {
-	const double c = s * v;
-	const double _h = h / 60.0;
-	const double x = c * (1 - abs(fmod(_h, 2.0) - 1.0));
-	if (in_range(0.0, 1.0, _h)) {
-		r = c;
-		g = x;
-		b = 0.0;
-	}
-	else if (in_range(1.0, 2.0, _h)) {
-		r = x;
-		g = c;
-		b = 0.0;
-	}
-	else if (in_range(2.0, 3.0, _h)) {
-		r = 0.0;
-		g = c;
-		b = x;
-	}
-	else if (in_range(3.0, 4.0, _h)) {
-		r = 0.0;
-		g = x;
-		b = c;
-	}
-	else if (in_range(4.0, 5.0, _h)) {
-		r = x;
-		g = 0.0;
-		b = c;
-	}
-	else if (5.0 <= _h && _h <= 6.0) {
-		r = c;
-		g = 0.0;
-		b = x;
-	}
-	const double m = v - c;
-	r += m;
-	g += m;
-	b += m;
-}
-
 inline void convert_rgb_to_hsv(const double r, const double g, const double b,
 	double &h, double &s, double &v) {
-	const double max_val = max(r, max(g, b));
-	const double min_val = min(r, min(g, b));
+	const double max_val = std::max(r, std::max(g, b));
+	const double min_val = std::min(r, std::min(g, b));
 	double c = max_val - min_val;
 
 	h = 0.0;
@@ -88,4 +46,30 @@ inline void convert_rgb_to_hsv(const double r, const double g, const double b,
 // Clamp double to min/max of 0/1
 inline double clamp(double x) { return x<0 ? 0 : x>1 ? 1 : x; }
 // Clamp to between 0-255
-inline int toInt(double x) { return int(clamp(x) * 255 + .5); }
+inline int to_int(double x) { return int(clamp(x) * 255 + .5); }
+
+inline void inv_mat3x3(const double* m, double* inv_m) {
+	//m = [m0 m1 m2
+	//     m3 m4 m5
+	//     m6 m7 m8]
+
+	const double recip_det = 1.0 / (m[0] * m[4] * m[8]
+		+ m[1] * m[5] * m[6]
+		+ m[2] * m[3] * m[7]
+		- m[2] * m[4] * m[6]
+		- m[1] * m[3] * m[8]
+		- m[0] * m[5] * m[7]);
+	
+
+	inv_m[0] = (m[4] * m[8] - m[5] * m[7]) * recip_det;
+	inv_m[1] = (m[2] * m[7] - m[1] * m[8]) * recip_det;
+	inv_m[2] = (m[1] * m[5] - m[2] * m[4]) * recip_det;
+
+	inv_m[3] = (m[5] * m[6] - m[3] * m[8]) * recip_det;
+	inv_m[4] = (m[0] * m[8] - m[2] * m[6]) * recip_det;
+	inv_m[5] = (m[2] * m[3] - m[0] * m[5]) * recip_det;
+
+	inv_m[6] = (m[3] * m[7] - m[4] * m[6]) * recip_det;
+	inv_m[7] = (m[1] * m[6] - m[0] * m[7]) * recip_det;
+	inv_m[8] = (m[0] * m[4] - m[1] * m[3]) * recip_det;
+}

@@ -73,8 +73,8 @@ c_smpl_spect::c_smpl_spect(double _r, double _g, double _b) {
 		r_weight = r - g;
 	}
 
-	values = new double[num_init_bins];
-	for(int i=0; i< num_init_bins; ++i)
+	values = new double[init_num_elems];
+	for(int i=0; i< init_num_elems; ++i)
 	{
 		values[i] =
 			w_weight * w_spect[i] +
@@ -86,10 +86,10 @@ c_smpl_spect::c_smpl_spect(double _r, double _g, double _b) {
 			y_weight * y_spect[i];
 	}
 
-	num_bins = num_init_bins;
-	lambdas = new double[num_bins];
-	memcpy((void*)lambdas, (void*)init_lambdas, sizeof(double)*num_bins);
-	step = (lambdas[num_bins - 1] - lambdas[0]) / (double)(num_bins - 1);
+	num_elems = init_num_elems;
+	lambdas = new double[num_elems];
+	memcpy((void*)lambdas, (void*)init_lambdas, sizeof(double)*num_elems);
+	step = (lambdas[num_elems - 1] - lambdas[0]) / (double)(num_elems - 1);
 }
 
 c_smpl_spect::~c_smpl_spect() {
@@ -97,54 +97,71 @@ c_smpl_spect::~c_smpl_spect() {
 	delete lambdas;
 }
 
-double c_smpl_spect::sample(double lambda) {
-	if (lambdas[0] > lambda)
+double c_smpl_spect::sample(const double lambda) {
+	if (lambdas[0] >= lambda)
 		return values[0];
 
-	if (lambdas[num_bins - 1] < lambda) {
-		return values[num_bins - 1];
-	}
+	//if (lambdas[num_elems - 1] <= lambda) {
+	//	return values[num_elems - 1];
+	//}
 
-	double value;
-	for (int i = 1; i < num_bins; ++i) {
+	for (int i = 1; i < num_elems; ++i) {
 		if (lambdas[i] > lambda) {
-			value = interpolate_linear(lambda, lambdas[i - 1], lambdas[i], values[i - 1], values[i]);
-			break;
+			return interpolate_linear(lambda, lambdas[i - 1], lambdas[i],
+				values[i - 1], values[i]);
 		}
 	}
-	return value;
+
+	return values[num_elems - 1];
 }
 
+void c_smpl_spect::resize(const double min_lambda, const double max_lambda, const double new_step) {
+	const int new_num_elems = (int)((max_lambda - min_lambda) / new_step) + 1;
 
-void c_smpl_spect::shrink(const double min_lambda, const double max_lambda, const double _step) {
-	const int _num_bins = (int)((max_lambda - min_lambda) / _step) + 1;
-	double *buf_lambdas = new double[_num_bins];
-	double *buf_values = new double[_num_bins];
-	
-	for (int i = 0; i < _num_bins; ++i) {
-		double lambda = min_lambda + _step * (double)i;
+	double *buf_lambdas;
+	double *buf_values;
+	if (init_num_elems != num_elems) {
+		delete lambdas;
+		delete values;
+
+		buf_lambdas = new double[num_elems];
+		buf_values = new double[num_elems];
+	}
+	else {
+		buf_lambdas = lambdas;
+		buf_values = values;
+	}
+
+	for (int i = 0; i < new_num_elems; ++i) {
+		double lambda = min_lambda + new_step * (double)i;
 		buf_lambdas[i] = lambda;
 		buf_values[i] = sample(lambda);
 	}
 
-	delete lambdas;
-	delete values;
 	lambdas = buf_lambdas;
 	values = buf_values;
-	step = _step;
-	num_bins = _num_bins;
+	num_elems = new_num_elems;
+	step = new_step;
 }
 
 void c_smpl_spect::normalize() {
 	double sum = 0.f;
-	for (int i = 0; i < num_bins; ++i) {
+	for (int i = 0; i < num_elems; ++i) {
 		sum += values[i];
 	}
 
 	const double isum = 1.0 / sum;
-	for (int i = 0; i < num_bins; ++i) {
+	for (int i = 0; i < num_elems; ++i) {
 		values[i] *= isum;
 	}
+}
+
+void c_smpl_spect::clone(const c_smpl_spect &spect){
+	*this = spect;
+	values = new double[spect.num_elems];
+	lambdas = new double[spect.num_elems];
+	memcpy((void*)values, (void*)spect.values, sizeof(double) * spect.num_elems);
+	memcpy((void*)lambdas, (void*)spect.lambdas, sizeof(double) * spect.num_elems);
 }
 
 double c_smpl_spect::get_min_lambda() const{
@@ -152,19 +169,36 @@ double c_smpl_spect::get_min_lambda() const{
 }
 
 double c_smpl_spect::get_max_lambda() const{
-	return lambdas[num_bins - 1];
+	return lambdas[num_elems - 1];
 }
 
 double c_smpl_spect::get_step() const {
 	return step;
 }
 
-pair<double, double> c_smpl_spect::get_elem(const int i) const {
-	return pair<double, double>(lambdas[i], values[i]);
+bool c_smpl_spect::next(){
+	++idx;
+	if (idx < num_elems) {
+		return true;
+	}
+	else {
+		--idx;
+		return false;
+	}
 }
 
-int c_smpl_spect::get_num_bins() const {
-	return num_bins;
+void c_smpl_spect::begin() {
+	idx = 0;
+}
+
+void c_smpl_spect::get_elem(double &lambda, double &val) const {
+	lambda = lambdas[idx];
+	val = values[idx];
+}
+
+void c_smpl_spect::set_elem(const double lambda, double val) {
+	lambdas[idx] = lambda;
+	values[idx] = val;
 }
 
 bool c_smpl_spect::write(const char *fname) {
@@ -183,7 +217,7 @@ bool c_smpl_spect::write(const char *fname) {
 	}
 
 	ofs << r << ", " << g << ", " << b << "\n";
-	for (int i = 0; i < num_bins; ++i) {
+	for (int i = 0; i < num_elems; ++i) {
 		ofs << lambdas[i] << ", " << values[i] << "\n";
 	}
 

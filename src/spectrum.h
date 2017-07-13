@@ -6,7 +6,7 @@ private:
 		ECOLOR_RED, ECOLOR_GREEN, ECOLOR_BLUE, ECOLOR_CYAN, ECOLOR_MAGENTA, ECOLOR_YELLOW, ECOLOR_WHITE, ECOLOR_UNDEF
 	};
 
-	static const int num_init_bins= 21;
+	static const int init_num_elems= 21;
 	
 	static const double init_lambdas[];
 	
@@ -23,27 +23,48 @@ private:
 	double * values;
 	double * lambdas;
 	double step;
-	int num_bins;
+	
+	int num_elems;
 
 	double r, g, b;
 
+	int idx;
 public:
+	c_smpl_spect() {};
 	c_smpl_spect(double r, double g, double b);
 	
 	~c_smpl_spect();
 
-	double  sample(double lambda);
+	double sample(const double lambda);
+
+	void resize(const double min_lambda, const double max_lambda, const double step);
 	
-	void shrink(const double min_lambdas, const double max_lambdas, const double step);
 	void normalize();
+
+	void clone(const c_smpl_spect &spect);
 
 	double get_min_lambda() const;
 	double get_max_lambda() const;
 	double get_step() const;
-	std::pair<double, double> get_elem(const int i) const;
 	
-	int get_num_bins() const;
+	bool next();
+	
+	void begin();
+	
+	void get_elem(double &lambda, double &val) const;
+	
+	void set_elem(const double lambda, double val);
 
 	bool write(const char *fname);
 };
 
+class c_spect {
+public:
+	struct s_elem {
+		double lambda;
+		double inten;
+	};
+
+private:
+	//list<s_elem> elems;
+};
