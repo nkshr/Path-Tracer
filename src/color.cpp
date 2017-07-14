@@ -2,6 +2,7 @@
 #include <fstream>
 #include <cstring>
 #include <algorithm>
+#include <list>
 using namespace std;
 
 #include "spectrum.h"

@@ -25,9 +25,7 @@ set(SOURCE_FILES
     src/camera.cpp
     src/scene.cpp
     src/renderer.cpp
-	src/spectrum.cpp
 	src/attenuation.cpp
-	src/color.cpp
     src/quantum_efficiency.cpp
 	lib/rand48/rand48.c
     lib/lodepng/lodepng.cpp
@@ -46,9 +44,7 @@ set(HEADER_FILES
 	src/texture.h
 	src/triangle.h
 	src/vector.h
-	src/spectrum.h
 	src/attenuation.h
-	src/color.h
 	src/common.h
 	src/quantum_efficiency.h
 	lib/rand48/erand48.h
@@ -62,12 +58,6 @@ set(DATA
 	)
 
 add_executable(pathtracer src/main.cpp ${SOURCE_FILES} ${HEADER_FILES} ${DATA})
-add_executable(attenuation_test src/attenuation_test.cpp ${SOURCE_FILES} ${HEADER_FILES} ${DATA})
-add_executable(spect_attenuation_test src/spect_attenuation_test.cpp ${SOURCE_FILES} ${HEADER_FILES} ${DATA})
-add_executable(XYZ_color_test src/xyz_color_test.cpp ${SOURCE_FILES} ${HEADER_FILES} ${DATA})
-add_executable(quantum_efficiency_test src/quantum_efficiency_test.cpp ${SOURCE_FILES} ${HEADER_FILES} ${DATA})
-
-enable_testing()
 
 add_test(NAME attenuation_test
 	COMMAND attenuation_test.exe

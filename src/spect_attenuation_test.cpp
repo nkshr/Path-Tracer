@@ -5,6 +5,7 @@
 #include <iostream>
 #include <cfloat>
 #include <cmath>
+#include <list>
 using namespace std;
 
 #include "../lib/lodepng/lodepng.h"
@@ -47,8 +48,6 @@ int main(int argc, char **argv) {
 		char buf[1024];
 		snprintf(buf, 1024, "atten_smpl_spec_%f_%f_%f.csv", r, g, b);
 		spect.write(buf);
-
-
 	}
 
 	//unsigned error = lodepng::encode(color_tiles_img_name, pix_buf, w_tile, h_tile * num_tiles);

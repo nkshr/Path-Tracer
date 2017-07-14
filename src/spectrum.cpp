@@ -5,7 +5,7 @@
 #include <fstream>
 #include <cfloat>
 #include <cstring>
-
+#include <list>
 using namespace std;
 
 #include "common.h"

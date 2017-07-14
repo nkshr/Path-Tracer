@@ -1,5 +1,6 @@
 #pragma once
 
+#include <list>
 class c_smpl_spect {
 private:
 	enum color {
@@ -66,5 +67,5 @@ public:
 	};
 
 private:
-	//list<s_elem> elems;
+	std::list<s_elem> elems;
 };
