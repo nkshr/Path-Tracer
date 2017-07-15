@@ -112,7 +112,7 @@ double Attenuation::sample(const double lambda) {
 		}
 
 		if (it->first >= lambda) {
-			atten = interpolate_linear(lambda, prev_it->first, it->first, prev_it->second, it->second);
+			atten = linearInterpolation(lambda, prev_it->first, it->first, prev_it->second, it->second);
 			break;
 		}
 	}
@@ -135,20 +135,6 @@ double Attenuation::get_step() const {
 bool Attenuation::ready() const{
   return atten_loaded;
 }
-
-//double Attenuation::calc_atten_coef(c_smpl_spect &nspect) {
-//	nspect.normalize();
-//
-//	nspect.begin();
-//	double atten = 0.0;
-//	do {
-//		double lambda, sval;
-//		nspect.get_elem(lambda, sval);
-//		atten += sval * sample(lambda);
-//	} while (nspect.next());
-//
-//	return atten;
-//}
 
 bool Attenuation::write_atten_coefs(const char *fname) {
 	ofstream ofs;
@@ -182,17 +168,6 @@ bool Attenuation::write_absorp_coefs(const char *fname) {
 	ofs.flush();
 	ofs.close();
 	return true;
-}
-
-void Attenuation::attenuate(const double dist, c_smpl_spect &spect) {
-	spect.begin();
-	do {
-		double lambda, sval;
-		spect.get_elem(lambda, sval);
-		spect.set_elem(lambda, attenuate(sample(lambda), dist, sval));
-
-		cout << sval << " => " << attenuate(sample(lambda), dist, sval) << endl;
-	} while (spect.next());
 }
 
 double Attenuation::attenuate(const double atten_coef, const double dist, const double orig_inten) {

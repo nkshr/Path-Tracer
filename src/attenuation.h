@@ -4,8 +4,6 @@
 #include <utility>
 #include <cmath>
 
-#include "spectrum.h"
-
 class Attenuation {
 private:
 	std::vector<std::pair<double, double> > absorp_coefs;
@@ -41,12 +39,5 @@ public:
 
 	//double calc_atenuation(c_smpl_spect &spect);
 	
-	void attenuate(const double dist, c_smpl_spect &spect);
 	double attenuate(const double atten_coef, const double dist, const double orig_inten);
 };
-
-//double calAttenuation(Attenuation &atten_coefs, c_smpl_spect &spect);
-
-//inline double calc_attenuated_value(const double coef, const double z, const double color) {
-//	return color * std::exp(-coef * z);
-//}

@@ -1,5 +1,10 @@
+#include <fstream>
+
 #include "ray.h"
 #include "camera.h"
+#include "common.h"
+
+#define BUF_SZ 1024
 
 Camera::Camera(Vec position, Vec target, int width, int height) {
     m_width = width;

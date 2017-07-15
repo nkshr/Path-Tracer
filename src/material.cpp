@@ -3,23 +3,12 @@
 #include "vector.h"
 #include "ray.h"
 #include "material.h"
+#include "spectrum.h"
 
-Material::Material(MaterialType t, Vec c, Vec e, Texture tex) {
-	m_type=t, m_colour=c, m_emission=e;
-    m_texture = tex;
+Material::Material(MaterialType t,  Spectrum e, Spectrum a) : m_type(t), m_emission(e), m_albedo(a){
 }
 
 MaterialType Material::get_type() const { return m_type; }
-Vec Material::get_colour() const { return m_colour; }
-
-// Get colour at UV coordinates u,v
-Vec Material::get_colour_at(double u, double v) const {
-    if (m_texture.is_loaded())
-        return m_texture.get_pixel(u, v);
-
-    return m_colour;
-}
-Vec Material::get_emission() const { return m_emission; }
 
 Ray Material::get_reflected_ray(const Ray &r, Vec &p, const Vec &n,	unsigned short *Xi) const {
 	// Ideal specular reflection
@@ -44,4 +33,20 @@ Ray Material::get_reflected_ray(const Ray &r, Vec &p, const Vec &n,	unsigned sho
 
         return Ray(p, d);
 	}
+}
+
+Spectrum Material::get_albedo() const {
+	return m_albedo;
+}
+
+Spectrum Material::get_emission() const {
+	return m_emission;
+}
+
+double Material::sample_albedo(const double lambda) const {
+	return m_albedo.sample(lambda);
+}
+
+double Material::sample_emission(const double lambda) const {
+	return m_emission.sample(lambda);
 }

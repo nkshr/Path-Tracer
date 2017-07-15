@@ -54,9 +54,9 @@ void Renderer::save_image(const char *file_path) {
     int pixel_count = width*height;
 
     for (int i=0; i<pixel_count; i++) {
-        pixel_buffer.push_back(to_int(m_pixel_buffer[i].x));
-        pixel_buffer.push_back(to_int(m_pixel_buffer[i].y));
-        pixel_buffer.push_back(to_int(m_pixel_buffer[i].z));
+        pixel_buffer.push_back(toInt(m_pixel_buffer[i].x));
+        pixel_buffer.push_back(toInt(m_pixel_buffer[i].y));
+        pixel_buffer.push_back(toInt(m_pixel_buffer[i].z));
         pixel_buffer.push_back(255);
     }
 

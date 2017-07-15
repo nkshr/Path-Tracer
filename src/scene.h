@@ -9,13 +9,13 @@
 class Scene {
 private:
     std::vector<Object*> m_objects;
+	std::vector<double> m_lambdas;
 
 public:
     Scene();
     void add(Object *object);
     ObjectIntersection intersect(const Ray &ray);
-	//c_atten_coefs atten_coefs;
-    Vec trace_ray(const Ray &ray, int depth, unsigned short*Xi);
+    double trace_ray(const Ray &ray, int depth, unsigned short*Xi);
 };
 
 #endif //SCENE_H

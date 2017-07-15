@@ -1,11 +1,20 @@
 #ifndef CAMERA_H
 #define CAMERA_H
 
+#include <vector>
+#include <utility>
+
 #include "../lib/rand48/erand48.h"
 #include "vector.h"
 #include "ray.h"
+#include "common.h"
+#include "spectrum.h"
 
 class Camera {
+public:
+	enum ColorModel {
+		MONO, RGB
+	};
 
 private:
     int m_width;
@@ -21,13 +30,12 @@ private:
     Vec m_direction;
     Vec m_x_direction;
     Vec m_y_direction;
-
+	Spectrum mono_eq;
 public:
     Camera(Vec position, Vec target, int width, int height);
     int get_width();
     int get_height();
     Ray get_ray(int x, int y, bool jitter, unsigned short *Xi);
-
 };
 
 #endif //CAMERA_H

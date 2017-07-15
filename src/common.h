@@ -1,5 +1,5 @@
 #pragma once
-inline double interpolate_linear(const double  x, const double x1, const double  x2,
+inline double linearInterpolation(const double  x, const double x1, const double  x2,
 	const double y1, const double y2) {
 	const double a = (x - x1) / (x2 - x1);
 	return a * (y2 - y1) + y1;
@@ -46,9 +46,9 @@ inline void convert_rgb_to_hsv(const double r, const double g, const double b,
 // Clamp double to min/max of 0/1
 inline double clamp(double x) { return x<0 ? 0 : x>1 ? 1 : x; }
 // Clamp to between 0-255
-inline int to_int(double x) { return int(clamp(x) * 255 + .5); }
+inline int toInt(double x) { return int(clamp(x) * 255 + .5); }
 
-inline void inv_mat3x3(const double* m, double* inv_m) {
+inline void invMat3x3(const double* m, double* inv_m) {
 	//m = [m0 m1 m2
 	//     m3 m4 m5
 	//     m6 m7 m8]
@@ -72,4 +72,9 @@ inline void inv_mat3x3(const double* m, double* inv_m) {
 	inv_m[6] = (m[3] * m[7] - m[4] * m[6]) * recip_det;
 	inv_m[7] = (m[1] * m[6] - m[0] * m[7]) * recip_det;
 	inv_m[8] = (m[0] * m[4] - m[1] * m[3]) * recip_det;
+}
+
+inline double mapValue(const double x, const double xmin, const double xmax) {
+	const double diff = xmax - xmin;
+	return ((x - xmin)/ diff) * diff + xmin;
 }

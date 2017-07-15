@@ -6,6 +6,8 @@
 #include "scene.h"
 #include "objects.h"
 
+#define LAMBDA_STEP 10
+
 Scene::Scene() {
 	//atten_coefs.init("../data/Pope_absorp.txt", "");
 	//atten_coefs.scale(100);
@@ -13,6 +15,27 @@ Scene::Scene() {
 
 void Scene::add(Object *object) {
     m_objects.push_back( object );
+	
+	constexpr double epsilon = LAMBDA_STEP * 0.5;
+
+	bool add = false;
+	Material m = object->get_material();
+	if (m.get_type() == EMIT) {
+		const Spectrum albedo = m.get_albedo();
+		for (int i = 0; i < albedo.get_num_elems(); ++i) {
+			const double lambda = albedo[i];
+			for (int j = 0; j < m_lambdas.size(); ++j) {
+				if (m_lambdas[j] - epsilon < lambda && lambda < m_lambdas[j] + epsilon) {
+					add = true;
+					break;
+				}
+			}
+
+			if (add) {
+				m_lambdas.push_back(lambda);
+			}
+		}
+	}
 }
 
 ObjectIntersection Scene::intersect(const Ray &ray) {
@@ -30,37 +53,25 @@ ObjectIntersection Scene::intersect(const Ray &ray) {
     return isct;
 }
 
-Vec Scene::trace_ray(const Ray &ray, int depth, unsigned short*Xi) {
+double Scene::trace_ray(const Ray &ray, int depth, unsigned short*Xi) {
 
     ObjectIntersection isct = intersect(ray);
 
     // If no hit, return world colour
-    if (!isct.hit) return Vec();
-    /*if (!isct.hit){
-        double u, v;
-        v = (acos(Vec(0,0,1).dot(ray.direction))/M_PI);
-        u = (acos(ray.direction.y)/ M_PI);
-        return bg.get_pixel(fabs(u), fabs(v))*1.2;
-    }*/
+    if (!isct.hit) return 0.0;
 
-    if (isct.m.get_type() == EMIT) return isct.m.get_emission();
-    //Vec x = ray.origin + ray.direction * isct.u;
+    if (isct.m.get_type() == EMIT) return isct.m.sample_emission(ray.lambda);
 
-    Vec colour = isct.m.get_colour();
-	//return colour * isct.n.dot((Vec(1,-3,8)-x).norm());
-
-    // Calculate max reflection
-    double p = colour.x>colour.y && colour.x>colour.z ? colour.x : colour.y>colour.z ? colour.y : colour.z;
+    double albedo = isct.m.sample_albedo(ray.lambda);
 
     // Russian roulette termination.
     // If random number between 0 and 1 is > p, terminate and return hit object's emmission
     double rnd = erand48(Xi);
     if (++depth>5){
-        if (rnd<p*0.9) { // Multiply by 0.9 to avoid infinite loop with colours of 1.0
-            colour=colour*(0.9/p);
+        if (rnd<albedo*0.9) { // Multiply by 0.9 to avoid infinite loop with colours of 1.0
         }
         else {
-            return isct.m.get_emission();
+            return isct.m.sample_emission(ray.lambda);
         }
     }
 
@@ -69,5 +80,5 @@ Vec Scene::trace_ray(const Ray &ray, int depth, unsigned short*Xi) {
 
     //return colour.mult( trace_ray(reflected, depth, Xi) );
     double brdf = reflected.direction.dot(isct.n);
-    return  colour + trace_ray(reflected, depth, Xi) * brdf;
+    return  isct.m.sample_emission(ray.lambda) + trace_ray(reflected, depth, Xi) * brdf;
 }
