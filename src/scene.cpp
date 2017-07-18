@@ -41,9 +41,9 @@ void Scene::add(Object *object) {
 		}
 	}
 
-	for (int i = 0; i < m_lambdas.size(); ++i) {
-		std::cout << m_lambdas[i] << std::endl;
-	}
+	// for (int i = 0; i < m_lambdas.size(); ++i) {
+	// 	std::cout << m_lambdas[i] << std::endl;
+	// }
 }
 
 ObjectIntersection Scene::intersect(const Ray &ray) {
@@ -70,9 +70,9 @@ double Scene::trace_ray(const Ray &ray, int depth, int samples, unsigned short*X
 
     if (isct.m.get_type() == EMIT) {
       const double emission = isct.m.sample_emission(ray.lambda);
-      std::cout << emission << std::endl;
-      if(emission)
-	std::cout << emission << std::endl;
+      // std::cout << emission << std::endl;
+      // if(emission)
+      // 	std::cout << emission << std::endl;
       return emission;
     }
     
