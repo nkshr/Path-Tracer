@@ -15,7 +15,8 @@ public:
     Scene();
     void add(Object *object);
     ObjectIntersection intersect(const Ray &ray);
-    double trace_ray(const Ray &ray, int depth, unsigned short*Xi);
+    double trace_ray(const Ray &ray, int depth, int samples, unsigned short*Xi);
+	Spectrum trace_ray(Ray ray, int samples, unsigned short*Xi);
 };
 
 #endif //SCENE_H

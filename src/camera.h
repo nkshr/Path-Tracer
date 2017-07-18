@@ -30,12 +30,12 @@ private:
     Vec m_direction;
     Vec m_x_direction;
     Vec m_y_direction;
-	Spectrum mono_eq;
+	Spectrum m_mono_eq;
 public:
-    Camera(Vec position, Vec target, int width, int height);
+    Camera(Vec position, Vec target, int width, int height, Spectrum mono_eq);
     int get_width();
     int get_height();
-    Ray get_ray(int x, int y, bool jitter, unsigned short *Xi);
+    void get_ray_orientation(int x, int y, bool jitter, unsigned short *Xi, Vec &pos, Vec &dir);
 };
 
 #endif //CAMERA_H

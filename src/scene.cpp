@@ -6,7 +6,8 @@
 #include "scene.h"
 #include "objects.h"
 
-#define LAMBDA_STEP 10
+#define LAMBDA_STEP 1.0
+#define MAX_DEPTH 2
 
 Scene::Scene() {
 	//atten_coefs.init("../data/Pope_absorp.txt", "");
@@ -18,15 +19,18 @@ void Scene::add(Object *object) {
 	
 	constexpr double epsilon = LAMBDA_STEP * 0.5;
 
-	bool add = false;
 	Material m = object->get_material();
 	if (m.get_type() == EMIT) {
-		const Spectrum albedo = m.get_albedo();
-		for (int i = 0; i < albedo.get_num_elems(); ++i) {
-			const double lambda = albedo[i];
+		const Spectrum emissions = m.get_spectral_emissions();
+		for (int i = 0; i < emissions.get_num_elems(); ++i) {
+			double lambda, emission;
+			emissions.get_elem(i, lambda, emission);
+			if (!(emission > 0))
+				continue;
+			bool add = true;
 			for (int j = 0; j < m_lambdas.size(); ++j) {
 				if (m_lambdas[j] - epsilon < lambda && lambda < m_lambdas[j] + epsilon) {
-					add = true;
+					add = false;
 					break;
 				}
 			}
@@ -35,6 +39,10 @@ void Scene::add(Object *object) {
 				m_lambdas.push_back(lambda);
 			}
 		}
+	}
+
+	for (int i = 0; i < m_lambdas.size(); ++i) {
+		std::cout << m_lambdas[i] << std::endl;
 	}
 }
 
@@ -53,21 +61,22 @@ ObjectIntersection Scene::intersect(const Ray &ray) {
     return isct;
 }
 
-double Scene::trace_ray(const Ray &ray, int depth, unsigned short*Xi) {
+double Scene::trace_ray(const Ray &ray, int depth, int samples, unsigned short*Xi) {
 
     ObjectIntersection isct = intersect(ray);
 
     // If no hit, return world colour
     if (!isct.hit) return 0.0;
 
-    if (isct.m.get_type() == EMIT) return isct.m.sample_emission(ray.lambda);
+    if (isct.m.get_type() == EMIT) 
+		return isct.m.sample_emission(ray.lambda);
 
     double albedo = isct.m.sample_albedo(ray.lambda);
 
     // Russian roulette termination.
     // If random number between 0 and 1 is > p, terminate and return hit object's emmission
     double rnd = erand48(Xi);
-    if (++depth>5){
+    if (++depth>MAX_DEPTH){
         if (rnd<albedo*0.9) { // Multiply by 0.9 to avoid infinite loop with colours of 1.0
         }
         else {
@@ -76,9 +85,25 @@ double Scene::trace_ray(const Ray &ray, int depth, unsigned short*Xi) {
     }
 
     Vec x = ray.origin + ray.direction * isct.u;
-    Ray reflected = isct.m.get_reflected_ray(ray, x, isct.n, Xi);
+	double radiance = 0.0;
+	for (int i = 0; i < samples; ++i) {
+		Ray reflected = isct.m.get_reflected_ray(ray, x, isct.n, Xi);
+		radiance +=  trace_ray(reflected, depth, samples, Xi) * reflected.direction.dot(isct.n);
 
-    //return colour.mult( trace_ray(reflected, depth, Xi) );
-    double brdf = reflected.direction.dot(isct.n);
-    return  isct.m.sample_emission(ray.lambda) + trace_ray(reflected, depth, Xi) * brdf;
+	}
+
+	radiance *= (2.0 * albedo / (double)samples);
+
+	return  radiance;
+}
+
+Spectrum Scene::trace_ray(Ray ray, int samples, unsigned short *Xi) {
+	Spectrum radiances;
+	radiances.resize(m_lambdas.size());
+	for (int i = 0; i < m_lambdas.size(); ++i) {
+		ray.lambda = m_lambdas[i];
+		double radiance = trace_ray(ray, 0, samples, Xi);
+		radiances.set_elem(i, ray.lambda, radiance);
+	}
+	return radiances;
 }

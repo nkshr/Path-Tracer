@@ -20,33 +20,27 @@ endif()
 set(SOURCE_FILES
     src/material.cpp
     src/objects.cpp
-    src/kdtree.cpp
-    src/texture.cpp
     src/camera.cpp
     src/scene.cpp
     src/renderer.cpp
 	src/attenuation.cpp
-    src/quantum_efficiency.cpp
+	src/spectrum.cpp
 	lib/rand48/rand48.c
     lib/lodepng/lodepng.cpp
     lib/tiny_obj_loader/tiny_obj_loader.cc
 	)
 
 set(HEADER_FILES
-	src/aabbox.h
 	src/camera.h
-	src/kdtree.h
 	src/material.h
 	src/objects.h
 	src/ray.h
 	src/renderer.h
 	src/scene.h
-	src/texture.h
-	src/triangle.h
 	src/vector.h
 	src/attenuation.h
+	src/spectrum.h
 	src/common.h
-	src/quantum_efficiency.h
 	lib/rand48/erand48.h
 	lib/lodepng/lodepng.h
 	lib/tiny_obj_loader/tiny_obj_loader.h
@@ -58,6 +52,7 @@ set(DATA
 	)
 
 add_executable(pathtracer src/main.cpp ${SOURCE_FILES} ${HEADER_FILES} ${DATA})
+add_executable(spectrum_template_generator src/spectrum_template_generator.cpp)
 
 add_test(NAME attenuation_test
 	COMMAND attenuation_test.exe

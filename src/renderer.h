@@ -10,7 +10,7 @@ class Renderer {
 private:
     Scene *m_scene;
     Camera *m_camera;
-    Vec *m_pixel_buffer;
+    Spectrum *m_radiance_spectrums;
 
 public:
     Renderer(Scene *scene, Camera *camera);

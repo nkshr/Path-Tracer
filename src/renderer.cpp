@@ -11,12 +11,12 @@ using namespace std;
 #include "renderer.h"
 #include "../lib/lodepng/lodepng.h"
 
-
+#define BUF_SZ 1024
 
 Renderer::Renderer(Scene *scene, Camera *camera) {
     m_scene = scene;
     m_camera = camera;
-    m_pixel_buffer = new Vec[m_camera->get_width()*m_camera->get_height()];
+    m_radiance_spectrums = new Spectrum[m_camera->get_width()*m_camera->get_height()];
 }
 
 void Renderer::render(int samples) {
@@ -33,37 +33,42 @@ void Renderer::render(int samples) {
                 samples, (double)y/height*100);                   // progress
 
         for (int x=0; x<width; x++){
-            Vec col = Vec();
-
-            for (int a=0; a<samples; a++){
-                Ray ray = m_camera->get_ray(x, y, a>0, Xi);
-                col = col + m_scene->trace_ray(ray, 0,Xi);
-            }
-
-            m_pixel_buffer[(y)*width + x] = col * samples_recp;
+			Ray ray;
+			m_camera->get_ray_orientation(x, y, false, Xi, ray.origin, ray.direction);
+            m_radiance_spectrums[y * width + x] = m_scene->trace_ray(ray, samples,Xi);
         }
     }
 }
 
-void Renderer::save_image(const char *file_path) {
+void Renderer::save_image(const char *fprefix) {
     int width = m_camera->get_width();
     int height = m_camera->get_height();
 
-    std::vector<unsigned char> pixel_buffer;
+	int pixel_count = width*height;
+	int lambda_count = m_radiance_spectrums[0].get_num_elems();
 
-    int pixel_count = width*height;
+	std::vector<unsigned char> pixel_buffer;
+	pixel_buffer.resize(pixel_count);
 
-    for (int i=0; i<pixel_count; i++) {
-        pixel_buffer.push_back(toInt(m_pixel_buffer[i].x));
-        pixel_buffer.push_back(toInt(m_pixel_buffer[i].y));
-        pixel_buffer.push_back(toInt(m_pixel_buffer[i].z));
-        pixel_buffer.push_back(255);
-    }
+	for (int i = 0; i < lambda_count; ++i) {
+		for (int j = 0; j<pixel_count; ++j) {
+			double lambda, radiance;
+			m_radiance_spectrums[j].get_elem(i, lambda, radiance);
+			pixel_buffer[j] = toInt(radiance);
+			pixel_buffer[j] = toInt(radiance);
+			pixel_buffer[j] = toInt(radiance);
+			pixel_buffer[j] = 255;
+		}
 
-    //Encode the image
-    unsigned error = lodepng::encode(file_path, pixel_buffer, width, height);
-    //if there's an error, display it
-    if(error) std::cout << "encoder error " << error << ": "<< lodepng_error_text(error) << std::endl;
+		double lambda, radiance;
+		m_radiance_spectrums[0].get_elem(i, lambda, radiance);
+		char file_path[BUF_SZ];
+		snprintf(file_path, BUF_SZ, "%s_%02f.png", fprefix, lambda);
 
-    pixel_buffer.clear();
+		//Encode the image
+		unsigned error = lodepng::encode(file_path, pixel_buffer, width, height);
+		//if there's an error, display it
+		if (error) std::cout << "encoder error " << error << ": " << lodepng_error_text(error) << std::endl;
+
+	}
 }
