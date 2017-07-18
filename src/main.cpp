@@ -22,6 +22,7 @@
 #include "scene.h"
 #include "renderer.h"
 
+const char *mono_eq_fname = "../data/gt1290.csv";
 
 int main(int argc, char *argv[]) {
 
@@ -31,21 +32,22 @@ int main(int argc, char *argv[]) {
 
     if (argc == 2) samples = atoi(argv[1]);
 
-    Camera camera = Camera(Vec(0, -5, 2.5), Vec(0,0,1), 320, 240);     // Create camera
+	Spectrum mono_eq(mono_eq_fname);
+    Camera camera = Camera(Vec(0, -5, 2.5), Vec(0,0,1), 320, 240, mono_eq);     // Create camera
 	Scene scene = Scene();                                              // Create scene
 
     // Add objects to scene
     scene.add( dynamic_cast<Object*>(new Sphere(Vec(0,0,-1000), 1000, Material())) );
-    scene.add( dynamic_cast<Object*>(new Sphere(Vec(-1004,0,0), 1000, Material(DIFF, Vec(0.85,0.4,0.4)))) );
-    scene.add( dynamic_cast<Object*>(new Sphere(Vec(1004,0,0), 1000, Material(DIFF, Vec(0.4,0.4,0.85)))) );
+    scene.add( dynamic_cast<Object*>(new Sphere(Vec(-1004,0,0), 1000, Material(DIFF))) );
+    scene.add( dynamic_cast<Object*>(new Sphere(Vec(1004,0,0), 1000, Material(DIFF))) );
     scene.add( dynamic_cast<Object*>(new Sphere(Vec(0,1006,0), 1000, Material())) );
-    scene.add( dynamic_cast<Object*>(new Sphere(Vec(0,0,110), 100, Material(EMIT, Vec(1,1,1), Vec(2.2,2.2,2.2)))) );
-    scene.add( dynamic_cast<Object*>(new Mesh(Vec(), "../obj/dragon2.obj", Material(DIFF, Vec(0.9, 0.9, 0.9)))) );
+    scene.add( dynamic_cast<Object*>(new Sphere(Vec(0,0,110), 100, Material(EMIT, Spectrum("../data/spike700.csv"), Spectrum(0.0)))) );
+    //scene.add( dynamic_cast<Object*>(new Mesh(Vec(), "../obj/dragon2.obj", Material(DIFF, Vec(0.9, 0.9, 0.9)))) );
 
 
     Renderer renderer = Renderer(&scene, &camera);  // Create renderer with our scene and camera
     renderer.render(samples);                       // Render image to pixel buffer
-    renderer.save_image("render.png");              // Save image
+    renderer.save_image("render");              // Save image
 
     // Print duration information
     time(&stop);

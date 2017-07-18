@@ -6,13 +6,44 @@
 #include "scene.h"
 #include "objects.h"
 
+#define LAMBDA_STEP 1.0
+#define MAX_DEPTH 5
+
 Scene::Scene() {
-	atten_coefs.init("../data/Pope_absorp.txt", "");
-	atten_coefs.scale(100);
+	//atten_coefs.init("../data/Pope_absorp.txt", "");
+	//atten_coefs.scale(100);
 }
 
 void Scene::add(Object *object) {
     m_objects.push_back( object );
+	
+	constexpr double epsilon = LAMBDA_STEP * 0.5;
+
+	Material m = object->get_material();
+	if (m.get_type() == EMIT) {
+		const Spectrum emissions = m.get_spectral_emissions();
+		for (int i = 0; i < emissions.get_num_elems(); ++i) {
+			double lambda, emission;
+			emissions.get_elem(i, lambda, emission);
+			if (!(emission > 0))
+				continue;
+			bool add = true;
+			for (int j = 0; j < m_lambdas.size(); ++j) {
+				if (m_lambdas[j] - epsilon < lambda && lambda < m_lambdas[j] + epsilon) {
+					add = false;
+					break;
+				}
+			}
+
+			if (add) {
+				m_lambdas.push_back(lambda);
+			}
+		}
+	}
+
+	for (int i = 0; i < m_lambdas.size(); ++i) {
+		std::cout << m_lambdas[i] << std::endl;
+	}
 }
 
 ObjectIntersection Scene::intersect(const Ray &ray) {
@@ -30,52 +61,54 @@ ObjectIntersection Scene::intersect(const Ray &ray) {
     return isct;
 }
 
-Vec Scene::trace_ray(const Ray &ray, int depth, unsigned short*Xi) {
+double Scene::trace_ray(const Ray &ray, int depth, int samples, unsigned short*Xi) {
 
     ObjectIntersection isct = intersect(ray);
 
     // If no hit, return world colour
-    if (!isct.hit) return Vec();
-    /*if (!isct.hit){
-        double u, v;
-        v = (acos(Vec(0,0,1).dot(ray.direction))/M_PI);
-        u = (acos(ray.direction.y)/ M_PI);
-        return bg.get_pixel(fabs(u), fabs(v))*1.2;
-    }*/
+    if (!isct.hit) return 0.0;
 
-    if (isct.m.get_type() == EMIT) return isct.m.get_emission();
-    //Vec x = ray.origin + ray.direction * isct.u;
-
-    Vec colour = isct.m.get_colour();
-    // c_smpl_spect spect(colour.x, colour.y, colour.z);
-    // double atten_coef = calc_atten_coef(atten_coefs, spect);
-    // colour.x = calc_attenuated_value(atten_coef, isct.u, colour.x);
-    // colour.y = calc_attenuated_value(atten_coef, isct.u, colour.y);
-    // colour.z = calc_attenuated_value(atten_coef, isct.u, colour.z);
-	//return colour * isct.n.dot((Vec(1,-3,8)-x).norm());
-
-    // Calculate max reflection
-    double p = colour.x>colour.y && colour.x>colour.z ? colour.x : colour.y>colour.z ? colour.y : colour.z;
+    if (isct.m.get_type() == EMIT) {
+      const double emission = isct.m.sample_emission(ray.lambda);
+      std::cout << emission << std::endl;
+      if(emission)
+	std::cout << emission << std::endl;
+      return emission;
+    }
+    
+    double albedo = isct.m.sample_albedo(ray.lambda);
 
     // Russian roulette termination.
     // If random number between 0 and 1 is > p, terminate and return hit object's emmission
-    double rnd = erand48(Xi);
-    if (++depth>5){
-        if (rnd<p*0.9) { // Multiply by 0.9 to avoid infinite loop with colours of 1.0
-            colour=colour*(0.9/p);
+    if (++depth>MAX_DEPTH){
+      double rnd = erand48(Xi);
+        if (rnd<albedo*0.9) { // Multiply by 0.9 to avoid infinite loop with colours of 1.0
         }
         else {
-            return isct.m.get_emission();
+            return isct.m.sample_emission(ray.lambda);
         }
     }
 
     Vec x = ray.origin + ray.direction * isct.u;
-    Ray reflected = isct.m.get_reflected_ray(ray, x, isct.n, Xi);
+	double radiance = 0.0;
+	for (int i = 0; i < samples; ++i) {
+		Ray reflected = isct.m.get_reflected_ray(ray, x, isct.n, Xi);
+		radiance +=  trace_ray(reflected, depth, samples, Xi) * reflected.direction.dot(isct.n);
 
-    return colour.mult( trace_ray(reflected, depth, Xi) );
-    double brdf = reflected.direction.dot(isct.n);
-    if(brdf > 1.0){
-      std::cout << brdf << " : " << reflected.direction << " : " << isct.n << std::endl;
-    }
-    return  colour + trace_ray(reflected, depth, Xi) * brdf;
+	}
+
+	radiance *= (2.0 * albedo / (double)samples);
+
+	return  radiance;
+}
+
+Spectrum Scene::trace_ray(Ray ray, int samples, unsigned short *Xi) {
+	Spectrum radiances;
+	radiances.resize(m_lambdas.size());
+	for (int i = 0; i < m_lambdas.size(); ++i) {
+		ray.lambda = m_lambdas[i];
+		double radiance = trace_ray(ray, 0, samples, Xi);
+		radiances.set_elem(i, ray.lambda, radiance);
+	}
+	return radiances;
 }

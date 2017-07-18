@@ -3,23 +3,13 @@
 #include "vector.h"
 #include "ray.h"
 #include "material.h"
+#include "spectrum.h"
 
-Material::Material(MaterialType t, Vec c, Vec e, Texture tex) {
-	m_type=t, m_colour=c, m_emission=e;
-    m_texture = tex;
+Material::Material(MaterialType t,  Spectrum e, Spectrum a) : m_type(t),
+m_spectral_emissions(e), m_spectral_albedos(a){
 }
 
 MaterialType Material::get_type() const { return m_type; }
-Vec Material::get_colour() const { return m_colour; }
-
-// Get colour at UV coordinates u,v
-Vec Material::get_colour_at(double u, double v) const {
-    if (m_texture.is_loaded())
-        return m_texture.get_pixel(u, v);
-
-    return m_colour;
-}
-Vec Material::get_emission() const { return m_emission; }
 
 Ray Material::get_reflected_ray(const Ray &r, Vec &p, const Vec &n,	unsigned short *Xi) const {
 	// Ideal specular reflection
@@ -32,7 +22,7 @@ Ray Material::get_reflected_ray(const Ray &r, Vec &p, const Vec &n,	unsigned sho
             reflected.z + (erand48(Xi)-0.5)*roughness
         ).norm();
 
-        return Ray(p, reflected);
+        return Ray(p, reflected, r.lambda);
 		//return Ray(p, r.direction - n * 2 * n.dot(r.direction));
 	}
 	// Ideal diffuse reflection
@@ -42,6 +32,22 @@ Ray Material::get_reflected_ray(const Ray &r, Vec &p, const Vec &n,	unsigned sho
         Vec w=nl, u=((fabs(w.x)>.1?Vec(0,1):Vec(1))%w).norm(), v=w%u;
         Vec d = (u*cos(r1)*r2s + v*sin(r1)*r2s + w*sqrt(1-r2)).norm();
 
-        return Ray(p, d);
+        return Ray(p, d, r.lambda);
 	}
+}
+
+Spectrum Material::get_spectral_albedos() const {
+	return m_spectral_albedos;
+}
+
+Spectrum Material::get_spectral_emissions() const {
+	return m_spectral_emissions;
+}
+
+double Material::sample_albedo(const double lambda) const {
+	return m_spectral_albedos.sample(lambda);
+}
+
+double Material::sample_emission(const double lambda) const {
+	return m_spectral_emissions.sample(lambda);
 }

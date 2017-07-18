@@ -1,6 +1,11 @@
 cmake_minimum_required(VERSION 2.8.4)
+
+cmake_policy(SET CMP0054 NEW)
+
 project(pathtracer)
+
 if(NOT "${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
+	message("OS IS LINUX")
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wno-narrowing -march=native -m64 -O3 -static -funroll-loops")
 endif()
 
@@ -15,33 +20,26 @@ endif()
 set(SOURCE_FILES
     src/material.cpp
     src/objects.cpp
-    src/kdtree.cpp
-    src/texture.cpp
     src/camera.cpp
     src/scene.cpp
     src/renderer.cpp
-	src/spectrum.cpp
 	src/attenuation.cpp
-	src/cie_xyz.cpp
-    lib/rand48/rand48.c
+	src/spectrum.cpp
+	lib/rand48/rand48.c
     lib/lodepng/lodepng.cpp
-    lib/tiny_obj_loader/tiny_obj_loader.cc)
+    lib/tiny_obj_loader/tiny_obj_loader.cc
+	)
 
 set(HEADER_FILES
-	src/aabbox.h
 	src/camera.h
-	src/kdtree.h
 	src/material.h
 	src/objects.h
 	src/ray.h
 	src/renderer.h
 	src/scene.h
-	src/texture.h
-	src/triangle.h
 	src/vector.h
-	src/spectrum.h
 	src/attenuation.h
-	src/cie_xyz.h
+	src/spectrum.h
 	src/common.h
 	lib/rand48/erand48.h
 	lib/lodepng/lodepng.h
@@ -49,14 +47,12 @@ set(HEADER_FILES
 	)
 
 set(DATA
-	data/Pope_absorp.txt
+	data/Pope_absorp_coefs.csv
+	data/ciexyz31.csv
 	)
 
 add_executable(pathtracer src/main.cpp ${SOURCE_FILES} ${HEADER_FILES} ${DATA})
-add_executable(attenuation_test src/attenuation_test.cpp ${SOURCE_FILES} ${HEADER_FILES} ${DATA})
-add_executable(cie_xyz_test src/cie_xyz_test.cpp ${SOURCE_FILES} ${HEADER_FILES} ${DATA})
-
-enable_testing()
+add_executable(spectrum_template_generator src/spectrum_template_generator.cpp)
 
 add_test(NAME attenuation_test
 	COMMAND attenuation_test.exe

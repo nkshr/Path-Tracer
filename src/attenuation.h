@@ -1,9 +1,10 @@
 #pragma once
 
-#include "spectrum.h"
-#include "cie_xyz.h"
+#include <vector>
+#include <utility>
+#include <cmath>
 
-class c_atten_coefs {
+class Attenuation {
 private:
 	std::vector<std::pair<double, double> > absorp_coefs;
 	std::vector<std::pair<double, double> > scat_coefs;
@@ -18,9 +19,9 @@ private:
 	bool load(const char *fname, std::vector<std::pair<double, double> > &coefs);
 	
 public:
-	c_atten_coefs() {};
-	c_atten_coefs(const char *absorp_fname, const char *scat_fname);
-	//c_atten_coefs(const c_atten_coefs & atten) = delete;
+	Attenuation() {};
+	Attenuation(const char *absorp_fname, const char *scat_fname);
+	//Attenuation(const Attenuation & atten) = delete;
 
 	bool init(const char *absorp_fname, const char *scat_fname);
 
@@ -32,10 +33,11 @@ public:
 	double get_step() const;
 
 	bool ready() const;
+
+	bool write_atten_coefs(const char *fname);
+	bool write_absorp_coefs(const char *fname);
+
+	//double calc_atenuation(c_smpl_spect &spect);
+	
+	double attenuate(const double atten_coef, const double dist, const double orig_inten);
 };
-
-double calc_atten_coef(c_atten_coefs &atten_coefs, c_smpl_spect &spect);
-
-inline double calc_attenuated_value(const double coef, const double z, const double color) {
-	return color * std::exp(-coef * z);
-}

@@ -1,49 +1,67 @@
 #pragma once
+#include <vector>
+#include <list>
+#include <utility>
 
-class c_smpl_spect {
+#include "vector.h"
+#include "common.h"
+
+class Spectrum {
 private:
-	enum color {
-		ECOLOR_RED, ECOLOR_GREEN, ECOLOR_BLUE, ECOLOR_CYAN, ECOLOR_MAGENTA, ECOLOR_YELLOW, ECOLOR_WHITE, ECOLOR_UNDEF
-	};
-
-	static const int num_init_bins= 21;
-	
-	static const double init_lambdas[];
-	
-	static const double r_spect[];
-	static const double g_spect[];
-	static const double b_spect[];
-
-	static const double c_spect[];
-	static const double m_spect[];
-	static const double y_spect[];
-
-	static const double w_spect[];
-
-	double * values;
-	double * lambdas;
-	double step;
-	int num_bins;
-
-	double r, g, b;
+	std::vector<std::pair<double, double> > data;
+	double mean_value;
+	double half_step;
+	std::vector<std::pair<double, double> >::iterator it_data;
 
 public:
-	c_smpl_spect(double r, double g, double b);
-	
-	~c_smpl_spect();
+	Spectrum(const double value = 0.0,
+		const double min_lambda = 380.0, const double max_lambda = 780, const double  step = 1.0);
+	Spectrum(const char *fname);
+	~Spectrum();
 
-	double  sample(double lambda);
-	
-	void shrink(const double min_lambdas, const double max_lambdas, const double step);
-	void normalize();
+	bool load(const char *fname);
 
-	double get_min_lambda() const;
-	double get_max_lambda() const;
-	double get_step() const;
-	std::pair<double, double> get_elem(const int i) const;
-	
-	int get_num_bins() const;
+	bool write(const char *fname)const;
 
-	bool write(const char *fname);
+	double sample(const double lambda) const;
+
+	void resize(const int i);
+
+	int get_num_elems() const;
+
+	void next();
+
+	void cur(double &lambda, double &value);
+
+	void begin();
+
+	bool end();
+
+	void get_elem(const int i, double &lambda, double &value) const;
+
+	void set_elem(const int i, const double lambda, const double value);
+
+	void add(const double lambda, const double value);
 };
 
+class SparseSpectrum{
+private:
+	std::list<std::pair<double, double> > data;
+
+public:
+	//int get_num_elems() const;
+	void get_elem(const int i, double &lambda, double &value) const;
+
+	void add(const double lambda, const double value);
+};
+
+std::ostream &operator<<(std::ostream out, const Spectrum &spectrum);
+
+class UniformSpectrum {
+private:
+	double value;
+	double max_lambda;
+	double min_lambda;
+
+public:
+};
