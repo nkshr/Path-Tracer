@@ -47,11 +47,11 @@ Vec Scene::trace_ray(const Ray &ray, int depth, unsigned short*Xi) {
     //Vec x = ray.origin + ray.direction * isct.u;
 
     Vec colour = isct.m.get_colour();
-    c_smpl_spect spect(colour.x, colour.y, colour.z);
-    double atten_coef = calc_atten_coef(atten_coefs, spect);
-    colour.x = calc_attenuated_value(atten_coef, isct.u, colour.x);
-    colour.y = calc_attenuated_value(atten_coef, isct.u, colour.y);
-    colour.z = calc_attenuated_value(atten_coef, isct.u, colour.z);
+    // c_smpl_spect spect(colour.x, colour.y, colour.z);
+    // double atten_coef = calc_atten_coef(atten_coefs, spect);
+    // colour.x = calc_attenuated_value(atten_coef, isct.u, colour.x);
+    // colour.y = calc_attenuated_value(atten_coef, isct.u, colour.y);
+    // colour.z = calc_attenuated_value(atten_coef, isct.u, colour.z);
 	//return colour * isct.n.dot((Vec(1,-3,8)-x).norm());
 
     // Calculate max reflection
