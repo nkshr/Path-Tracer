@@ -62,7 +62,7 @@ ObjectIntersection Scene::intersect(const Ray &ray) {
 }
 
 double Scene::trace_ray(const Ray &ray, int depth, int samples, unsigned short*Xi) {
-
+	//std::cout << "depth : " << depth << std::endl;
     ObjectIntersection isct = intersect(ray);
 
     // If no hit, return world colour
@@ -81,7 +81,8 @@ double Scene::trace_ray(const Ray &ray, int depth, int samples, unsigned short*X
     // Russian roulette termination.
     // If random number between 0 and 1 is > p, terminate and return hit object's emmission
     if (++depth>MAX_DEPTH){
-      double rnd = erand48(Xi);
+		return isct.m.sample_emission(ray.lambda);
+		double rnd = erand48(Xi);
         if (rnd<albedo*0.9) { // Multiply by 0.9 to avoid infinite loop with colours of 1.0
         }
         else {
