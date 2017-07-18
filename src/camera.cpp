@@ -51,5 +51,7 @@ void Camera::get_ray_orientation(int x, int y, bool jitter, unsigned short *Xi, 
     pixel = pixel - m_x_direction*m_ratio + m_x_direction*((x * 2 * m_ratio)*m_width_recp) + x_jitter;
     pixel = pixel + m_y_direction - m_y_direction*((y * 2.0)*m_height_recp + y_jitter);
 
+	pos = m_position;
+	dir = (pixel - m_position).norm();
     //return Ray(m_position, (pixel-m_position).norm(), -1.0);
 }
