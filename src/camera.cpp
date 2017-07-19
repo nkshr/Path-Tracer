@@ -1,4 +1,5 @@
 #include <fstream>
+#include <iostream>
 
 #include "ray.h"
 #include "camera.h"
@@ -7,24 +8,19 @@
 
 #define BUF_SZ 1024
 
-Camera::Camera(Vec position, Vec target, int width, int height, Spectrum mono_eq) {
-    m_width = width;
+Camera::Camera(Vec position, Vec target, Vec up, int width, int height, Spectrum mono_eq) : m_width(width), m_height(height), m_position(position), m_up(up), m_mono_eq(mono_eq){
     m_width_recp = 1./m_width;
-    m_height = height;
     m_height_recp = 1./m_height;
     m_ratio = (double)m_width/m_height;
 
-    m_position = position;
     m_direction = (target - m_position).norm();
-    m_x_direction = Vec(0, 0, 1).cross(m_direction * -1).norm();
+    m_x_direction = m_up.cross(m_direction * -1).norm();
     m_y_direction = m_x_direction.cross(m_direction).norm();
 
     m_x_spacing = (2.0 * m_ratio)/(double)m_width;
     m_y_spacing = (double)2.0/(double)m_height;
     m_x_spacing_half = m_x_spacing * 0.5;
     m_y_spacing_half = m_y_spacing * 0.5;
-
-	m_mono_eq = mono_eq;
 }
 
 int Camera::get_width() { return m_width; }

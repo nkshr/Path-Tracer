@@ -9,6 +9,11 @@ struct Vec {
     double x, y, z;
 
     Vec(double x_=0, double y_=0, double z_=0) : x(x_), y(y_), z(z_) {}
+	Vec(const Vec &v) {
+		x = v.x;
+		y = v.y;
+		z = v.z;
+	}
 
     // Return x,y, and z component for 0, 1, and 2 respectively
     double axis(uint32_t axis){

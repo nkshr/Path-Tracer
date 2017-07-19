@@ -27,12 +27,13 @@ private:
     double m_y_spacing;
     double m_y_spacing_half;
     Vec m_position;
+	Vec m_up;
     Vec m_direction;
     Vec m_x_direction;
     Vec m_y_direction;
 	Spectrum m_mono_eq;
 public:
-    Camera(Vec position, Vec target, int width, int height, Spectrum mono_eq);
+    Camera(Vec position, Vec target, Vec up, int width, int height, Spectrum mono_eq);
     int get_width();
     int get_height();
     void get_ray_orientation(int x, int y, bool jitter, unsigned short *Xi, Vec &pos, Vec &dir);

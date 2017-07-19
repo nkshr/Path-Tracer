@@ -8,15 +8,15 @@
 #include <cfloat>
 #include <list>
 #include <cstring>
-using namespace std;
 
 #include "common.h"
 #include "attenuation.h"
 
-bool Attenuation::load(const char *fname, vector<pair<double, double> > &coefs){
-  ifstream ifs(fname, ifstream::binary);
+bool Attenuation::load(const char *fname, const Factor factor){
+	std::vector<std::pair<double, double> > coefs;
+  std::ifstream ifs(fname, std::ifstream::binary);
   if (!ifs.good()) {
-    cerr << "Warning : Couldn't open " << fname << "." << endl;
+    std::cerr << "Warning : Couldn't open " << fname << "." << std::endl;
     return false;
   }
 
@@ -40,73 +40,67 @@ bool Attenuation::load(const char *fname, vector<pair<double, double> > &coefs){
 
   for (int i = 0; i < num_elems; ++i) {
 	  ifs.getline(buf, buf_sz);
-	  cout << buf << endl;
+	  std::cout << buf << std::endl;
 	   char * val = strtok(buf, delims);
 	  double lambda = atof(val);
 
 	  val = strtok(NULL, delims);
 	  double coef = atof(val);
 
-	  coefs.push_back(pair<double, double>(lambda, coef));
+	  coefs.push_back(std::pair<double, double>(lambda, coef));
+  }
+
+  switch (factor) {
+  case ABSORPTION:
+	  m_absorp_coefs.swap(coefs);
+	  break;
+  case SCATTERING:
+	  m_scat_coefs.swap(coefs);
+	  break;
   }
 
   return true;
 }
 
-Attenuation::Attenuation(const char *absorp_fname, const char *scat_fname) {
-	init(absorp_fname, scat_fname);
-}
 
-bool Attenuation::init(const char *absorp_fname, const char *scat_fname) {
-  absorp_loaded = false;
-  scat_loaded = false;
-  atten_loaded = false;
-  absorp_loaded = load(absorp_fname, absorp_coefs);
-  scat_loaded = load(scat_fname, scat_coefs);	
-
-  if(!absorp_loaded && !scat_loaded){
-    cerr << "Error : Couldn't calculate attenuation coefficients." << endl;
+bool Attenuation::init() {
+  if(!m_absorp_coefs.size() && !m_scat_coefs.size()){
+    std::cerr << "Error : Couldn't calculate attenuation coefficients." << std::endl;
+	return false;
   }
-  else if (absorp_loaded && scat_loaded) {
+  else if (m_absorp_coefs.size() && m_scat_coefs.size()) {
     
   }
-  else if (absorp_loaded) {
-    atten_coefs.reserve(absorp_coefs.size());
-    copy(absorp_coefs.begin(), absorp_coefs.end(), back_inserter(atten_coefs));
+  else if (m_absorp_coefs.size()) {
+    m_atten_coefs.reserve(m_absorp_coefs.size());
+    copy(m_absorp_coefs.begin(), m_absorp_coefs.end(), back_inserter(m_atten_coefs));
   }
   else {
-    scat_coefs.reserve(absorp_coefs.size());
-    copy(scat_coefs.begin(), scat_coefs.end(), back_inserter(atten_coefs));
-  }
-
-  if(atten_coefs.size() > 0){
-	  step = (atten_coefs[atten_coefs.size() - 1].first - atten_coefs[0].first) / (atten_coefs.size() - 1);
-	  atten_loaded = true;
-  }else{
-	  step = 0.0;
+    m_scat_coefs.reserve(m_absorp_coefs.size());
+    copy(m_scat_coefs.begin(), m_scat_coefs.end(), back_inserter(m_atten_coefs));
   }
   
-  return atten_loaded;
+  return true;
 }
 
 void Attenuation::scale(const double s) {
-	for (int i = 0; i < atten_coefs.size(); ++i) {
-		atten_coefs[i].second *= s;
+	for (int i = 0; i < m_atten_coefs.size(); ++i) {
+		m_atten_coefs[i].second *= s;
 	}
 }
 
 double Attenuation::sample(const double lambda) {
 	double atten;
-	vector<pair<double, double> >::const_iterator it = atten_coefs.begin();
+	std::vector<std::pair<double, double> >::const_iterator it = m_atten_coefs.begin();
 	if (it->first >= lambda) {
 		return it->second;
 	}
 
-	vector<pair<double, double> > ::const_iterator prev_it;
+	std::vector<std::pair<double, double> > ::const_iterator prev_it;
 	while(true) {
 		prev_it = it;
 		++it;
-		if (it == atten_coefs.end()) {
+		if (it == m_atten_coefs.end()) {
 			atten = prev_it->second;
 			break;
 		}
@@ -121,48 +115,33 @@ double Attenuation::sample(const double lambda) {
 }
 
 double Attenuation::get_min_lambda() const{
-	return atten_coefs[0].first;
+	return m_atten_coefs[0].first;
 }
 
 double Attenuation::get_max_lambda() const{
-	return atten_coefs[atten_coefs.size() - 1].first;
+	return m_atten_coefs[m_atten_coefs.size() - 1].first;
 }
 
-double Attenuation::get_step() const {
-	return step;
-}
-
-bool Attenuation::ready() const{
-  return atten_loaded;
-}
-
-bool Attenuation::write_atten_coefs(const char *fname) {
-	ofstream ofs;
+bool Attenuation::write(const char *fname, const Factor factor) {
+	std::ofstream ofs;
 	ofs.open(fname);
 	
 	if (!ofs.good()) {
 		return false;
 	}
 
-	for (int i = 0; i < atten_coefs.size(); ++i) {
-		ofs << atten_coefs[i].first << "," << atten_coefs[i].second << "\n";
+	std::vector<std::pair<double, double> > * coefs;
+	switch (factor) {
+	case ABSORPTION:
+		coefs = &m_absorp_coefs;
+		break;
+	case SCATTERING:
+		coefs = &m_scat_coefs;
+		break;
 	}
 
-	ofs.flush();
-	ofs.close();
-	return true;
-}
-
-bool Attenuation::write_absorp_coefs(const char *fname) {
-	ofstream ofs;
-	ofs.open(fname);
-
-	if (!ofs.good()) {
-		return false;
-	}
-
-	for (int i = 0; i < absorp_coefs.size(); ++i) {
-		ofs << absorp_coefs[i].first << "," << absorp_coefs[i].second << "\n";
+	for (std::vector<std::pair<double, double> >::iterator it = coefs->begin(); it != coefs->end(); ++it) {
+		ofs << it->first << "," << it->second << "\n";
 	}
 
 	ofs.flush();

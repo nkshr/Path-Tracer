@@ -6,38 +6,31 @@
 
 class Attenuation {
 private:
-	std::vector<std::pair<double, double> > absorp_coefs;
-	std::vector<std::pair<double, double> > scat_coefs;
-	std::vector<std::pair<double, double> > atten_coefs;
-
-	bool absorp_loaded;
-	bool scat_loaded;
-	bool atten_loaded;
-	
-	double step;
-
-	bool load(const char *fname, std::vector<std::pair<double, double> > &coefs);
-	
+	std::vector<std::pair<double, double> > m_absorp_coefs;
+	std::vector<std::pair<double, double> > m_scat_coefs;
+	std::vector<std::pair<double, double> > m_atten_coefs;
+		
 public:
 	Attenuation() {};
-	Attenuation(const char *absorp_fname, const char *scat_fname);
-	//Attenuation(const Attenuation & atten) = delete;
 
-	bool init(const char *absorp_fname, const char *scat_fname);
+	enum Factor {
+		ABSORPTION, SCATTERING
+	};
+
+	bool init();
 
 	void scale(const double s);
 
 	double sample(const double lambda);
 	double get_min_lambda() const;
 	double get_max_lambda() const;
-	double get_step() const;
 
-	bool ready() const;
-
-	bool write_atten_coefs(const char *fname);
-	bool write_absorp_coefs(const char *fname);
+	bool write(const char *fname, const Factor factor);
 
 	//double calc_atenuation(c_smpl_spect &spect);
 	
 	double attenuate(const double atten_coef, const double dist, const double orig_inten);
+
+	bool load(const char *fname, const Factor factor);
+
 };
