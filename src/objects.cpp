@@ -23,7 +23,7 @@ double Sphere::get_radius() { return m_r; }
 
 Cylinder::Cylinder(Vec p_, Vec d_, double r_, double h_, Material m_) {
 	m_p = p_;
-	m_d = d_;
+	m_d = d_.norm();
 	m_r = r_;
 	m_h = h_;
 	m_m = m_;
@@ -53,8 +53,9 @@ ObjectIntersection Cylinder::get_intersection(const Ray&ray) {
 
 	std::vector<double> ts;
 	const double d = b*b - 4 * a * c;
-	const Vec p0 = m_p;
-	const Vec p1 = m_p + m_d * m_h;
+	const double hhalf = m_h * 0.5;
+	const Vec p0 = m_p - m_d * hhalf;
+	const Vec p1 = m_p + m_d * hhalf;
 
 	if (!(d < 0)) {
 		const double sqrt_d = sqrt(d);
