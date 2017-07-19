@@ -55,7 +55,7 @@ ObjectIntersection Cylinder::get_intersection(const Ray&ray) {
 	const double b = x1.dot(x2) * 2.0;
 	const double c = x2.dot(x2) - m_r * m_r;
 
-	std::vector<double> ts;
+	std::vector<std::pair<double, Vec> > tns;
 	const double d = b*b - 4 * a * c;
 
 	if (!(d < 0)) {
@@ -67,7 +67,8 @@ ObjectIntersection Cylinder::get_intersection(const Ray&ray) {
 			Vec q = ray.origin + ray.direction * t;
 
 			if (m_d.dot(q - p0) > 0 && m_d.dot(q - p1) < 0) {
-				ts.push_back(t);
+			  Vec n = (q - m_d * q.dot(m_d)).norm();
+			  tns.push_back(std::pair<double, Vec>(t, n));
 			}
 		}
 		
@@ -77,7 +78,8 @@ ObjectIntersection Cylinder::get_intersection(const Ray&ray) {
 			Vec q = ray.origin + ray.direction * t;
 
 			if (m_d.dot(q - p0) > 0 && m_d.dot(q - p1) < 0) {
-				ts.push_back(t);
+			  Vec n = (q - m_d * q.dot(m_d)).norm();
+			  tns.push_back(std::pair<double, Vec>(t, n));
 			}
 		}
 	}
@@ -88,7 +90,8 @@ ObjectIntersection Cylinder::get_intersection(const Ray&ray) {
 		Vec q = ray.origin + ray.direction * t;
 		Vec qp = q - p0;
 		if (qp.dot(qp) < r2) {
-			ts.push_back(t);
+		  Vec n = m_d;
+		  tns.push_back(std::pair<double, Vec>(t, n));
 		}
 	}
 
@@ -97,23 +100,30 @@ ObjectIntersection Cylinder::get_intersection(const Ray&ray) {
 		Vec q = ray.origin + ray.direction * t;
 		Vec qp = q - p1;
 		if (qp.dot(qp) < r2) {
-			ts.push_back(t);
+		  Vec n = m_d*(-1);
+		  tns.push_back(std::pair<double, Vec>(t, n));
 		}
 	}
 
-	if(!ts.size()){
-	  return ObjectIntersection(false, 0.0, m_d, m_m);
-	}
-	
-	double tmin = DBL_MAX;
-	for (int i = 0; i < ts.size(); ++i) {
-		t = ts[i];
-		if (tmin > t) {
-			tmin = t;
-		}
+	if(!tns.size()){
+	  return ObjectIntersection(false, 0.0, Vec(), m_m);
 	}
 
-	return ObjectIntersection(true, t, m_d, m_m);
+	if(tns.size() >= 3){
+	  std::cout << "tns.size() : " << tns.size() << std::endl;
+	  return -1;
+	}
+
+	std::pair<double, Vec> tn = tns[0];
+	if(tns.size() == 2){
+	  if(tn.first > tns[1].first){
+	    tn = tns[1];
+	  }
+
+	  tn.second = tn.second * (-1.0);
+	}
+
+	return ObjectIntersection(true, tn.first, tn.second, m_m);
 }
 
 // Check if ray intersects with sphere. Returns ObjectIntersection data structure
