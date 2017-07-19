@@ -79,3 +79,7 @@ inline double mapValue(const double x, const double xmin, const double xmax) {
 	const double diff = xmax - xmin;
 	return ((x - xmin)/ diff) * diff + xmin;
 }
+
+inline double max(const double a, const double b, const double c) {
+	return std::max(std::max(a, b), c);
+}

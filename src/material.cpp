@@ -34,6 +34,8 @@ Ray Material::get_reflected_ray(const Ray &r, Vec &p, const Vec &n,	unsigned sho
 
         return Ray(p, d, r.lambda);
 	}
+
+	return Ray();
 }
 
 Spectrum Material::get_spectral_albedos() const {

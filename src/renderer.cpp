@@ -62,7 +62,6 @@ void Renderer::save_image(const char *fprefix) {
 		m_radiance_spectrums[0].get_elem(i, lambda, radiance);
 		char file_path[BUF_SZ];
 		snprintf(file_path, BUF_SZ, "%s_%02f.png", fprefix, lambda);
-		std::cout << file_path << " is encoded." << std::endl;
 		//Encode the image
 		unsigned error = lodepng::encode(file_path, pixel_buffer, width, height);
 		//if there's an error, display it

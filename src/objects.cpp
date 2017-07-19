@@ -20,7 +20,95 @@ Sphere::Sphere( Vec p_, double r_, Material m_ ) {
 }
 
 double Sphere::get_radius() { return m_r; }
-Material Sphere::get_material() { return m_m; }
+
+Cylinder::Cylinder(Vec p_, Vec d_, double r_, double h_, Material m_) {
+	m_p = p_;
+	m_d = d_;
+	m_r = r_;
+	m_h = h_;
+	m_m = m_;
+}
+
+double Cylinder::get_radius() {
+	return m_r;
+}
+
+double Cylinder::get_height() {
+	return m_h;
+}
+
+Vec Cylinder::get_direction() {
+	return m_d;
+}
+
+//http://mrl.nyu.edu/~dzorin/rend05/lecture2.pdf
+ObjectIntersection Cylinder::get_intersection(const Ray&ray) {
+	Vec x0 = ray.origin - m_p;
+	Vec x1 = ray.direction - m_d * ray.direction.dot(m_d);
+	Vec x2 = x0 - m_d * x0.dot(m_d);
+
+	double a = x1.dot(x1);
+	double b = x1.dot(x2) * 2.0;
+	double c = x2.dot(x2) - m_r * m_r;
+
+	std::vector<double> ts;
+	double d = b*b - 4 * a * c;
+	Vec p0 = m_p;
+	Vec p1 = m_p + m_d * m_h;
+
+	if (!(d < 0)) {
+		double sqrt_d = sqrt(d);
+		double a2_recip = 1.0 / (2.0 * a);
+		double t = (-b + sqrt_d) * a2_recip;
+		
+		if (!(t < 0)) {
+			Vec q = ray.origin + ray.direction * t;
+
+			if (m_d.dot(q - p0) > 0 && m_d.dot(q - p1) < 0) {
+				ts.push_back(t);
+			}
+		}
+		
+		t = (-b - sqrt_d) * a2_recip;
+
+		if (!(t < 0)) {
+			Vec q = ray.origin + ray.direction * t;
+
+			if (m_d.dot(q - p0) > 0 && m_d.dot(q - p1) < 0) {
+				ts.push_back(t);
+			}
+		}
+	}
+
+	double t  = (m_d.dot(m_p - ray.origin)) / (m_d.dot(ray.direction));
+	double r2 = m_r * m_r;
+	if (!(t < 0)) {
+		Vec q = ray.origin + ray.direction * t;
+		Vec qp = q - m_p;
+		if (qp.dot(qp) < r2) {
+			ts.push_back(t);
+		}
+	}
+
+	t = (m_d.dot(m_p - ray.origin)) / (m_d.dot(ray.direction));
+	if (!(t < 0)) {
+		Vec q = ray.origin + ray.direction * t;
+		Vec qp = q - m_p;
+		if (qp.dot(qp) < r2) {
+			ts.push_back(t);
+		}
+	}
+
+	double tmin = DBL_MAX;
+	for (int i = 0; i < ts.size(); ++i) {
+		t = ts[i];
+		if (tmin > t) {
+			tmin = t;
+		}
+	}
+
+	return t;
+}
 
 // Check if ray intersects with sphere. Returns ObjectIntersection data structure
 ObjectIntersection Sphere::get_intersection(const Ray &ray) {

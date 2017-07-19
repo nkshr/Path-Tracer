@@ -18,7 +18,7 @@ struct ObjectIntersection {
 
 
 class Object {
-public:
+protected:
 	Vec m_p;
 	Material m_m;
 public:
@@ -35,12 +35,24 @@ private:
 
 public:
 	Sphere(Vec p_, double r_, Material m_);	
-	virtual double get_radius();
-	virtual Material get_material();
-
+	double get_radius();
+	
 	virtual ObjectIntersection get_intersection(const Ray &r);
 };
 
+class Cylinder : public Object {
+private:
+	double m_r; //Radius
+	double m_h; //Height
+	Vec m_d;
+
+public:
+	Cylinder(Vec p_, Vec d_, double r_, double h_, Material m_);
+	double get_radius();
+	double get_height();
+	Vec get_direction();
+	virtual ObjectIntersection get_intersection(const Ray &r);
+};
 
 //class Mesh : public Object {
 //
@@ -58,6 +70,6 @@ public:
 //	virtual ObjectIntersection get_intersection(const Ray &r);
 //
 //};
-
+//
 
 #endif // OBJECTS_H
