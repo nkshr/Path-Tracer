@@ -43,23 +43,23 @@ Vec Cylinder::get_direction() {
 
 //http://mrl.nyu.edu/~dzorin/rend05/lecture2.pdf
 ObjectIntersection Cylinder::get_intersection(const Ray&ray) {
-	Vec x0 = ray.origin - m_p;
-	Vec x1 = ray.direction - m_d * ray.direction.dot(m_d);
-	Vec x2 = x0 - m_d * x0.dot(m_d);
+	const Vec x0 = ray.origin - m_p;
+	const Vec x1 = ray.direction - m_d * ray.direction.dot(m_d);
+	const Vec x2 = x0 - m_d * x0.dot(m_d);
 
-	double a = x1.dot(x1);
-	double b = x1.dot(x2) * 2.0;
-	double c = x2.dot(x2) - m_r * m_r;
+	const double a = x1.dot(x1);
+	const double b = x1.dot(x2) * 2.0;
+	const double c = x2.dot(x2) - m_r * m_r;
 
 	std::vector<double> ts;
-	double d = b*b - 4 * a * c;
-	Vec p0 = m_p;
-	Vec p1 = m_p + m_d * m_h;
+	const double d = b*b - 4 * a * c;
+	const Vec p0 = m_p;
+	const Vec p1 = m_p + m_d * m_h;
 
 	if (!(d < 0)) {
-		double sqrt_d = sqrt(d);
-		double a2_recip = 1.0 / (2.0 * a);
-		double t = (-b + sqrt_d) * a2_recip;
+		const double sqrt_d = sqrt(d);
+		const double a2_recip = 1.0 / (2.0 * a);
+	        double t = (-b + sqrt_d) * a2_recip;
 		
 		if (!(t < 0)) {
 			Vec q = ray.origin + ray.direction * t;
@@ -80,25 +80,29 @@ ObjectIntersection Cylinder::get_intersection(const Ray&ray) {
 		}
 	}
 
-	double t  = (m_d.dot(m_p - ray.origin)) / (m_d.dot(ray.direction));
+	double t  = (m_d.dot(p0 - ray.origin)) / (m_d.dot(ray.direction));
 	double r2 = m_r * m_r;
 	if (!(t < 0)) {
 		Vec q = ray.origin + ray.direction * t;
-		Vec qp = q - m_p;
+		Vec qp = q - p0;
 		if (qp.dot(qp) < r2) {
 			ts.push_back(t);
 		}
 	}
 
-	t = (m_d.dot(m_p - ray.origin)) / (m_d.dot(ray.direction));
+	t = (m_d.dot(p1 - ray.origin)) / (m_d.dot(ray.direction));
 	if (!(t < 0)) {
 		Vec q = ray.origin + ray.direction * t;
-		Vec qp = q - m_p;
+		Vec qp = q - p1;
 		if (qp.dot(qp) < r2) {
 			ts.push_back(t);
 		}
 	}
 
+	if(!ts.size()){
+	  return ObjectIntersection(false, 0.0, m_d, m_m);
+	}
+	
 	double tmin = DBL_MAX;
 	for (int i = 0; i < ts.size(); ++i) {
 		t = ts[i];
@@ -107,7 +111,7 @@ ObjectIntersection Cylinder::get_intersection(const Ray&ray) {
 		}
 	}
 
-	return t;
+	return ObjectIntersection(true, t, m_d, m_m);
 }
 
 // Check if ray intersects with sphere. Returns ObjectIntersection data structure
