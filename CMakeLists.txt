@@ -6,7 +6,7 @@ project(pathtracer)
 
 if(NOT "${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
 	message("OS IS LINUX")
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wl,--stack,4194304 -std=c++11 -Wno-narrowing -march=native -m64 -O3 -static -funroll-loops")
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wno-narrowing -march=native -m64 -O3 -static -funroll-loops")
 endif()
 
 FIND_PACKAGE( OpenMP REQUIRED)
@@ -52,7 +52,7 @@ set(DATA
 	)
 
 add_executable(pathtracer src/main.cpp ${SOURCE_FILES} ${HEADER_FILES} ${DATA})
-add_executable(spectrum_template_generator src/spectrum_template_generator.cpp)
+#add_executable(spectrum_template_generator src/spectrum_template_generator.cpp)
 
 add_test(NAME attenuation_test
 	COMMAND attenuation_test.exe

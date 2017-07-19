@@ -21,13 +21,11 @@ void Renderer::render(int samples) {
     int width = m_camera->get_width();
     int height = m_camera->get_height();
     double samples_recp = 1./samples;
-
+    
     // Main Loop
     #pragma omp parallel for schedule(dynamic, 1)       // OpenMP
     for (int y=0; y<height; y++){
-        //unsigned short Xi[3]={0,0,y*y*y};               // Stores seed for erand48
-		unsigned short Xi[3] = { 0,0,0};               // Stores seed for erand48
-
+        unsigned short Xi[3]={0,0,y*y*y};               // Stores seed for erand48
         fprintf(stderr, "\rRendering (%i samples): %.2f%% ",      // Prints
                 samples, (double)y/height*100);                   // progress
 

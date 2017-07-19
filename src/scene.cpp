@@ -7,7 +7,7 @@
 #include "objects.h"
 
 #define LAMBDA_STEP 1.0
-#define MAX_DEPTH 2
+#define MAX_DEPTH 5
 
 Scene::Scene() {
 	//atten_coefs.init("../data/Pope_absorp.txt", "");
