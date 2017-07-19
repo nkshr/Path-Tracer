@@ -43,7 +43,11 @@ Vec Cylinder::get_direction() {
 
 //http://mrl.nyu.edu/~dzorin/rend05/lecture2.pdf
 ObjectIntersection Cylinder::get_intersection(const Ray&ray) {
-	const Vec x0 = ray.origin - m_p;
+	const double hhalf = m_h * 0.5;
+	const Vec p0 = m_p - m_d * hhalf;
+	const Vec p1 = m_p + m_d * hhalf;
+
+	const Vec x0 = ray.origin - p0;
 	const Vec x1 = ray.direction - m_d * ray.direction.dot(m_d);
 	const Vec x2 = x0 - m_d * x0.dot(m_d);
 
@@ -53,14 +57,11 @@ ObjectIntersection Cylinder::get_intersection(const Ray&ray) {
 
 	std::vector<double> ts;
 	const double d = b*b - 4 * a * c;
-	const double hhalf = m_h * 0.5;
-	const Vec p0 = m_p - m_d * hhalf;
-	const Vec p1 = m_p + m_d * hhalf;
 
 	if (!(d < 0)) {
 		const double sqrt_d = sqrt(d);
 		const double a2_recip = 1.0 / (2.0 * a);
-	        double t = (-b + sqrt_d) * a2_recip;
+        double t = (-b + sqrt_d) * a2_recip;
 		
 		if (!(t < 0)) {
 			Vec q = ray.origin + ray.direction * t;
