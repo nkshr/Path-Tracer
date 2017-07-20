@@ -33,7 +33,7 @@ int main(int argc, char *argv[]) {
     if (argc == 2) samples = atoi(argv[1]);
 
 	Spectrum mono_eq(mono_eq_fname);
-	Camera camera = Camera(Vec(0, 2.5, 5), Vec(0,1,0), Vec(0, 1, 0), 320, 240, mono_eq);     // Create camera
+	Camera camera = Camera(Vec(0, 0, 5), Vec(0,1,0), Vec(0, 0, 0), 320, 240, mono_eq);     // Create camera
 	Scene scene = Scene();                                              // Create scene
 
     // Add objects to scene

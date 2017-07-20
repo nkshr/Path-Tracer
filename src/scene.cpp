@@ -21,7 +21,7 @@ void Scene::add(Object *object) {
 
 	Material m = object->get_material();
 	if (m.get_type() == EMIT) {
-		const Spectrum emissions = m.get_spectral_emissions();
+		const Spectrum emissions = m.get_spectral_emission();
 		for (int i = 0; i < emissions.get_num_elems(); ++i) {
 			double lambda, emission;
 			emissions.get_elem(i, lambda, emission);

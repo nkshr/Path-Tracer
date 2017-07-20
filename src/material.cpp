@@ -6,7 +6,7 @@
 #include "spectrum.h"
 
 Material::Material(MaterialType t,  Spectrum e, Spectrum a) : m_type(t),
-m_spectral_emissions(e), m_spectral_albedos(a){
+m_spectral_emission(e), m_spectral_albedo(a){
 }
 
 MaterialType Material::get_type() const { return m_type; }
@@ -38,18 +38,18 @@ Ray Material::get_reflected_ray(const Ray &r, Vec &p, const Vec &n,	unsigned sho
 	//return Ray();
 }
 
-Spectrum Material::get_spectral_albedos() const {
-	return m_spectral_albedos;
+Spectrum Material::get_spectral_albedo() const {
+	return m_spectral_albedo;
 }
 
-Spectrum Material::get_spectral_emissions() const {
-	return m_spectral_emissions;
+Spectrum Material::get_spectral_emission() const {
+	return m_spectral_emission;
 }
 
 double Material::sample_albedo(const double lambda) const {
-	return m_spectral_albedos.sample(lambda);
+	return m_spectral_albedo.sample(lambda);
 }
 
 double Material::sample_emission(const double lambda) const {
-	return m_spectral_emissions.sample(lambda);
+	return m_spectral_emission.sample(lambda);
 }

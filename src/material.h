@@ -17,15 +17,15 @@ class Material {
 
 private:
 	MaterialType m_type;
-	Spectrum m_spectral_albedos;
-	Spectrum m_spectral_emissions;
+	Spectrum m_spectral_albedo;
+	Spectrum m_spectral_emission;
 
 public:
 	Material( MaterialType t=DIFF, Spectrum e = Spectrum(0.0), Spectrum a = Spectrum(0.56));
 	MaterialType get_type() const;
 	Ray get_reflected_ray( const Ray &r, Vec &p, const Vec &n, unsigned short *Xi ) const;
-	Spectrum get_spectral_albedos() const;
-	Spectrum get_spectral_emissions() const;
+	Spectrum get_spectral_albedo() const;
+	Spectrum get_spectral_emission() const;
 	double sample_albedo(const double lambda) const;
 	double sample_emission(const double lambda) const;
 };

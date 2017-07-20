@@ -119,8 +119,9 @@ ObjectIntersection Cylinder::get_intersection(const Ray&ray) {
 	  if(tn.first > tns[1].first){
 	    tn = tns[1];
 	  }
-
 	  tn.second = tn.second * (-1.0);
+	  std::cout << "tns.size() : " << tns.size() << std::endl;
+	  exit(EXIT_FAILURE);
 	}
 
 	return ObjectIntersection(true, tn.first, tn.second, m_m);
