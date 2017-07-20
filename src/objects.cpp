@@ -57,7 +57,7 @@ ObjectIntersection Cylinder::get_intersection(const Ray&ray) {
 
 	std::vector<std::pair<double, Vec> > tns;
 	const double d = b*b - 4 * a * c;
-	const double eps = 1e-4;
+	const double eps = 1e-7;
 	if (!(d < 0)) {
 		const double sqrt_d = sqrt(d);
 		const double a2_recip = 1.0 / (2.0 * a);
@@ -67,7 +67,7 @@ ObjectIntersection Cylinder::get_intersection(const Ray&ray) {
 			Vec q = ray.origin + ray.direction * t;
 
 			if (m_d.dot(q - p0) > 0 && m_d.dot(q - p1) < 0) {
-			  Vec n = (q - m_d * q.dot(m_d)).norm();
+			  Vec n = (m_d * q.dot(m_d) - q).norm();
 			  tns.push_back(std::pair<double, Vec>(t, n));
 			}
 		}
@@ -78,7 +78,7 @@ ObjectIntersection Cylinder::get_intersection(const Ray&ray) {
 			Vec q = ray.origin + ray.direction * t;
 
 			if (m_d.dot(q - p0) > 0 && m_d.dot(q - p1) < 0) {
-			  Vec n = (q - m_d * q.dot(m_d)).norm();
+			  Vec n = (m_d * q.dot(m_d) - q).norm();
 			  tns.push_back(std::pair<double, Vec>(t, n));
 			}
 		}
@@ -89,7 +89,7 @@ ObjectIntersection Cylinder::get_intersection(const Ray&ray) {
 	if (t>eps) {
 		Vec q = ray.origin + ray.direction * t;
 		Vec qp = q - p0;
-		if (qp.dot(qp) < r2) {
+		if (qp.dot(qp) <= r2) {
 		  Vec n = m_d;
 		  tns.push_back(std::pair<double, Vec>(t, n));
 		}
@@ -99,7 +99,7 @@ ObjectIntersection Cylinder::get_intersection(const Ray&ray) {
 	if (t>eps) {
 		Vec q = ray.origin + ray.direction * t;
 		Vec qp = q - p1;
-		if (qp.dot(qp) < r2) {
+		if (qp.dot(qp) <= r2) {
 		  Vec n = m_d*(-1);
 		  tns.push_back(std::pair<double, Vec>(t, n));
 		}

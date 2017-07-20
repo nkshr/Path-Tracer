@@ -74,14 +74,23 @@ double Scene::trace_ray(const Ray &ray, int depth, int samples, unsigned short*X
     
     if (isct.m.get_type() == EMIT) {
       const double emission = isct.m.sample_emission(ray.lambda);
-      // std::cout << emission << std::endl;
+      //std::cout << emission << std::endl;
       // if(emission)
       // 	std::cout << emission << std::endl;
+      //std::cout << emission << std::endl;
+      	  if(emission < 0){
+	    std::cout << "emission : " << emission << std::endl;
+	    exit(EXIT_FAILURE);
+	  }
+
       return emission;
     }
     
-    double albedo = isct.m.sample_albedo(ray.lambda);
-
+    const double albedo = isct.m.sample_albedo(ray.lambda);
+    if(albedo < 0){
+      std::cout << "albedo : " << albedo << std::endl;
+      exit(EXIT_FAILURE);
+    }
     // Russian roulette termination.
     // If random number between 0 and 1 is > p, terminate and return hit object's emmission
     if (++depth>MAX_DEPTH){
@@ -90,7 +99,12 @@ double Scene::trace_ray(const Ray &ray, int depth, int samples, unsigned short*X
         if (rnd<albedo*0.9) { // Multiply by 0.9 to avoid infinite loop with colours of 1.0
         }
         else {
-            return isct.m.sample_emission(ray.lambda);
+	  const double emission = isct.m.sample_emission(ray.lambda);
+	  if(emission < 0){
+	    std::cout << emission << std::endl;
+	    exit(EXIT_FAILURE);
+	  }
+            return emission;
         }
     }
 
@@ -99,11 +113,17 @@ double Scene::trace_ray(const Ray &ray, int depth, int samples, unsigned short*X
 	for (int i = 0; i < samples; ++i) {
 		Ray reflected = isct.m.get_reflected_ray(ray, x, isct.n, Xi);
 		radiance +=  trace_ray(reflected, depth, samples, Xi) * reflected.direction.dot(isct.n);
-
+		if(reflected.direction.dot(isct.n) < 0){
+		  std::cout << reflected.direction.dot(isct.n) << std::endl;
+		}
 	}
 
 	radiance *= (2.0 * albedo / (double)samples);
-
+	if(radiance < 0){
+	  std::cout << "samples :" << samples << std::endl;
+	  std::cout << "radiance : " << radiance << std::endl;
+	  exit(EXIT_FAILURE);
+	}
 	return  radiance;
 }
 
