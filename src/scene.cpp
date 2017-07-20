@@ -66,8 +66,13 @@ double Scene::trace_ray(const Ray &ray, int depth, int samples, unsigned short*X
     ObjectIntersection isct = intersect(ray);
 
     // If no hit, return world colour
-    if (!isct.hit) return 0.0;
-
+    if (!isct.hit){
+      std::cout << "no hit" << std::endl;
+      exit(EXIT_FAILURE);
+      return 0.0;
+    }
+    return isct.u;
+    
     if (isct.m.get_type() == EMIT) {
       const double emission = isct.m.sample_emission(ray.lambda);
       // std::cout << emission << std::endl;

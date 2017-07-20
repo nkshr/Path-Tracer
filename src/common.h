@@ -75,9 +75,11 @@ inline void invMat3x3(const double* m, double* inv_m) {
 	inv_m[8] = (m[0] * m[4] - m[1] * m[3]) * recip_det;
 }
 
-inline double mapValue(const double x, const double xmin, const double xmax) {
+inline double mapValue(const double x, const double xmin, const double xmax, const double new_xmin, const double new_xmax) {
 	const double diff = xmax - xmin;
-	return ((x - xmin)/ diff) * diff + xmin;
+	const double new_diff = new_xmax - new_xmin;
+	double ret =  ((x - xmin)/ diff) * new_diff + new_xmin;
+	return  ((x - xmin)/ diff) * new_diff + new_xmin;
 }
 
 inline double max(const double a, const double b, const double c) {

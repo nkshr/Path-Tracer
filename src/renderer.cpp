@@ -47,12 +47,29 @@ void Renderer::save_image(const char *fprefix) {
 	for (int i = 0; i < lambda_count; ++i) {
 	  std::vector<unsigned char> pixel_buffer;
 	  pixel_buffer.reserve(pixel_count);
+	  double max_val = -DBL_MAX;
+	  double min_val = DBL_MAX;
+	  for(int j = 0; j < pixel_count; ++j){
+	    double lambda, radiance;
+	    m_radiance_spectrums[j].get_elem(i, lambda, radiance);
+	    if(max_val < radiance){
+	      max_val = radiance;
+	    }
+
+	    if(min_val > radiance){
+	      min_val = radiance;
+	    }
+	  }
+
+	  std::cout << "max_val : " << max_val << std::endl;
+	  std::cout << "min_val : " << min_val << std::endl;
 	  for (int j = 0; j<pixel_count; ++j) {
 			double lambda, radiance;
 			m_radiance_spectrums[j].get_elem(i, lambda, radiance);
-			pixel_buffer.push_back(toInt(radiance));
-			pixel_buffer.push_back(toInt(radiance));
-			pixel_buffer.push_back(toInt(radiance));
+			int iradiance = (int)mapValue(radiance, min_val, max_val, 0, 256);
+			pixel_buffer.push_back(iradiance);
+			pixel_buffer.push_back(iradiance);
+			pixel_buffer.push_back(iradiance);
 			pixel_buffer.push_back(255);
 		}
 
