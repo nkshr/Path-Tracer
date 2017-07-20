@@ -27,7 +27,6 @@ private:
     double m_y_spacing;
     double m_y_spacing_half;
     Vec m_position;
-	Vec m_up;
     Vec m_direction;
     Vec m_x_direction;
     Vec m_y_direction;

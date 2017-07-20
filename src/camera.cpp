@@ -8,13 +8,13 @@
 
 #define BUF_SZ 1024
 
-Camera::Camera(Vec position, Vec target, Vec up, int width, int height, Spectrum mono_eq) : m_width(width), m_height(height), m_position(position), m_up(up), m_mono_eq(mono_eq){
+Camera::Camera(Vec position, Vec target, Vec up, int width, int height, Spectrum mono_eq) : m_width(width), m_height(height), m_position(position),  m_mono_eq(mono_eq){
     m_width_recp = 1./m_width;
     m_height_recp = 1./m_height;
     m_ratio = (double)m_width/m_height;
 
     m_direction = (target - m_position).norm();
-    m_x_direction = m_up.cross(m_direction * -1).norm();
+    m_x_direction = up.cross(m_direction * -1).norm();
     m_y_direction = m_x_direction.cross(m_direction).norm();
 
     m_x_spacing = (2.0 * m_ratio)/(double)m_width;
