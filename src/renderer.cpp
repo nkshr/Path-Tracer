@@ -61,8 +61,8 @@ void Renderer::save_image(const char *fprefix) {
 	    }
 	  }
 
-	  std::cout << "max_val : " << max_val << std::endl;
-	  std::cout << "min_val : " << min_val << std::endl;
+	  //std::cout << "max_val : " << max_val << std::endl;
+	  //std::cout << "min_val : " << min_val << std::endl;
 	  for (int j = 0; j<pixel_count; ++j) {
 			double lambda, radiance;
 			m_radiance_spectrums[j].get_elem(i, lambda, radiance);

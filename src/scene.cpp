@@ -71,7 +71,6 @@ double Scene::trace_ray(const Ray &ray, int depth, int samples, unsigned short*X
       exit(EXIT_FAILURE);
       return 0.0;
     }
-    return isct.u;
     
     if (isct.m.get_type() == EMIT) {
       const double emission = isct.m.sample_emission(ray.lambda);
