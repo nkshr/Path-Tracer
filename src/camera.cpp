@@ -27,7 +27,7 @@ int Camera::get_width() { return m_width; }
 int Camera::get_height() { return m_height; }
 
 // Returns ray from camera origin through pixel at x,y
-void Camera::get_ray_orientation(int x, int y, bool jitter, unsigned short *Xi, Vec &pos, Vec &dir) {
+Ray Camera::get_ray(int x, int y, bool jitter, unsigned short *Xi) {
 
     double x_jitter;
     double y_jitter;
@@ -47,7 +47,5 @@ void Camera::get_ray_orientation(int x, int y, bool jitter, unsigned short *Xi, 
     pixel = pixel - m_x_direction*m_ratio + m_x_direction*((x * 2 * m_ratio)*m_width_recp) + x_jitter;
     pixel = pixel + m_y_direction - m_y_direction*((y * 2.0)*m_height_recp + y_jitter);
 
-	pos = m_position;
-	dir = (pixel - m_position).norm();
-    //return Ray(m_position, (pixel-m_position).norm(), -1.0);
+    return Ray(m_position, (pixel-m_position).norm(), Spectrum(0, m_mono_eq.get_min_lambda(), m_mono_eq.get_max_lambda(), 0));
 }

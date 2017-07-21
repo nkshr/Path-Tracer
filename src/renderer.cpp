@@ -30,9 +30,8 @@ void Renderer::render(int samples) {
                 samples, (double)y/height*100);                   // progress
 
         for (int x=0; x<width; x++){
-			Ray ray;
-			m_camera->get_ray_orientation(x, y, false, Xi, ray.origin, ray.direction);
-            m_radiance_spectrums[y * width + x] = m_scene->trace_ray(ray, samples,Xi);
+			Ray ray = m_camera->get_ray(x, y, false, Xi);
+            //m_radiance_spectrums[y * width + x] = m_scene->trace_ray(ray, samples,Xi);
         }
     }
 }

@@ -8,11 +8,11 @@
 #define INITIAL_RESERVED_SZ 2
 
 Spectrum::Spectrum(const double value, const double min_lambda, const double max_lambda, const double step){
-	int num_data = ((max_lambda - min_lambda) / step)+1;
-	data.reserve(num_data);
+	int num_data = (int)((max_lambda - min_lambda) / step)+1;
+	m_data.reserve(num_data);
 	double lambda = min_lambda;
 	for (int i = 0; i < num_data; ++i) {
-		data.push_back(std::pair<double, double>(lambda, value));
+		m_data.push_back(std::pair<double, double>(lambda, value));
 		lambda += step;
 	}
 }
@@ -40,7 +40,7 @@ bool Spectrum::load(const char *fname) {
 	}
 
 
-	data.resize(num_elems);
+	m_data.resize(num_elems);
 
 	ifs.clear();
 	ifs.seekg(0);
@@ -50,16 +50,15 @@ bool Spectrum::load(const char *fname) {
 	for (int i = 0; i < num_elems; ++i) {
 		ifs.getline(buf, BUF_SZ);
 		char * val = strtok(buf, delims);
-		data[i].first = atof(val);
+		m_data[i].first = atof(val);
 
 		val = strtok(NULL, delims);
-		data[i].second = atof(val);
-		sum_values += data[i].second;
+		m_data[i].second = atof(val);
+		sum_values += m_data[i].second;
 	}
 
-	mean_value = sum_values / num_elems;
-	//for (int i = 0; i < data.size(); ++i) {
-	//	std::cout << data[i].first << ", " << data[i].second << std::endl;
+	//for (int i = 0; i < m_data.size(); ++i) {
+	//	std::cout << m_data[i].first << ", " << m_data[i].second << std::endl;
 	//}
 	return true;
 }
@@ -70,8 +69,8 @@ bool Spectrum::write(const char *fname) const{
     return false;
   }
 
-  for(int i = 0; i < data.size(); ++i){
-    ofs << data[i].first << "," << data[i].second << std::endl;
+  for(int i = 0; i < m_data.size(); ++i){
+    ofs << m_data[i].first << "," << m_data[i].second << std::endl;
   }
 
   ofs.close();
@@ -82,17 +81,14 @@ Spectrum::~Spectrum() {
 }
 
 double Spectrum::sample(const double lambda) const{
-	if (!data.size())
-		return mean_value;
-
-	if (lambda < data[0].first) {
+	if (lambda < m_data[0].first) {
 		return 0.0;
 	}
 
-	for (int i = 0; i < data.size(); ++i) {
-		if (data[i].first > lambda) {
-			return linearInterpolation(lambda, data[i - 1].first, data[i].first,
-				data[i - 1].second, data[i].second);
+	for (int i = 0; i < m_data.size(); ++i) {
+		if (m_data[i].first > lambda) {
+			return linearInterpolation(lambda, m_data[i - 1].first, m_data[i].first,
+				m_data[i - 1].second, m_data[i].second);
 		}
 	}
 
@@ -100,49 +96,55 @@ double Spectrum::sample(const double lambda) const{
 }
 
 void Spectrum::resize(const int i) {
-	data.resize(i);
+	m_data.resize(i);
 }
 
 int Spectrum::get_num_elems() const {
-	return (int)data.size();
+	return (int)m_data.size();
 }
 
 void Spectrum::next(){
-	++it_data;
+	++m_it_data;
 }
 
 void Spectrum::cur(double &lambda, double &value) {
-	lambda = it_data->first;
-	value = it_data->second;
+	lambda = m_it_data->first;
+	value = m_it_data->second;
 }
 
 void Spectrum::begin() {
-	it_data = data.begin();
+	m_it_data = m_data.begin();
 }
 
 bool Spectrum::end() {
-	return it_data == data.end();
+	return m_it_data == m_data.end();
 }
 
 void Spectrum::get_elem(const int i, double &lambda, double &value) const {
-	lambda = data[i].first;
-	value = data[i].second;
+	lambda = m_data[i].first;
+	value = m_data[i].second;
+}
+
+double Spectrum::get_min_lambda() const {
+	return m_data[0].first;
+}
+
+double Spectrum::get_max_lambda() const {
+	return m_data[m_data.size() - 1].first;
+}
+
+double Spectrum::get_step() const {
+	return m_step;
 }
 
 void Spectrum::set_elem(const int i, const double lambda, const double value) {
-	data[i] = std::pair<double, double>(lambda, value);
+	m_data[i] = std::pair<double, double>(lambda, value);
 }
 
 void Spectrum::add(const double lambda, const double value) {
-	data.push_back(std::pair<double, double>(lambda, value));
+	m_data.push_back(std::pair<double, double>(lambda, value));
 }
 
-void SparseSpectrum::get_elem(const int i, double &lambda, double &value)const {
-}
-
-void SparseSpectrum::add(const double lambda, const double value) {
-	data.push_back(std::pair<double, double>(lambda, value));
-}
 
 std::ostream &operator<<(std::ostream &out, const Spectrum &spectrum) {
 	for (int i = 0; i < spectrum.get_num_elems(); ++i) {
@@ -155,19 +157,54 @@ std::ostream &operator<<(std::ostream &out, const Spectrum &spectrum) {
 }
 
 Spectrum Spectrum::operator+(const Spectrum &spectrum) const {
-	assert(this->data.size() == spectrum.data.size());
+	assert(this->m_data.size() == spectrum.m_data.size());
+
+	std::vector<std::pair<double, double> >::const_iterator it_a = this->m_data.begin();
+	std::vector<std::pair<double, double> >::const_iterator end_a = this->m_data.end();
+
 	Spectrum ret;
-	std::vector<std::pair<double, double> >::const_iterator it_a = this->data.begin();
-	std::vector<std::pair<double, double> >::const_iterator end_a = this->data.end();
+	ret.m_data.resize(this->m_data.size());
+	std::vector<std::pair<double, double> >::iterator it_c= ret.m_data.begin();
 
-	ret.data.resize(this->data.size());
-	std::vector<std::pair<double, double> >::iterator it_c= ret.data.begin();
-
-	std::vector<std::pair<double, double> >::const_iterator it_b = spectrum.data.begin();
+	std::vector<std::pair<double, double> >::const_iterator it_b = spectrum.m_data.begin();
 
 	for (; it_a != end_a; ++it_a, ++it_b) {
 		it_c->second = it_a->second + it_b->second;
 	}
 
-	return Spectrum();
+	return ret;
+}
+
+Spectrum Spectrum::operator*(const double a) const {
+	std::vector<std::pair<double, double> >::const_iterator it_a = this->m_data.begin();
+	std::vector<std::pair<double, double> >::const_iterator end_a = this->m_data.end();
+
+	Spectrum ret;
+
+	ret.m_data.resize(this->m_data.size());
+	std::vector<std::pair<double, double> >::iterator it_b = ret.m_data.begin();
+	for (; it_a != end_a; ++it_a) {
+		it_b->second = it_a->second * a;
+	}
+
+	return ret;
+}
+
+Spectrum Spectrum::element_wise_product(const Spectrum &spectrum) const {
+	assert(this->m_data.size() == spectrum.m_data.size());
+
+	std::vector<std::pair<double, double> >::const_iterator it_a = this->m_data.begin();
+	std::vector<std::pair<double, double> >::const_iterator end_a = this->m_data.end();
+
+	Spectrum ret;
+	ret.m_data.resize(this->m_data.size());
+	std::vector<std::pair<double, double> >::iterator it_c = ret.m_data.begin();
+
+	std::vector<std::pair<double, double> >::const_iterator it_b = spectrum.m_data.begin();
+
+	for (; it_a != end_a; ++it_a, ++it_b) {
+		it_c->second = it_a->second * it_b->second;
+	}
+
+	return ret;
 }
