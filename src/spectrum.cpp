@@ -1,5 +1,7 @@
 #include <fstream>
 #include <cstring>
+#include <cassert>
+
 #include "spectrum.h"
 
 #define BUF_SZ 1024
@@ -150,4 +152,22 @@ std::ostream &operator<<(std::ostream &out, const Spectrum &spectrum) {
 	}
 
 	return out;
+}
+
+Spectrum Spectrum::operator+(const Spectrum &spectrum) const {
+	assert(this->data.size() == spectrum.data.size());
+	Spectrum ret;
+	std::vector<std::pair<double, double> >::const_iterator it_a = this->data.begin();
+	std::vector<std::pair<double, double> >::const_iterator end_a = this->data.end();
+
+	ret.data.resize(this->data.size());
+	std::vector<std::pair<double, double> >::iterator it_c= ret.data.begin();
+
+	std::vector<std::pair<double, double> >::const_iterator it_b = spectrum.data.begin();
+
+	for (; it_a != end_a; ++it_a, ++it_b) {
+		it_c->second = it_a->second + it_b->second;
+	}
+
+	return Spectrum();
 }

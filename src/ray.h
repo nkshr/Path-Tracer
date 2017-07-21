@@ -6,6 +6,7 @@
 struct Ray {
     Vec origin, direction, direction_inv;
 	double lambda;
+	Spectrum *sprctrum;
 
 	//Ray(Vec o_, Vec d_) : origin(o_), direction(d_) {
  //       direction_inv = Vec(

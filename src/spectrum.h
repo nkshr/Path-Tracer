@@ -11,7 +11,7 @@ private:
 	std::vector<std::pair<double, double> > data;
 	double mean_value;
 	double half_step;
-	std::vector<std::pair<double, double> >::iterator it_data;
+	std::vector<std::pair<double, double> >::const_iterator it_data;
 
 public:
 	Spectrum(const double value = 0.0,
@@ -42,6 +42,8 @@ public:
 	void set_elem(const int i, const double lambda, const double value);
 
 	void add(const double lambda, const double value);
+
+	Spectrum operator+(const Spectrum &spectrum) const;
 };
 
 class SparseSpectrum{
@@ -55,7 +57,7 @@ public:
 	void add(const double lambda, const double value);
 };
 
-std::ostream &operator<<(std::ostream out, const Spectrum &spectrum);
+std::ostream &operator<<(std::ostream &out, const Spectrum &spectrum);
 
 class UniformSpectrum {
 private:
