@@ -26,6 +26,10 @@ Camera::Camera(Vec position, Vec target, Vec up, int width, int height, Spectrum
 int Camera::get_width() { return m_width; }
 int Camera::get_height() { return m_height; }
 
+Spectrum Camera::get_mono_eq() {
+	return m_mono_eq;
+}
+
 // Returns ray from camera origin through pixel at x,y
 Ray Camera::get_ray(int x, int y, bool jitter, unsigned short *Xi) {
 

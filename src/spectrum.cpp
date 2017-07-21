@@ -141,6 +141,15 @@ void Spectrum::set_elem(const int i, const double lambda, const double value) {
 	m_data[i] = std::pair<double, double>(lambda, value);
 }
 
+void Spectrum::set_all(const double value) {
+	std::vector<std::pair<double, double> >::iterator it = m_data.begin();
+	std::vector<std::pair<double, double> >::const_iterator end = m_data.end();
+
+	for (; it != end; ++it) {
+		it->second = value;
+	}
+}
+
 void Spectrum::add(const double lambda, const double value) {
 	m_data.push_back(std::pair<double, double>(lambda, value));
 }
@@ -185,6 +194,22 @@ Spectrum Spectrum::operator*(const double a) const {
 	std::vector<std::pair<double, double> >::iterator it_b = ret.m_data.begin();
 	for (; it_a != end_a; ++it_a) {
 		it_b->second = it_a->second * a;
+	}
+
+	return ret;
+}
+
+Spectrum Spectrum::operator/(const double a) const {
+	std::vector<std::pair<double, double> >::const_iterator it_a = this->m_data.begin();
+	std::vector<std::pair<double, double> >::const_iterator end_a = this->m_data.end();
+
+	Spectrum ret;
+
+	ret.m_data.resize(this->m_data.size());
+	std::vector<std::pair<double, double> >::iterator it_b = ret.m_data.begin();
+	const double a_recip = 1.0 / a;
+	for (; it_a != end_a; ++it_a) {
+		it_b->second = it_a->second * a_recip;
 	}
 
 	return ret;

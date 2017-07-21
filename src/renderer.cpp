@@ -25,13 +25,18 @@ void Renderer::render(int samples) {
     // Main Loop
     #pragma omp parallel for schedule(dynamic, 1)       // OpenMP
     for (int y=0; y<height; y++){
-        unsigned short Xi[3]={0,0,y*y*y};               // Stores seed for erand48
+        unsigned short Xi[3]={(unsigned short)0, (unsigned short)0,(unsigned short)(y*y*y)};               // Stores seed for erand48
         fprintf(stderr, "\rRendering (%i samples): %.2f%% ",      // Prints
                 samples, (double)y/height*100);                   // progress
 
         for (int x=0; x<width; x++){
 			Ray ray = m_camera->get_ray(x, y, false, Xi);
-            //m_radiance_spectrums[y * width + x] = m_scene->trace_ray(ray, samples,Xi);
+			Spectrum spectrum = spectrum + m_scene->trace_ray(ray, 0, samples, Xi);
+			for (int s = 1; s < samples; ++s) {
+				ray = m_camera->get_ray(x, y, true, Xi);
+				spectrum = spectrum + m_scene->trace_ray(ray, 0, samples, Xi);
+			}
+			spectrum = spectrum / samples;
         }
     }
 }

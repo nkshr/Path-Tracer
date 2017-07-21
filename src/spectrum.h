@@ -45,10 +45,13 @@ public:
 	double get_step() const;
 
 	void set_elem(const int i, const double lambda, const double value);
+	void set_all(const double value);
 
 	void add(const double lambda, const double value);
 
 	Spectrum operator+(const Spectrum &spectrum) const;
 	Spectrum operator*(const double a) const;
+	Spectrum operator/(const double a) const;
+
 	Spectrum element_wise_product(const Spectrum &spectrum) const;
 };

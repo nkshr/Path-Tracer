@@ -114,7 +114,6 @@ ObjectIntersection Cylinder::get_intersection(const Ray&ray) {
 	if(tns.size() >= 3){
 	  std::cout << "tns.size() : " << tns.size() << std::endl;
 	  exit(EXIT_FAILURE);
-	  return -1;
 	}
 
 	std::pair<double, Vec> tn = tns[0];

@@ -35,6 +35,7 @@ public:
     Camera(Vec position, Vec target, Vec up, int width, int height, Spectrum mono_eq);
     int get_width();
     int get_height();
+	Spectrum get_mono_eq();
     Ray get_ray(int x, int y, bool jitter, unsigned short *Xi);
 };
 
