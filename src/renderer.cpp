@@ -31,7 +31,7 @@ void Renderer::render(int samples) {
 
         for (int x=0; x<width; x++){
 			Ray ray = m_camera->get_ray(x, y, false, Xi);
-			Spectrum spectrum = spectrum + m_scene->trace_ray(ray, 0, samples, Xi);
+			Spectrum &spectrum = m_radiance_spectrums[y * width + x];
 			for (int s = 1; s < samples; ++s) {
 				ray = m_camera->get_ray(x, y, true, Xi);
 				spectrum = spectrum + m_scene->trace_ray(ray, 0, samples, Xi);
@@ -46,7 +46,7 @@ void Renderer::save_image(const char *fprefix) {
     int height = m_camera->get_height();
 
 	int pixel_count = width*height;
-	int lambda_count = m_radiance_spectrums[0].get_num_elems();
+	int lambda_count = m_radiance_spectrums[0].get_num_data();
 
 	for (int i = 0; i < lambda_count; ++i) {
 	  std::vector<unsigned char> pixel_buffer;

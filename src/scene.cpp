@@ -16,34 +16,6 @@ Scene::Scene() {
 
 void Scene::add(Object *object) {
     m_objects.push_back( object );
-	
-	constexpr double epsilon = LAMBDA_STEP * 0.5;
-
-	Material m = object->get_material();
-	if (m.get_type() == EMIT) {
-		const Spectrum emissions = m.get_spectral_emissions();
-		for (int i = 0; i < emissions.get_num_elems(); ++i) {
-			double lambda, emission;
-			emissions.get_elem(i, lambda, emission);
-			if (!(emission > 0))
-				continue;
-			bool add = true;
-			for (int j = 0; j < m_lambdas.size(); ++j) {
-				if (m_lambdas[j] - epsilon < lambda && lambda < m_lambdas[j] + epsilon) {
-					add = false;
-					break;
-				}
-			}
-
-			if (add) {
-				m_lambdas.push_back(lambda);
-			}
-		}
-	}
-
-	// for (int i = 0; i < m_lambdas.size(); ++i) {
-	// 	std::cout << m_lambdas[i] << std::endl;
-	// }
 }
 
 ObjectIntersection Scene::intersect(const Ray &ray) {
@@ -155,13 +127,12 @@ Spectrum Scene::trace_ray(Ray ray, int depth, int samples, unsigned short *Xi) {
 	const Spectrum albedos = isct.m.get_spectral_albedos();
 	if (++depth>MAX_DEPTH) {
 		return isct.m.get_spectral_emissions();
-		double rnd = erand48(Xi);
 	}
 
 	Vec x = ray.origin + ray.direction * isct.u;
 
 
-	Spectrum radiances;
+	Spectrum radiances(0.0);
 	for (int i = 0; i < samples; ++i) {
 		Ray reflected = isct.m.get_reflected_ray(ray, x, isct.n, Xi);
 		radiances = radiances + trace_ray(reflected, depth, samples, Xi) * reflected.direction.dot(isct.n);
@@ -170,6 +141,7 @@ Spectrum Scene::trace_ray(Ray ray, int depth, int samples, unsigned short *Xi) {
 		}
 	}
 
-	//radiances = radiances *(2.0 * albedo / (double)samples);
+	radiances = radiances.element_wise_product(albedos);
+	radiances = radiances * 2.0  / (double)samples;
 	return  radiances;
 }
