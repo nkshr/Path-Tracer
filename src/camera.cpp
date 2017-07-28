@@ -51,5 +51,5 @@ Ray Camera::get_ray(int x, int y, bool jitter, unsigned short *Xi) {
     pixel = pixel - m_x_direction*m_ratio + m_x_direction*((x * 2 * m_ratio)*m_width_recp) + x_jitter;
     pixel = pixel + m_y_direction - m_y_direction*((y * 2.0)*m_height_recp + y_jitter);
 
-    return Ray(m_position, (pixel-m_position).norm(), Spectrum(0, m_mono_eq.get_min_lambda(), m_mono_eq.get_max_lambda(), 0));
+    return Ray(m_position, (pixel-m_position).norm(), Spectrum(0.0));
 }

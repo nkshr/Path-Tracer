@@ -2,61 +2,142 @@
 #include <vector>
 #include <list>
 #include <utility>
+#include <iostream>
+#include <fstream>
 
 #include "vector.h"
 #include "common.h"
 
-class Spectrum {
+#define NUM_SAMPLES 100
+#define MIN_LAMBDA 380
+#define MAX_LAMBDA 780
+
+template<int t_num_samples, int t_min_lambda, int t_max_lambda>
+class SpectrumX {
 private:
-	std::vector<std::pair<double, double> > m_data;
-	std::vector<std::pair<double, double> >::const_iterator m_it_data;
-
-	//double mean_value;
-	//double half_step;
-
+	double m_samples[t_num_samples];
+	static double m_step;
 public:
-	Spectrum();
-	Spectrum(const double value,
-		const double min_lambda = 380.0, const double max_lambda = 780, const int num_data = 500);
-	Spectrum(const char *fname);
-	~Spectrum();
+	SpectrumX(const double val = 0.0) {
+		for (int i = 0; i < t_num_samples; ++i) {
+			m_samples[i] = val;
+		}
+	}
 
-	void init(const double value, const double min_lambda, const double max_lambda, const int num_data);
+	SpectrumX(const char *fname) {
+		if (!load(fname))
+			SpectrumX(0.0);
+	}
 
-	bool load(const char *fname);
+	SpectrumX operator+(const SpectrumX &r) {
+		SpectrumX ret;
+		for (int i = 0; i < t_num_samples; ++i) {
+			ret.m_samples[i] = this->m_samples[i] +r.m_samples[i];
+		}
+		return ret;
+	}
 
-	bool write(const char *fname)const;
+	double operator*(const SpectrumX &r) {
+		double ret = 0.0;
+		for (int i = 0; i < t_num_samples; ++i) {
+			ret += this->m_samples[i] * r.m_samples[i];
+		}
+		return ret;
+	}
+	
+	SpectrumX operator*(const double r) {
+		SpectrumX ret;
+		for (int i = 0; i < t_num_samples; ++i) {
+			ret.m_samples[i] *= r;
+		}
+		return ret;
+	}
+	SpectrumX operator/(const double r) {
+		SpectrumX ret;
+		const double r_recip = 1.0 / r;
+		for (int i = 0; i < t_num_samples; ++i) {
+			ret.m_samples[i] *= r_recip;
+		}
+		return ret;
+	}
+	
+	double& operator[](const int i) {
+		return m_samples[i];
+	}
+	
+	std::ostream& operator<<(const std::ostream &out) {
+		for (int i = 0; i < t_num_samples; ++i) {
+			out << this->m_samples[i] << std::endl;
+		}
+	}
 
-	double sample(const double lambda) const;
+	bool load(const char *fname) {
+		std::ifstream ifs(fname, std::ifstream::binary);
+		if (!ifs.good()) {
+			return false;
+		}
 
-	void resize(const int i);
+		int num_samples = 0;
 
-	void next();
+		const int buf_sz = 1024;
+		char buf[buf_sz];
 
-	void cur(double &lambda, double &value);
+		while (!ifs.eof()) {
+			ifs.getline(buf, buf_sz);
+			if (buf[0] == '\0')
+				break;
 
-	void begin();
+			num_samples++;
+		}
 
-	bool end();
+		std::vector<std::pair<double, double> > samples;
+		samples.resize(num_samples);
 
-	void get_elem(const int i, double &lambda, double &value) const;
-	int get_num_data() const;
-	double get_min_lambda() const;
-	double get_max_lambda() const;
+		ifs.clear();
+		ifs.seekg(0);
 
-	void set_all(const double value);
+		const char * delims = ", \n\t";
+		for (int i = 0; i < num_samples; ++i) {
+			ifs.getline(buf, buf_sz);
+			char * val = strtok(buf, delims);
+			samples[i].first = atof(val);
 
-	void add(const double lambda, const double value);
+			val = strtok(NULL, delims);
+			samples[i].second = atof(val);
+		}
 
-	//Spectrum operator*(const double a) const;
-	//Spectrum operator/(const double a) const;
+		double lambda = t_min_lambda;
+		const double step = get_step();
+		for (int i = 0; i < t_num_samples; ++i, lambda += step) {
+			m_samples[i] = sample(samples, lambda);
+		}
+		return true;
+	}
 
-	Spectrum element_wise_product(const Spectrum &spectrum) const;
+	SpectrumX element_wise_product(const SpectrumX &r) {
+		SpectrumX ret;
+		for (int i = 0; i < t_num_samples; ++i) {
+			ret.m_samples[i] = this->m_samples[i] * r.m_samples[i];
+		}
+		return ret;
+	}
 
-	friend Spectrum operator*(const Spectrum &l, const double r);
-	friend Spectrum operator/(const Spectrum &l, const double r);
-	friend Spectrum operator+(const Spectrum &l, const Spectrum &a);
-	friend double operator*(const Spectrum &l, const Spectrum &r);
+	static int get_num_samples(){
+		return t_num_samples;
+	}
+
+	static int get_min_lambda(){
+		return t_min_lambda;
+	}
+
+	static int get_max_lambda(){
+		return t_max_lambda;
+	}
+
+	static double get_step(){
+		constexpr double step = (double)(t_max_lambda - t_min_lambda) / (double)(t_num_samples - 1.0);
+		return step;
+	}
 };
 
-//Spectrum operator+(const Spectrum &a, const Spectrum &b);
+typedef SpectrumX<NUM_SAMPLES, MIN_LAMBDA, MAX_LAMBDA> Spectrum;

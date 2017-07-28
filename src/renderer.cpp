@@ -42,20 +42,18 @@ void Renderer::render(int samples) {
 }
 
 void Renderer::save_image(const char *fprefix) {
-    int width = m_camera->get_width();
-    int height = m_camera->get_height();
+    const int width = m_camera->get_width();
+    const int height = m_camera->get_height();
 
-	int pixel_count = width*height;
-	int lambda_count = m_radiance_spectrums[0].get_num_data();
-
-	for (int i = 0; i < lambda_count; ++i) {
+	const int pixel_count = width*height;
+	const double  step = Spectrum::get_step();
+	for (int i = 0; i < NUM_SAMPLES; ++i) {
 	  std::vector<unsigned char> pixel_buffer;
 	  pixel_buffer.reserve(pixel_count);
 	  double max_val = -DBL_MAX;
 	  double min_val = DBL_MAX;
 	  for(int j = 0; j < pixel_count; ++j){
-	    double lambda, radiance;
-	    m_radiance_spectrums[j].get_elem(i, lambda, radiance);
+	    double radiance = m_radiance_spectrums[j][i];
 	    if(max_val < radiance){
 	      max_val = radiance;
 	    }
@@ -68,8 +66,7 @@ void Renderer::save_image(const char *fprefix) {
 	  std::cout << "max_val : " << max_val << std::endl;
 	  std::cout << "min_val : " << min_val << std::endl;
 	  for (int j = 0; j<pixel_count; ++j) {
-			double lambda, radiance;
-			m_radiance_spectrums[j].get_elem(i, lambda, radiance);
+			double radiance = m_radiance_spectrums[j][i];
 			int iradiance = (int)mapValue(radiance, min_val, max_val, 0, 255.5);
 			pixel_buffer.push_back(iradiance);
 			pixel_buffer.push_back(iradiance);
@@ -77,10 +74,8 @@ void Renderer::save_image(const char *fprefix) {
 			pixel_buffer.push_back(255);
 		}
 
-		double lambda, radiance;
-		m_radiance_spectrums[0].get_elem(i, lambda, radiance);
 		char file_path[BUF_SZ];
-		snprintf(file_path, BUF_SZ, "%s_%02f.png", fprefix, lambda);
+		snprintf(file_path, BUF_SZ, "%s_%02f.png", fprefix, MIN_LAMBDA + i * step);
 		//Encode the image
 		unsigned error = lodepng::encode(file_path, pixel_buffer, width, height);
 		//if there's an error, display it

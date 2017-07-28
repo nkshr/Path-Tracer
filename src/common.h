@@ -85,3 +85,17 @@ inline double mapValue(const double x, const double xmin, const double xmax, con
 inline double max(const double a, const double b, const double c) {
 	return std::max(std::max(a, b), c);
 }
+
+inline double sample(std::vector<std::pair<double, double> > data, const double pos) {
+	if (pos < data[0].first)
+		return 0.0;
+
+	for (int i = 1; i < data.size(); ++i) {
+		if (pos < data[i].first) {
+			return linearInterpolation(pos, data[i-1].first, data[i].first,
+				data[i-1].second, data[i].second);
+		}
+	}
+
+	return  0.0;
+}

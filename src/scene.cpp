@@ -5,6 +5,7 @@
 
 #include "scene.h"
 #include "objects.h"
+#include "ray.h"
 
 #define LAMBDA_STEP 1.0
 #define MAX_DEPTH 2

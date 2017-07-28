@@ -53,6 +53,7 @@ set(DATA
 	)
 
 add_executable(pathtracer src/main.cpp ${SOURCE_FILES} ${HEADER_FILES} ${DATA})
+add_executable(spectrum_test src/spectrum_test src/spectrum.cpp src/spectrum.h)
 #add_executable(spectrum_template_generator src/spectrum_template_generator.cpp)
 
 add_test(NAME attenuation_test

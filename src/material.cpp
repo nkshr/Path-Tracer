@@ -48,10 +48,10 @@ Spectrum Material::get_spectral_emissions() const {
 	return m_spectral_emissions;
 }
 
-double Material::sample_albedo(const double lambda) const {
-	return m_spectral_albedos.sample(lambda);
-}
-
-double Material::sample_emission(const double lambda) const {
-	return m_spectral_emissions.sample(lambda);
-}
+//double Material::sample_albedo(const double lambda) const {
+//	return m_spectral_albedos.sample(lambda);
+//}
+//
+//double Material::sample_emission(const double lambda) const {
+//	return m_spectral_emissions.sample(lambda);
+//}
