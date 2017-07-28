@@ -23,17 +23,16 @@ void Renderer::render(int samples) {
     double samples_recp = 1./samples;
     
     // Main Loop
-    #pragma omp parallel for schedule(dynamic, 1)       // OpenMP
+    //#pragma omp parallel for schedule(dynamic, 1)       // OpenMP
     for (int y=0; y<height; y++){
         unsigned short Xi[3]={(unsigned short)0, (unsigned short)0,(unsigned short)(y*y*y)};               // Stores seed for erand48
         fprintf(stderr, "\rRendering (%i samples): %.2f%% ",      // Prints
                 samples, (double)y/height*100);                   // progress
 
         for (int x=0; x<width; x++){
-			Ray ray = m_camera->get_ray(x, y, false, Xi);
 			Spectrum &spectrum = m_radiance_spectrums[y * width + x];
-			for (int s = 1; s < samples; ++s) {
-				ray = m_camera->get_ray(x, y, true, Xi);
+			for (int s = 0; s < samples; ++s) {
+				Ray ray = m_camera->get_ray(x, y, s > 0, Xi);
 				spectrum = spectrum + m_scene->trace_ray(ray, 0, samples, Xi);
 			}
 			spectrum = spectrum / samples;
@@ -47,7 +46,7 @@ void Renderer::save_image(const char *fprefix) {
 
 	const int pixel_count = width*height;
 	const double  step = Spectrum::get_step();
-	for (int i = 0; i < NUM_SAMPLES; ++i) {
+	for (int i = 0; i < Spectrum::get_num_samples(); ++i) {
 	  std::vector<unsigned char> pixel_buffer;
 	  pixel_buffer.reserve(pixel_count);
 	  double max_val = -DBL_MAX;
@@ -75,7 +74,7 @@ void Renderer::save_image(const char *fprefix) {
 		}
 
 		char file_path[BUF_SZ];
-		snprintf(file_path, BUF_SZ, "%s_%02f.png", fprefix, MIN_LAMBDA + i * step);
+		snprintf(file_path, BUF_SZ, "%s_%02f.png", fprefix, Spectrum::get_min_lambda() + i * step);
 		//Encode the image
 		unsigned error = lodepng::encode(file_path, pixel_buffer, width, height);
 		//if there's an error, display it

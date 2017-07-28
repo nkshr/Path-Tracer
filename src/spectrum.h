@@ -9,55 +9,54 @@
 #include "vector.h"
 #include "common.h"
 
-#define NUM_SAMPLES 100
-#define MIN_LAMBDA 380
-#define MAX_LAMBDA 780
+#define NUM_SAMPLES 41
+#define MIN_LAMBDA 380.0
+#define MAX_LAMBDA 780.0
 
-template<int t_num_samples, int t_min_lambda, int t_max_lambda>
-class SpectrumX {
+class Spectrum {
 private:
-	double m_samples[t_num_samples];
-	static double m_step;
+	double m_samples[NUM_SAMPLES];
+
 public:
-	SpectrumX(const double val = 0.0) {
-		for (int i = 0; i < t_num_samples; ++i) {
+	Spectrum(const double val = 0.0) {
+		for (int i = 0; i < NUM_SAMPLES; ++i) {
 			m_samples[i] = val;
 		}
 	}
 
-	SpectrumX(const char *fname) {
+	Spectrum(const char *fname) {
 		if (!load(fname))
-			SpectrumX(0.0);
+			*this = Spectrum(0.0);
 	}
 
-	SpectrumX operator+(const SpectrumX &r) {
-		SpectrumX ret;
-		for (int i = 0; i < t_num_samples; ++i) {
+	Spectrum operator+(const Spectrum &r) {
+		Spectrum ret;
+		for (int i = 0; i < NUM_SAMPLES; ++i) {
 			ret.m_samples[i] = this->m_samples[i] +r.m_samples[i];
 		}
 		return ret;
 	}
 
-	double operator*(const SpectrumX &r) {
+	double operator*(const Spectrum &r) {
 		double ret = 0.0;
-		for (int i = 0; i < t_num_samples; ++i) {
+		for (int i = 0; i < NUM_SAMPLES; ++i) {
 			ret += this->m_samples[i] * r.m_samples[i];
 		}
 		return ret;
 	}
 	
-	SpectrumX operator*(const double r) {
-		SpectrumX ret;
-		for (int i = 0; i < t_num_samples; ++i) {
-			ret.m_samples[i] *= r;
+	Spectrum operator*(const double r) {
+		Spectrum ret;
+		for (int i = 0; i < NUM_SAMPLES; ++i) {
+			ret.m_samples[i] = this->m_samples[i] * r;
 		}
 		return ret;
 	}
-	SpectrumX operator/(const double r) {
-		SpectrumX ret;
+	Spectrum operator/(const double r) {
+		Spectrum ret;
 		const double r_recip = 1.0 / r;
-		for (int i = 0; i < t_num_samples; ++i) {
-			ret.m_samples[i] *= r_recip;
+		for (int i = 0; i < NUM_SAMPLES; ++i) {
+			ret.m_samples[i] = this->m_samples[i] * r_recip;
 		}
 		return ret;
 	}
@@ -66,10 +65,11 @@ public:
 		return m_samples[i];
 	}
 	
-	std::ostream& operator<<(const std::ostream &out) {
-		for (int i = 0; i < t_num_samples; ++i) {
-			out << this->m_samples[i] << std::endl;
+	friend std::ostream& operator<<(std::ostream &l, const Spectrum &r) {
+		for (int i = 0; i < NUM_SAMPLES; ++i) {
+			l << MIN_LAMBDA + r.get_step() * i <<", " << r.m_samples[i] << std::endl;
 		}
+		return l;
 	}
 
 	bool load(const char *fname) {
@@ -107,38 +107,48 @@ public:
 			samples[i].second = atof(val);
 		}
 
-		double lambda = t_min_lambda;
+		double lambda = MIN_LAMBDA;
 		const double step = get_step();
-		for (int i = 0; i < t_num_samples; ++i, lambda += step) {
+		for (int i = 0; i < NUM_SAMPLES; ++i, lambda += step) {
 			m_samples[i] = sample(samples, lambda);
+			//std::cout << m_samples[i] << std::endl;
+		}
+
+		return true;
+	}
+
+	bool write(const char *fname) {
+		std::ofstream ofs(fname);
+		if (!ofs.good())
+			return false;
+		for (int i = 0; i < NUM_SAMPLES; ++i) {
+			ofs << i * get_step() + MIN_LAMBDA << "," << m_samples[i] << std::endl;
 		}
 		return true;
 	}
 
-	SpectrumX element_wise_product(const SpectrumX &r) {
-		SpectrumX ret;
-		for (int i = 0; i < t_num_samples; ++i) {
+	Spectrum element_wise_product(const Spectrum &r) {
+		Spectrum ret;
+		for (int i = 0; i < NUM_SAMPLES; ++i) {
 			ret.m_samples[i] = this->m_samples[i] * r.m_samples[i];
 		}
 		return ret;
 	}
 
 	static int get_num_samples(){
-		return t_num_samples;
+		return NUM_SAMPLES;
 	}
 
-	static int get_min_lambda(){
-		return t_min_lambda;
+	static double get_min_lambda(){
+		return MIN_LAMBDA;
 	}
 
-	static int get_max_lambda(){
-		return t_max_lambda;
+	static double get_max_lambda(){
+		return MAX_LAMBDA;
 	}
 
 	static double get_step(){
-		constexpr double step = (double)(t_max_lambda - t_min_lambda) / (double)(t_num_samples - 1.0);
+		constexpr double step = (double)(MAX_LAMBDA - MIN_LAMBDA) / (double)(NUM_SAMPLES - 1.0);
 		return step;
 	}
 };
-
-typedef SpectrumX<NUM_SAMPLES, MIN_LAMBDA, MAX_LAMBDA> Spectrum;

@@ -3,7 +3,10 @@
 #include "spectrum.h"
 
 int main(int argc, char ** argv) {
-	SpectrumX<NUM_SAMPLES, MIN_LAMBDA, MAX_LAMBDA> a, b, c;
-	a.load("");
+	Spectrum a("../data/spike700.csv");
+	std::cout << a << std::endl;
+	Spectrum b = a;
+	a = a + b;
+	std::cout << a << std::endl;
 	return 0;
 }

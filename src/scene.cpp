@@ -136,7 +136,7 @@ Spectrum Scene::trace_ray(Ray ray, int depth, int samples, unsigned short *Xi) {
 	Spectrum radiances(0.0);
 	for (int i = 0; i < samples; ++i) {
 		Ray reflected = isct.m.get_reflected_ray(ray, x, isct.n, Xi);
-		radiances = radiances + trace_ray(reflected, depth, samples, Xi) * reflected.direction.dot(isct.n);
+		radiances = radiances + trace_ray(reflected, depth, samples, Xi) *reflected.direction.dot(isct.n);
 		if (reflected.direction.dot(isct.n) < 0) {
 			std::cout << reflected.direction.dot(isct.n) << std::endl;
 		}
