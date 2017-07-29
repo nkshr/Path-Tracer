@@ -4,12 +4,13 @@
 #include "ray.h"
 #include "vector.h"
 #include "objects.h"
-//#include "attenuation.h"
+#include "attenuation.h"
 
 class Scene {
 private:
     std::vector<Object*> m_objects;
 	std::vector<double> m_lambdas;
+	Attenuation m_atten;
 
 public:
     Scene();

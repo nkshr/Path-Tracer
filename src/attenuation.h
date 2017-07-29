@@ -27,5 +27,6 @@ public:
 		for (int i = 0; i < config::number_of_samples_per_spectrum; ++i) {
 			 atten_spect[i] = orig_spect[i] * exp(-atten_coefs[i] * dist);
 		}
+		return  atten_spect;
 	}
 };

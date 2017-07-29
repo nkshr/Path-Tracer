@@ -44,12 +44,12 @@ Spectrum Scene::trace_ray(Ray ray, int depth, int samples, unsigned short *Xi) {
 	}
 
 	if (isct.m.get_type() == EMIT) {
-		return isct.m.get_spectral_emissions();
+		return m_atten.attenuate(isct.u, isct.m.get_spectral_emissions());
 	}
 
 	const Spectrum albedos = isct.m.get_spectral_albedos();
 	if (++depth>config::maximum_depth) {
-		return isct.m.get_spectral_emissions();
+		return m_atten.attenuate(isct.u, isct.m.get_spectral_emissions());
 	}
 
 	Vec x = ray.origin + ray.direction * isct.u;
@@ -66,5 +66,6 @@ Spectrum Scene::trace_ray(Ray ray, int depth, int samples, unsigned short *Xi) {
 
 	radiances = radiances.element_wise_product(albedos);
 	radiances = radiances * 2.0  / (double)samples;
+	radiances = m_atten.attenuate(isct.u, radiances);
 	return  radiances;
 }
