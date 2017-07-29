@@ -4,33 +4,28 @@
 #include <utility>
 #include <cmath>
 
+#include "spectrum.h"
+#include "config.h"
+
 class Attenuation {
 private:
-	std::vector<std::pair<double, double> > m_absorp_coefs;
-	std::vector<std::pair<double, double> > m_scat_coefs;
-	std::vector<std::pair<double, double> > m_atten_coefs;
-		
+	Spectrum atten_coefs;
+	Spectrum absorp_coefs;
+	Spectrum scat_coefs;
+
 public:
-	Attenuation() {};
+	Attenuation() {
+		absorp_coefs.load(config::path_of_absorption_coefficients_file);
+		scat_coefs.load(config::path_of_scattering_coefficients_file);
 
-	enum Factor {
-		ABSORPTION, SCATTERING
-	};
+		atten_coefs = absorp_coefs + scat_coefs;
+		atten_coefs = atten_coefs  * config::scale_of_attenuation_coefficeints;
+	}
 
-	bool init();
-
-	void scale(const double s);
-
-	double sample(const double lambda);
-	double get_min_lambda() const;
-	double get_max_lambda() const;
-
-	bool write(const char *fname, const Factor factor);
-
-	//double calc_atenuation(c_smpl_spect &spect);
-	
-	double attenuate(const double atten_coef, const double dist, const double orig_inten);
-
-	bool load(const char *fname, const Factor factor);
-
+	Spectrum attenuate(const double  dist, const Spectrum &orig_spect) {
+		Spectrum atten_spect;
+		for (int i = 0; i < config::number_of_samples_per_spectrum; ++i) {
+			 atten_spect[i] = orig_spect[i] * exp(-atten_coefs[i] * dist);
+		}
+	}
 };
