@@ -6,6 +6,7 @@
 #include "ray.h"
 #include "material.h"
 #include "objects.h"
+#include "color.h"
 //#include "../lib/fastbvh/BVH.h"
 
 
@@ -57,13 +58,14 @@ ObjectIntersection Cylinder::get_intersection(const Ray&ray) {
 
 	std::vector<std::pair<double, Vec> > tns;
 	const double d = b*b - 4 * a * c;
-	const double eps = 1e-7;
+
+	double ts[4];
 	if (!(d < 0)) {
 		const double sqrt_d = sqrt(d);
 		const double a2_recip = 1.0 / (2.0 * a);
         double t = (-b + sqrt_d) * a2_recip;
-		
-		if (t > eps) {
+		ts[0] = t;
+		if (t > config::eps) {
 			Vec q = ray.origin + ray.direction * t;
 
 			if (m_d.dot(q - p0) > 0 && m_d.dot(q - p1) < 0) {
@@ -73,8 +75,8 @@ ObjectIntersection Cylinder::get_intersection(const Ray&ray) {
 		}
 		
 		t = (-b - sqrt_d) * a2_recip;
-
-		if (t>eps) {
+		ts[1] = t;
+		if (t>config::eps) {
 			Vec q = ray.origin + ray.direction * t;
 
 			if (m_d.dot(q - p0) > 0 && m_d.dot(q - p1) < 0) {
@@ -85,8 +87,9 @@ ObjectIntersection Cylinder::get_intersection(const Ray&ray) {
 	}
 
 	double t  = (m_d.dot(p0 - ray.origin)) / (m_d.dot(ray.direction));
+	ts[2] = t;
 	double r2 = m_r * m_r;
-	if (t>eps) {
+	if (t>config::eps) {
 		Vec q = ray.origin + ray.direction * t;
 		Vec qp = q - p0;
 		if (qp.dot(qp) <= r2) {
@@ -95,8 +98,8 @@ ObjectIntersection Cylinder::get_intersection(const Ray&ray) {
 		}
 	}
 
-	t = (m_d.dot(p1 - ray.origin)) / (m_d.dot(ray.direction));
-	if (t>eps) {
+	t = (m_d.dot(p1 - ray.origin)) / (m_d.dot(ray.direction)); ts[3] = t;
+	if (t>config::eps) {
 		Vec q = ray.origin + ray.direction * t;
 		Vec qp = q - p1;
 		if (qp.dot(qp) <= r2) {
@@ -106,8 +109,9 @@ ObjectIntersection Cylinder::get_intersection(const Ray&ray) {
 	}
 
 	if(!tns.size()){
-	  std::cout << "tns.size() : " << tns.size() << std::endl;
-	  exit(EXIT_FAILURE);
+	  //std::cout << "tns.size() : " << tns.size() << std::endl;
+	 // exit(EXIT_FAILURE);
+	 //std::cout << sqrtf(pow(ray.origin.x, 2.0) + pow(ray.origin.y , 2.0)) << " " << ray.origin.z << std::endl;
 	  return ObjectIntersection(false, 0.0, Vec(), m_m);
 	}
 
@@ -138,10 +142,10 @@ ObjectIntersection Sphere::get_intersection(const Ray &ray) {
 	Vec n = Vec();
 
 	Vec op = m_p-ray.origin;
-	double t, eps=1e-4, b=op.dot(ray.direction), det=b*b-op.dot(op)+m_r*m_r;
+	double t, b=op.dot(ray.direction), det=b*b-op.dot(op)+m_r*m_r;
 	if (det<0) return ObjectIntersection(hit, distance, n, m_m); 
 	else det=sqrt(det);
-	distance = (t=b-det)>eps ? t : ((t=b+det)>eps ? t : 0);
+	distance = (t=b-det)>config::eps ? t : ((t=b+det)>config::eps ? t : 0);
 	if (distance != 0) hit = true, 
 		n = ((ray.origin + ray.direction * distance) - m_p).norm();
 

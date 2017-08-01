@@ -14,5 +14,6 @@ namespace config {
 	static const char * path_of_mono_eq_file = "../data/gt1290.csv";
 	static const int buffer_size = 1024;
 	constexpr double lambda_step = (double)(maximum_lambda- minimum_lambda)/(double)(number_of_samples_per_spectrum - 1);
+	static const double eps = 1e-4;
 };
 #endif

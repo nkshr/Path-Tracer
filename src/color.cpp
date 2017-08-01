@@ -14,9 +14,7 @@
 #include "vector.h"
 
 XYZColor::XYZColor(const char *fname) {
-	if (!load(fname)) {
-		std::cerr << "Warning : Couldn't load " << fname << "." << std::endl;
-	}
+	load(fname);
 }
 
 bool XYZColor::load(const char * fname) {

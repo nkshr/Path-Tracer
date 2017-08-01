@@ -42,6 +42,7 @@ set(HEADER_FILES
 	src/color.h
 	src/spectrum.h
 	src/common.h
+	src/config.h
 	lib/rand48/erand48.h
 	lib/lodepng/lodepng.h
 	lib/tiny_obj_loader/tiny_obj_loader.h

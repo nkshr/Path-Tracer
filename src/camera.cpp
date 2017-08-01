@@ -6,8 +6,6 @@
 #include "common.h"
 #include "spectrum.h"
 
-#define BUF_SZ 1024
-
 Camera::Camera(Vec position, Vec target, Vec up, int width, int height, Spectrum mono_eq) : m_width(width), m_height(height), m_position(position),  m_mono_eq(mono_eq){
     m_width_recp = 1./m_width;
     m_height_recp = 1./m_height;

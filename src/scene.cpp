@@ -39,7 +39,6 @@ Spectrum Scene::trace_ray(Ray ray, int depth, int samples, unsigned short *Xi) {
 	// If no hit, return world colour
 	if (!isct.hit) {
 		std::cout << "no hit" << std::endl;
-		exit(EXIT_FAILURE);
 		return 0.0;
 	}
 
