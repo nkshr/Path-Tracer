@@ -4,21 +4,19 @@
 #include "ray.h"
 #include "vector.h"
 #include "objects.h"
-#include "attenuation.h"
 
 class Scene {
 private:
     std::vector<Object*> m_objects;
 	std::vector<double> m_lambdas;
-	Attenuation m_atten;
+	Spectrum m_atten_coefs;
 
 public:
-    Scene();
+    Scene(const Spectrum &atten_coefs);
     void add(Object *object);
     ObjectIntersection intersect(const Ray &ray);
-    //double trace_ray(const Ray &ray, int depth, int samples, unsigned short*Xi);
-	//Spectrum trace_ray(Ray ray, int samples, unsigned short*Xi);
 	Spectrum trace_ray(Ray ray, int depth, int samples, unsigned short *Xi);
+	Spectrum attenuate(const double dist,  const Spectrum &prig_spectrum);
 };
 
 #endif //SCENE_H

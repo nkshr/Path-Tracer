@@ -81,11 +81,10 @@ public:
 
 		int num_samples = 0;
 
-		const int buf_sz = 1024;
-		char buf[buf_sz];
+		char buf[config::buffer_size];
 
 		while (!ifs.eof()) {
-			ifs.getline(buf, buf_sz);
+			ifs.getline(buf, config::buffer_size);
 			if (buf[0] == '\0')
 				break;
 
@@ -100,7 +99,7 @@ public:
 
 		const char * delims = ", \n\t";
 		for (int i = 0; i < num_samples; ++i) {
-			ifs.getline(buf, buf_sz);
+			ifs.getline(buf, config::buffer_size);
 			char * val = strtok(buf, delims);
 			samples[i].first = atof(val);
 
@@ -149,7 +148,6 @@ public:
 	}
 
 	static double get_step(){
-		constexpr double step = (double)(config::maximum_lambda - config::minimum_lambda) / (double)(config::number_of_samples_per_spectrum - 1.0);
-		return step;
+		return config::lambda_step;
 	}
 };

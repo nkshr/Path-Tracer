@@ -22,8 +22,6 @@
 #include "scene.h"
 #include "renderer.h"
 
-const char *mono_eq_fname = "../data/gt1290.csv";
-
 int main(int argc, char *argv[]) {
 
     time_t start, stop;
@@ -32,9 +30,9 @@ int main(int argc, char *argv[]) {
 
     if (argc == 2) samples = atoi(argv[1]);
 
-	Spectrum mono_eq(mono_eq_fname);
+	Spectrum mono_eq(config::path_of_mono_eq_file);
 	Camera camera = Camera(Vec(-2, 0, 6), Vec(0,0,-6), Vec(0, 1, 0), 320, 240, mono_eq);     // Create camera
-	Scene scene = Scene();                                              // Create scene
+	Scene scene = Scene(Spectrum(config::path_of_absorption_coefficients_file));                                              // Create scene
 
     // Add objects to scene
     //scene.add( dynamic_cast<Object*>(new Sphere(Vec(0,0,-1006), 1000, Material())) );

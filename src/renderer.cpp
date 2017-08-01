@@ -36,6 +36,8 @@ void Renderer::render(int samples) {
 				spectrum = spectrum + m_scene->trace_ray(ray, 0, samples, Xi);
 			}
 			spectrum = spectrum / samples;
+
+			spectrum = m_camera->get_mono_eq().element_wise_product(spectrum);
         }
     }
 }
