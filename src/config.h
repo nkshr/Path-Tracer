@@ -5,7 +5,7 @@ namespace config {
 	static constexpr double minimum_lambda = 380.0;
 	static constexpr double maximum_lambda = 780.0;
 	static const int number_of_samples_per_pixel = 4;
-	static const int number_of_samples_per_point = 1;
+	static const int number_of_samples_per_intersection = 1;
 	static const int maximum_depth = 4;
 
 	static const char * path_of_absorption_coefficients_file = "../data/Pope_abosorp_coefs.csv";

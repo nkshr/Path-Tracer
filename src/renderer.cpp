@@ -17,25 +17,25 @@ Renderer::Renderer(Scene *scene, Camera *camera) {
     m_radiance_spectrums = new Spectrum[m_camera->get_width()*m_camera->get_height()];
 }
 
-void Renderer::render(int samples) {
+void Renderer::render() {
     int width = m_camera->get_width();
     int height = m_camera->get_height();
-    double samples_recp = 1./samples;
+    double samples_recp = 1./config::number_of_samples_per_pixel;
     
     // Main Loop
     //#pragma omp parallel for schedule(dynamic, 1)       // OpenMP
     for (int y=0; y<height; y++){
         unsigned short Xi[3]={(unsigned short)0, (unsigned short)0,(unsigned short)(y*y*y)};               // Stores seed for erand48
-        fprintf(stderr, "\rRendering (%i samples): %.2f%% ",      // Prints
-                samples, (double)y/height*100);                   // progress
+        fprintf(stderr, "\rRendering : %.2f%% ",      // Prints
+                (double)y/height*100);                   // progress
 
         for (int x=0; x<width; x++){
 			Spectrum &spectrum = m_radiance_spectrums[y * width + x];
-			for (int s = 0; s < samples; ++s) {
+			for (int s = 0; s < config::number_of_samples_per_pixel; ++s) {
 				Ray ray = m_camera->get_ray(x, y, s > 0, Xi);
-				spectrum = spectrum + m_scene->trace_ray(ray, 0, samples, Xi);
+				spectrum = spectrum + m_scene->trace_ray(ray, 0, Xi);
 			}
-			spectrum = spectrum / samples;
+			spectrum = spectrum * samples_recp;
 
 			spectrum = m_camera->get_mono_eq().element_wise_product(spectrum);
         }

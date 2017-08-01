@@ -33,7 +33,7 @@ ObjectIntersection Scene::intersect(const Ray &ray) {
 }
 
 
-Spectrum Scene::trace_ray(Ray ray, int depth, int samples, unsigned short *Xi) {
+Spectrum Scene::trace_ray(Ray ray, int depth, unsigned short *Xi) {
 	ObjectIntersection isct = intersect(ray);
 
 	// If no hit, return world colour
@@ -55,16 +55,16 @@ Spectrum Scene::trace_ray(Ray ray, int depth, int samples, unsigned short *Xi) {
 
 
 	Spectrum radiances(0.0);
-	for (int i = 0; i < samples; ++i) {
+	for (int i = 0; i < config::number_of_samples_per_intersection; ++i) {
 		Ray reflected = isct.m.get_reflected_ray(ray, x, isct.n, Xi);
-		radiances = radiances + trace_ray(reflected, depth, samples, Xi) *reflected.direction.dot(isct.n);
+		radiances = radiances + trace_ray(reflected, depth, Xi) *reflected.direction.dot(isct.n);
 		if (reflected.direction.dot(isct.n) < 0) {
 			std::cout << reflected.direction.dot(isct.n) << std::endl;
 		}
 	}
 
 	radiances = radiances.element_wise_product(albedos);
-	radiances = radiances * 2.0  / (double)samples;
+	radiances = radiances * 2.0  / (double)config::number_of_samples_per_intersection;
 	radiances = attenuate(isct.u, radiances);
 	return  radiances;
 }

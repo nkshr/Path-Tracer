@@ -15,7 +15,7 @@ public:
     Scene(const Spectrum &atten_coefs);
     void add(Object *object);
     ObjectIntersection intersect(const Ray &ray);
-	Spectrum trace_ray(Ray ray, int depth, int samples, unsigned short *Xi);
+	Spectrum trace_ray(Ray ray, int depth, unsigned short *Xi);
 	Spectrum attenuate(const double dist,  const Spectrum &prig_spectrum);
 };
 

@@ -16,7 +16,7 @@ private:
 
 public:
     Renderer(Scene *scene, Camera *camera);
-    void render(int samples=4);
+    void render();
     void save_image(const char * file_path);
 
 };
