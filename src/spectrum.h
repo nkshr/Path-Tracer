@@ -148,6 +148,6 @@ public:
 	}
 
 	static double get_step(){
-		return config::lambda_step;
+	  return config::lambda_step;
 	}
 };

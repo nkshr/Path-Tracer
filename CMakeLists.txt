@@ -24,7 +24,7 @@ set(SOURCE_FILES
     src/camera.cpp
     src/scene.cpp
     src/renderer.cpp
-	src/attenuation.cpp
+	src/color.cpp
 	src/spectrum.cpp
 	lib/rand48/rand48.c
     lib/lodepng/lodepng.cpp
@@ -39,7 +39,7 @@ set(HEADER_FILES
 	src/renderer.h
 	src/scene.h
 	src/vector.h
-	src/attenuation.h
+	src/color.h
 	src/spectrum.h
 	src/common.h
 	lib/rand48/erand48.h
