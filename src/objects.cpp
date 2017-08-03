@@ -16,18 +16,12 @@ ObjectIntersection::ObjectIntersection(bool hit_, double u_, Vec n_, Material m_
 }
 
 
-Sphere::Sphere( Vec p_, double r_, Material m_ ) {
-	m_p=p_, m_r=r_, m_m=m_;
+Sphere::Sphere( Vec p_, double r_, Material m_ ) : Object(p_, m_), m_r(r_){
 }
 
 double Sphere::get_radius() { return m_r; }
 
-Cylinder::Cylinder(Vec p_, Vec d_, double r_, double h_, Material m_) {
-	m_p = p_;
-	m_d = d_.norm();
-	m_r = r_;
-	m_h = h_;
-	m_m = m_;
+Cylinder::Cylinder(Vec p_, Vec d_, double r_, double h_, Material m_) : Object(p_, m_), m_d(d_.norm()), m_r(r_), m_h(h_){
 }
 
 double Cylinder::get_radius() {
@@ -158,4 +152,79 @@ Vec Object::get_position() {
 
 Material Object::get_material() {
 	return m_m;
+}
+
+//Rectangle::Rectangle(Vec p_, Vec n_, double w_, double h_, Material m_) : 
+//	Object(p_, m_), m_n(n_), m_w(w_), m_h(w_){
+//}
+//
+//ObjectIntersection Rectangle::get_intersect(const Ray &r) {
+//	const double tmp = r.direction.dot(m_n);
+//	if (abs(tmp) < config::eps) {
+//		
+//	}
+//
+//	const double t = (m_p - r.origin).dot(m_n) / tmp;
+//
+//
+//	ObjectIntersection isct;
+//	return isct;
+//}
+
+Cuboid::Cuboid(Vec p_, Vec dir_, Vec up_, double w_, double h_, double depth_, Material m_) : 
+	Object(p_, m_), m_dir(dir_.norm()), m_w(w_), m_h(h_), m_depth(depth_){
+	m_x_dir = m_dir.cross(up_).norm();
+	m_y_dir = m_x_dir.cross(m_dir);
+	
+	const Vec xw = m_x_dir * m_w;
+	const Vec yh = m_y_dir * m_h;
+	const Vec dd = m_dir * m_depth;
+	const Vec half_xw = xw * 0.5;
+	const Vec half_yh = yh * 0.5;
+	const Vec half_dd = dd * 0.5;
+	
+	const Vec v0 = m_p - half_xw + half_yh - half_dd;
+	const Vec v1 = v0 + xw;
+	const Vec v2 = v1 - yh;
+	const Vec v3 = v2 - xw;
+
+	const Vec v4 = v0 + dd;
+	const Vec v5 = v1 + dd;
+	const Vec v6 = v2 + dd;
+	const Vec v7 = v3 + dd;
+
+	//face0
+	m_tris[0] = Triangle(v0, v3, v2, Vec(), Vec(), Vec(), &m_m);
+	m_tris[1] = Triangle(v0, v2, v1, Vec(), Vec(), Vec(), &m_m);
+
+	//face1
+	m_tris[2] = Triangle(v2, v7, v6, Vec(), Vec(), Vec(), &m_m);
+	m_tris[3] = Triangle(v2, v6, v3, Vec(), Vec(), Vec(), &m_m);
+
+	//face2
+	m_tris[4] = Triangle(v6, v7, v4, Vec(), Vec(), Vec(), &m_m);
+	m_tris[5] = Triangle(v6, v4, v5, Vec(), Vec(), Vec(), &m_m);
+
+	//face3
+	m_tris[6] = Triangle(v5, v4, v0, Vec(), Vec(), Vec(), &m_m);
+	m_tris[7] = Triangle(v5, v0, v1, Vec(), Vec(), Vec(), &m_m);
+
+	//face4
+	m_tris[8] = Triangle(v7, v3, v6, Vec(), Vec(), Vec(), &m_m);
+	m_tris[9] = Triangle(v7, v6, v5, Vec(), Vec(), Vec(), &m_m);
+
+	//face5
+	m_tris[10] = Triangle(v4, v7, v2, Vec(), Vec(), Vec(), &m_m);
+	m_tris[11] = Triangle(v4, v2, v0, Vec(), Vec(), Vec(), &m_m);
+}
+
+ObjectIntersection Cuboid::get_intersect(const Ray &r) {
+	ObjectIntersection isct;
+	double t = DBL_MAX;
+	for (int i = 0; i < 4; ++i) {
+		if (m_tris[i].intersect(r, isct.u, t, isct.n)) {
+			t = isct.u;
+		}
+	}
+	return isct;
 }

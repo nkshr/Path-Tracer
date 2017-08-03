@@ -4,6 +4,8 @@
 #include "vector.h"
 #include "ray.h"
 #include "material.h"
+#include "aabbox.h"
+#include "triangle.h"
 #include "../lib/tiny_obj_loader/tiny_obj_loader.h"
 //#include "../lib/fastbvh/BVH.h"
 
@@ -22,6 +24,8 @@ protected:
 	Vec m_p;
 	Material m_m;
 public:
+	Object(Vec p_, Material m_):m_p(p_), m_m(m_) {
+	}
 	virtual ObjectIntersection get_intersection(const Ray &r) = 0;
 	Vec get_position();
 	Material get_material();
@@ -52,6 +56,33 @@ public:
 	double get_height();
 	Vec get_direction();
 	virtual ObjectIntersection get_intersection(const Ray &r);
+};
+
+//class Rectangle : public Object {
+//private:
+//	Vec m_n;
+//	double m_w;
+//	double m_h;
+//
+//public:
+//	Rectangle(Vec p_, Vec d_, double w_, double h_, Material m_);
+//	virtual ObjectIntersection get_intersect(const Ray &r);
+//};
+
+class Cuboid : public Object {
+private:
+	double m_w;
+	double m_h;
+	double m_depth;
+	Vec m_dir;
+	Vec m_x_dir;
+	Vec m_y_dir;
+
+	Triangle m_tris[12];
+
+public:
+	Cuboid(Vec p_, Vec dir_, Vec up_, double w_, double h_, double depth_, Material m_);
+	virtual ObjectIntersection get_intersect(const Ray &r);
 };
 
 //class Mesh : public Object {
