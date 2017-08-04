@@ -35,9 +35,8 @@ int main(int argc, char *argv[]) {
 	cconfig.up = Vec(0, 1, 0);
 	cconfig.model = Camera::GT1290;
 
-	Spectrum mono_eq(config::path_of_mono_eq_file);
 	//Camera camera = Camera(Vec(-2, 0, 6), Vec(0,0,-6), Vec(0, 1, 0), 320, 240, mono_eq);     // Create camera
-	Camera camera = Camera(cconfig);
+	Camera * camera = new MonoCamera(cconfig);
 	Scene scene = Scene(Spectrum(config::path_of_absorption_coefficients_file));                                              // Create scene
 
     // Add objects to scene
@@ -50,7 +49,7 @@ int main(int argc, char *argv[]) {
     //scene.add( dynamic_cast<Object*>(new Mesh(Vec(), "../obj/dragon2.obj", Material(DIFF, Vec(0.9, 0.9, 0.9)))) );
 
 
-    Renderer renderer = Renderer(&scene, &camera);  // Create renderer with our scene and camera
+    Renderer renderer = Renderer(&scene, camera);  // Create renderer with our scene and camera
     renderer.render();                       // Render image to pixel buffer
     renderer.save_image("render");              // Save image
 

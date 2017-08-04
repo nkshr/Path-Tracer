@@ -86,6 +86,10 @@ inline double max(const double a, const double b, const double c) {
 	return std::max(std::max(a, b), c);
 }
 
+inline double min(const double a, const double b, const double  c) {
+	return std::min(std::min(a, b), c);
+}
+
 inline double sample(std::vector<std::pair<double, double> > data, const double pos) {
 	if (pos < data[0].first)
 		return 0.0;
