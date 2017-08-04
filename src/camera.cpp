@@ -6,23 +6,45 @@
 #include "common.h"
 #include "spectrum.h"
 
-Camera::Camera(Vec position, Vec target, Vec up, int width, int height, Spectrum mono_eq) : m_width(width), m_height(height), m_position(position),  m_mono_eq(mono_eq){
-    m_width_recp = 1./m_width;
-    m_height_recp = 1./m_height;
-    m_ratio = (double)m_width/m_height;
+//Camera::Camera(Vec position, Vec target, Vec up, int width, int height, Spectrum mono_eq) : m_width(width), m_height(height), m_position(position),  m_mono_eq(mono_eq){
+//    m_width_recp = 1./m_width;
+//    m_height_recp = 1./m_height;
+//    m_ratio = (double)m_width/m_height;
+//
+//    m_direction = (target - m_position).norm();
+//    m_x_direction = up.cross(m_direction * -1).norm();
+//    m_y_direction = m_x_direction.cross(m_direction).norm();
+//
+//    m_x_spacing = (2.0 * m_ratio)/(double)m_width;
+//    m_y_spacing = (double)2.0/(double)m_height;
+//    m_x_spacing_half = m_x_spacing * 0.5;
+//    m_y_spacing_half = m_y_spacing * 0.5;
+//}
 
-    m_direction = (target - m_position).norm();
-    m_x_direction = up.cross(m_direction * -1).norm();
-    m_y_direction = m_x_direction.cross(m_direction).norm();
+Camera::Camera(const Config  &config) : m_config(config){
+	m_width_recp = 1. / m_config.width;
+	m_height_recp = 1. / m_config.height;
+	m_ratio = (double)m_config.width / m_config.height;
 
-    m_x_spacing = (2.0 * m_ratio)/(double)m_width;
-    m_y_spacing = (double)2.0/(double)m_height;
-    m_x_spacing_half = m_x_spacing * 0.5;
-    m_y_spacing_half = m_y_spacing * 0.5;
+	m_direction = (config.target - m_position).norm();
+	m_x_direction = m_config.up.cross(m_direction * -1).norm();
+	m_y_direction = m_x_direction.cross(m_direction).norm();
+
+	m_x_spacing = (2.0 * m_ratio) / (double)m_config.width;
+	m_y_spacing = (double)2.0 / (double)m_config.height;
+	m_x_spacing_half = m_x_spacing * 0.5;
+	m_y_spacing_half = m_y_spacing * 0.5;
+
+	switch (m_config.model) {
+	default:
+	case GT1290:
+		m_mono_eq = Spectrum(config::path_of_mono_eq_file);
+		break;
+	}
 }
 
-int Camera::get_width() { return m_width; }
-int Camera::get_height() { return m_height; }
+int Camera::get_width() { return m_config.width; }
+int Camera::get_height() { return m_config.height; }
 
 Spectrum Camera::get_mono_eq() {
 	return m_mono_eq;

@@ -12,14 +12,26 @@
 
 class Camera {
 public:
-	enum ColorModel {
-		MONO, RGB
+	enum Model {
+		EYE, GT1290
+	};
+
+	struct Config {
+		Config() : width(1280), height(960), fov(60),
+			position(Vec()),  target(Vec()), up(Vec()), model(GT1290){
+		}
+		int width;
+		int height;
+		double fov;
+		Vec position;
+		Vec target;
+		Vec up;
+		Model model;
 	};
 
 private:
-    int m_width;
+	Config m_config;
     double m_width_recp;
-    int m_height;
     double m_height_recp;
     double m_ratio;
     double m_x_spacing;
@@ -31,8 +43,10 @@ private:
     Vec m_x_direction;
     Vec m_y_direction;
 	Spectrum m_mono_eq;
+
 public:
-    Camera(Vec position, Vec target, Vec up, int width, int height, Spectrum mono_eq);
+    //Camera(Vec position, Vec target, Vec up, int width, int height, Spectrum mono_eq);
+	Camera(const Config &config);
     int get_width();
     int get_height();
 	Spectrum get_mono_eq();
