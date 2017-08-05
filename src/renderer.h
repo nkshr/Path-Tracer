@@ -3,19 +3,18 @@
 
 #include "vector.h"
 #include "scene.h"
-#include "camera.h"
+#include "observer.h"
 #include "color.h"
 
 class Renderer {
 
 private:
     Scene *m_scene;
-    Camera *m_camera;
+    Observer *m_observer;
 	Spectrum *m_psds;
-	XYZColor m_XYZ_color;
 
 public:
-    Renderer(Scene *scene, Camera *camera);
+    Renderer(Scene *scene, Observer *observer);
     void render();
     void save_image(const char * file_path);
 	void save_spectrum_images(const char * file_path);

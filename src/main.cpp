@@ -8,7 +8,7 @@
 *      $ make
 *
 *  Usage:
-*      $ ./pathtracer <number of samples>
+*      $ ./pathtracer
 */
 
 #include <stdio.h>
@@ -18,7 +18,7 @@
 #include "vector.h"
 #include "material.h"
 #include "objects.h"
-#include "camera.h"
+#include "observer.h"
 #include "scene.h"
 #include "renderer.h"
 
@@ -26,18 +26,18 @@ int main(int argc, char *argv[]) {
 
     time_t start, stop;
     time(&start);               // Start execution timer
-	Camera::Config cconfig;
-	cconfig.width = 320;
-	cconfig.height = 240;
-	cconfig.fov = 60;
-	cconfig.position = Vec(-2, 0, 6);
-	cconfig.target = Vec(0, 0, -6);
-	cconfig.up = Vec(0, 1, 0);
-	cconfig.model = Camera::GT1290;
+	Observer::Config oconfig;
+	oconfig.image_width = 320;
+	oconfig.image_height = 240;
+	oconfig.fov = 60;
+	oconfig.position = Vec(-2, 0, 6);
+	oconfig.target = Vec(0, 0, -6);
+	oconfig.up = Vec(0, 1, 0);
+	oconfig.model = Observer::GT1290;
 
 	//Camera camera = Camera(Vec(-2, 0, 6), Vec(0,0,-6), Vec(0, 1, 0), 320, 240, mono_eq);     // Create camera
-	Camera * camera = new MonoCamera(cconfig);
-	Scene scene = Scene(Spectrum(config::path_of_absorption_coefficients_file));                                              // Create scene
+	Observer * observer = new MonoCamera(oconfig);
+	Scene scene = Scene(Spectrum(config::absorption_coefficients_file));                                              // Create scene
 
     // Add objects to scene
     //scene.add( dynamic_cast<Object*>(new Sphere(Vec(0,0,-1006), 1000, Material())) );
@@ -49,7 +49,7 @@ int main(int argc, char *argv[]) {
     //scene.add( dynamic_cast<Object*>(new Mesh(Vec(), "../obj/dragon2.obj", Material(DIFF, Vec(0.9, 0.9, 0.9)))) );
 
 
-    Renderer renderer = Renderer(&scene, camera);  // Create renderer with our scene and camera
+    Renderer renderer = Renderer(&scene, observer);  // Create renderer with our scene and camera
     renderer.render();                       // Render image to pixel buffer
     renderer.save_image("render");              // Save image
 

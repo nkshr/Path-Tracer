@@ -9,21 +9,27 @@
 #include "ray.h"
 #include "common.h"
 #include "spectrum.h"
+#include "color.h";
 
-class Camera {
+class Observer {
 public:
 	enum Model {
-		EYE, GT1290
+		CIE31, GT1290, MAKO
 	};
 
 	struct Config {
-		Config() : width(1280), height(960), fov(60),
+		Config() : image_width(1280), image_height(960), fov(60),
 			position(Vec()),  target(Vec()), up(Vec()), model(GT1290){
 		}
 
-		int width;
-		int height;
+		int image_width;
+		int image_height;
 		double fov;
+		double sensor_width;//meter
+		double sensor_height;//meter
+		double exposure_time;
+		double iso;
+		double pinhole_radius;
 		Vec position;
 		Vec target;
 		Vec up;
@@ -38,6 +44,7 @@ private:
     double m_x_spacing_half;
     double m_y_spacing;
     double m_y_spacing_half;
+	double m_sensor_size;
 
     Vec m_position;
     Vec m_direction;
@@ -55,18 +62,19 @@ protected:
 
 public:
     //Camera(Vec position, Vec target, Vec up, int width, int height, Spectrum mono_eq);
-	Camera(const Config &config);
-	~Camera();
+	Observer(const Config &config);
+	~Observer();
 	int get_width();
     int get_height();
-    Ray get_ray(int x, int y, bool jitter, unsigned short *Xi);
+	double get_sensor_size();
+    Ray get_ray(int x, int y, bool jitter_pinhole, bool jitter_pixel, unsigned short *Xi);
 	void create_image(const Spectrum * psds);
-	void read(const double *& buf, int &sz, double &max_bal, double &min_val);
+	void read_image(const double *& buf, int &sz, double &max_bal, double &min_val);
 	virtual Vec convert_psd_to_rgb(const Spectrum &psd) = 0;
 };
 
 
-class MonoCamera : public Camera{
+class MonoCamera : public Observer{
 private:
 	Spectrum m_mono_eq;
 
@@ -75,14 +83,24 @@ public:
 	Vec convert_psd_to_rgb(const Spectrum  &spectrum);
 };
 
-//class RGBCamera : public Camera {
-//private:
-//	Spectrum m_r_eq;
-//	Spectrum m_g_eq;
-//	Spectrum m_b_eq;
-//
-//public:
-//	RGBCamera(const Config &config);
-//	Vec convert_psd_to_rgb(const Spectrum &spectrum);
-//}
+class RGBCamera : public Observer {
+private:
+	Spectrum m_r_eq;
+	Spectrum m_g_eq;
+	Spectrum m_b_eq;
+
+public:
+	RGBCamera(const Config &config);
+	Vec convert_psd_to_rgb(const Spectrum &psd);
+};
+
+
+class Eye : public Observer {
+private:
+	XYZColor m_XYZ_color;
+
+public:
+	Eye(const Config &config);
+	Vec convert_psd_to_rgb(const Spectrum &psd);
+};
 #endif //CAMERA_H
