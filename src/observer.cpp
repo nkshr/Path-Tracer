@@ -35,7 +35,8 @@ Observer::Observer(const Config  &config) : m_config(config){
 	m_x_spacing_half = m_x_spacing * 0.5;
 	m_y_spacing_half = m_y_spacing * 0.5;
 
-	m_pixel_buffer = new double[m_num_pixs * 3];
+	m_num_pixels = m_config.image_width * m_config.image_height;
+	m_pixel_buffer = new double[m_num_pixels * 3];
 }
 
 Observer::~Observer() {
@@ -46,7 +47,7 @@ int Observer::get_width() { return m_config.image_width; }
 int Observer::get_height() { return m_config.image_height; }
 
 double Observer::get_sensor_size() {
-	return m_sensor_size;
+  return m_config.sensor_size;
 }
 
 // Returns ray from camera origin through pixel at x,y
@@ -78,21 +79,21 @@ Ray Observer::get_ray(int x, int y, bool jitter_pinhole, bool jitter_pixel, unsi
 }
 
 void Observer::create_image(const Spectrum *psds) {
-	for (int i = 0; i < m_num_pixs; ++i) {
+  DMsg dmsg("create_image");
+  m_max_pixel_val = -DBL_MAX;
+  m_min_pixel_val = DBL_MAX;
+	for (int i = 0; i < m_num_pixels; ++i) {
 		Vec rgb = convert_psd_to_rgb(psds[i]);
 		rgb = rgb * m_config.exposure_time;
 
-		double max_val = -DBL_MAX;
-		double min_val = DBL_MAX;
-
 		double tmp = max(rgb.x, rgb.y, rgb.z);
-		if (m_max_pix_val < tmp) {
-			m_max_pix_val = tmp;
+		if (m_max_pixel_val < tmp) {
+			m_max_pixel_val = tmp;
 		}
 
 		tmp = min(rgb.x, rgb.y, rgb.z);
-		if (m_min_pix_val > tmp) {
-			m_min_pix_val = tmp;
+		if (m_min_pixel_val > tmp) {
+			m_min_pixel_val = tmp;
 		}
 
 		const int ipb = i * 3;
@@ -105,8 +106,8 @@ void Observer::create_image(const Spectrum *psds) {
 void Observer::read_image(const double *& buf, int &num_pixs, double &max_val, double &min_val) {
 	buf = m_pixel_buffer;
 	num_pixs = m_config.image_width * m_config.image_height;
-	max_val = m_max_pix_val;
-	min_val = m_min_pix_val;
+	max_val = m_max_pixel_val;
+	min_val = m_min_pixel_val;
 }
 
 MonoCamera::MonoCamera(const Config &config) : Observer(config){
@@ -151,4 +152,9 @@ Eye::Eye(const Config &config) : Observer(config) {
 	case CIE31:
 		break;
 	}
+}
+
+Vec Eye::convert_psd_to_rgb(const Spectrum &psd) {
+	Vec rgb;
+	return rgb;
 }

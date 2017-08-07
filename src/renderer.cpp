@@ -22,7 +22,7 @@ void Renderer::render() {
 	double sensor_size = m_observer->get_sensor_size();
 
     // Main Loop
-    //#pragma omp parallel for schedule(dynamic, 1)       // OpenMP
+    #pragma omp parallel for schedule(dynamic, 1)       // OpenMP
     for (int y=0; y<height; y++){
         unsigned short Xi[3]={(unsigned short)0, (unsigned short)0,(unsigned short)(y*y*y)};               // Stores seed for erand48
         fprintf(stderr, "\rRendering : %.2f%% ",      // Prints
@@ -42,6 +42,7 @@ void Renderer::render() {
 }
 
 void Renderer::save_image(const char *file_path) {
+  DMsg dmsg("save_image");
     const int width = m_observer->get_width();
     const int height = m_observer->get_height();
 
@@ -56,12 +57,12 @@ void Renderer::save_image(const char *file_path) {
 	m_observer->read_image(pixel_buffer_d, pixel_count, max_val, min_val);
 
 	unsigned char * pixel_buffer = new unsigned char[pixel_count * 4];
-	const int max_buf_idx = pixel_count * 3;
-	for (int  buf_idx = 0; buf_idx < max_buf_idx;) {
-		pixel_buffer[buf_idx] = static_cast<int>(mapValue(pixel_buffer_d[buf_idx++], min_val, max_val, 0, 255.9));
-		pixel_buffer[buf_idx] = static_cast<int>(mapValue(pixel_buffer_d[buf_idx++], min_val, max_val, 0, 255.9));
-		pixel_buffer[buf_idx] = static_cast<int>(mapValue(pixel_buffer_d[buf_idx++], min_val, max_val, 0, 255.9));
-		pixel_buffer[buf_idx++] = 255;
+	const int jmax = pixel_count * 3;
+	for (int  i = 0, j = 0; j < jmax;) {
+		pixel_buffer[i++] = static_cast<int>(mapValue(pixel_buffer_d[j++], min_val, max_val, 0, 255.9));
+		pixel_buffer[i++] = static_cast<int>(mapValue(pixel_buffer_d[j++], min_val, max_val, 0, 255.9));
+		pixel_buffer[i++] = static_cast<int>(mapValue(pixel_buffer_d[j++], min_val, max_val, 0, 255.9));
+		pixel_buffer[i++] = 255;
 	}
 
 	char complete_file_path[config::buffer_size];
@@ -78,6 +79,7 @@ void Renderer::save_image(const char *file_path) {
 }
 
 void Renderer::save_spectrum_images(const char * fprefix) {
+  DMsg dmsg("save_spectrum_images");
 	const int width = m_observer->get_width();
 	const int height = m_observer->get_height();
 	const int pixel_count = width*height;

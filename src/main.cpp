@@ -30,7 +30,8 @@ int main(int argc, char *argv[]) {
 	oconfig.image_width = 320;
 	oconfig.image_height = 240;
 	oconfig.fov = 60;
-	oconfig.position = Vec(-2, 0, 6);
+	oconfig.exposure_time = 1.0;
+	oconfig.position = Vec(-2, 0, 0);
 	oconfig.target = Vec(0, 0, -6);
 	oconfig.up = Vec(0, 1, 0);
 	oconfig.model = Observer::GT1290;

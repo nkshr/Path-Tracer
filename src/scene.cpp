@@ -11,6 +11,7 @@
 Scene::Scene(const Spectrum &atten_coefs):m_atten_coefs(atten_coefs) {
 	//atten_coefs.init("../data/Pope_absorp.txt", "");
 	//atten_coefs.scale(100);
+  m_atten_coefs = Spectrum(1.0);
 }
 
 void Scene::add(Object *object) {
@@ -38,7 +39,6 @@ Spectrum Scene::trace_ray(Ray ray, int depth, unsigned short *Xi) {
 
 	// If no hit, return world colour
 	if (!isct.hit) {
-		std::cout << "no hit" << std::endl;
 		return 0.0;
 	}
 
@@ -69,10 +69,10 @@ Spectrum Scene::trace_ray(Ray ray, int depth, unsigned short *Xi) {
 	return  radiances;
 }
 
-Spectrum Scene::attenuate(const double dist, const Spectrum &orig_spect) {
-	Spectrum atten_spect;
+Spectrum Scene::attenuate(const double dist, const Spectrum &spd) {
+	Spectrum atten_spd;
 	for (int i = 0; i < config::number_of_samples_per_spectrum; ++i) {
-		atten_spect[i] = orig_spect[i] * exp(-m_atten_coefs[i] * dist);
+		atten_spd[i] = spd[i] * exp(-m_atten_coefs[i] * dist);
 	}
-	return  atten_spect;
+	return  atten_spd;
 }

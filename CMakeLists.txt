@@ -21,7 +21,7 @@ endif()
 set(SOURCE_FILES
     src/material.cpp
     src/objects.cpp
-    src/camera.cpp
+    src/observer.cpp
     src/scene.cpp
     src/renderer.cpp
 	src/color.cpp
@@ -32,7 +32,7 @@ set(SOURCE_FILES
 	)
 
 set(HEADER_FILES
-	src/camera.h
+  src/observer.h
 	src/material.h
 	src/objects.h
 	src/ray.h

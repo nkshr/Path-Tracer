@@ -1,5 +1,10 @@
 #pragma once
 #include <cfloat>
+#include <cstring>
+#include <iostream>
+
+#include "config.h"
+
 inline double linearInterpolation(const double  x, const double x1, const double  x2,
 	const double y1, const double y2) {
 	const double a = (x - x1) / (x2 - x1);
@@ -103,3 +108,17 @@ inline double sample(std::vector<std::pair<double, double> > data, const double 
 
 	return  0.0;
 }
+
+class DMsg{
+ private:
+  char m_msg[config::buffer_size];
+ public:
+  DMsg(const char * msg){
+    strcpy(m_msg, msg);
+    std::cerr << "Entering " << m_msg << std::endl;
+  }
+
+  ~DMsg(){
+    std::cerr << "Exiting " << m_msg << std::endl;
+  }
+};

@@ -9,7 +9,7 @@
 #include "ray.h"
 #include "common.h"
 #include "spectrum.h"
-#include "color.h";
+#include "color.h"
 
 class Observer {
 public:
@@ -25,9 +25,8 @@ public:
 		int image_width;
 		int image_height;
 		double fov;
-		double sensor_width;//meter
-		double sensor_height;//meter
-		double exposure_time;
+	  double sensor_size;
+	  double exposure_time;
 		double iso;
 		double pinhole_radius;
 		Vec position;
@@ -44,17 +43,16 @@ private:
     double m_x_spacing_half;
     double m_y_spacing;
     double m_y_spacing_half;
-	double m_sensor_size;
 
     Vec m_position;
     Vec m_direction;
     Vec m_x_direction;
     Vec m_y_direction;
 
-	int m_num_pixs;
+	int m_num_pixels;
 
-	double m_max_pix_val;
-	double m_min_pix_val;
+	double m_max_pixel_val;
+	double m_min_pixel_val;
 
 	double *m_pixel_buffer;
 protected:
