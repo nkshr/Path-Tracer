@@ -36,6 +36,7 @@ int main(int argc, char *argv[]) {
 	oconfig.up = Vec(0, 1, 0);
 	oconfig.type = Observer::MONO;
 	oconfig.mono_eq_file = config::gt1290_eq_file;
+	oconfig.sensor_size = 1.0;
 
 
 	Scene::Config sconfig;

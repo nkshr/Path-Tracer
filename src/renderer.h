@@ -12,6 +12,7 @@ private:
     Scene *m_scene;
     Observer *m_observer;
 	Spectrum *m_spds;
+	double * m_pixel_buffer;
 
 public:
 	Renderer(const Scene::Config &sconfig, const Observer::Config &oconfig);

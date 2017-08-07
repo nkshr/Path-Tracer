@@ -53,4 +53,6 @@ public:
 	Underwater(const Config &config);
 	Spectrum attenuate(const double dist, const Spectrum  &spd);
 };
+
+Scene * generateScene(const Scene::Config &config); 
 #endif //SCENE_H

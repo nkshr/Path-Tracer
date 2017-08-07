@@ -59,6 +59,8 @@ private:
 	double m_min_pixel_val;
 
 	double *m_pixel_buffer;
+	double *m_spds;
+
 protected:
 	Config m_config;
 
@@ -69,7 +71,7 @@ public:
 	int get_width();
     int get_height();
 	double get_sensor_size();
-    Ray get_ray(int x, int y, bool jitter_pinhole, bool jitter_pixel, unsigned short *Xi);
+    Ray get_ray(int x, int y, bool jitter_pixel, bool jitter_pinhole, unsigned short *Xi);
 	void create_image(const Spectrum * psds);
 	void read_image(const double *& buf, int &sz, double &max_bal, double &min_val);
 	virtual Vec convert_psd_to_rgb(const Spectrum &psd) = 0;
@@ -105,4 +107,7 @@ public:
 	Eye(const Config &config);
 	Vec convert_psd_to_rgb(const Spectrum &psd);
 };
+
+Observer * generateObserver(Observer::Config &config);
+
 #endif //CAMERA_H

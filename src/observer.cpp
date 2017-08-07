@@ -51,13 +51,7 @@ double Observer::get_sensor_size() {
 }
 
 // Returns ray from camera origin through pixel at x,y
-Ray Observer::get_ray(int x, int y, bool jitter_pinhole, bool jitter_pixel, unsigned short *Xi) {
-	
-	if (jitter_pinhole) {
-	}
-	else {
-	}
-
+Ray Observer::get_ray(int x, int y, bool jitter_pixel, bool jitter_pinhole, unsigned short *Xi) {
     double x_jitter_pixel;
     double y_jitter_pixel;
 
@@ -70,6 +64,11 @@ Ray Observer::get_ray(int x, int y, bool jitter_pinhole, bool jitter_pixel, unsi
         x_jitter_pixel = 0;
         y_jitter_pixel = 0;
     }
+
+	if (jitter_pinhole) {
+	}
+	else {
+	}
 
     Vec pixel = m_config.position + m_direction*2;
     pixel = pixel - m_x_direction*m_ratio + m_x_direction*((x * 2 * m_ratio)*m_width_recp) + x_jitter_pixel;
@@ -143,4 +142,18 @@ Eye::Eye(const Config &config) : Observer(config) {
 Vec Eye::convert_psd_to_rgb(const Spectrum &psd) {
 	Vec rgb;
 	return rgb;
+}
+
+Observer * generateObserver(Observer::Config &config) {
+	switch (config.type) {
+	default:
+	case Observer::MONO:
+		return new MonoCamera(config);
+	case Observer::RGB:
+		return new RGBCamera(config);
+		break;
+	case Observer::EYE:
+		return new Eye(config);
+		break;
+	}
 }

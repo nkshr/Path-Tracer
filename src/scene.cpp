@@ -103,3 +103,14 @@ Spectrum Underwater::attenuate(const double dist, const Spectrum &spd) {
 	return  atten_spd;
 }
 
+Scene * generateScene(const Scene::Config &config) {
+	switch (config.model) {
+	default:
+	case Scene::VACUUM:
+		return new Vacuum(config);
+	case Scene::AIR:
+		return new Air(config);
+	case Scene::UNDERWATER:
+		return new Underwater(config);
+	}
+}

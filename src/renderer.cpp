@@ -48,7 +48,7 @@ Renderer::Renderer() {
 void Renderer::render() {
     int width = m_observer->get_width();
     int height = m_observer->get_height();
-    double samples_recp = 1./config::number_of_samples_per_pixel;
+    double samples_recp = 1./(config::number_of_samples_per_pixel * config::number_of_samples_per_point);
 	double sensor_size = m_observer->get_sensor_size();
 
     // Main Loop
@@ -60,9 +60,11 @@ void Renderer::render() {
 
         for (int x=0; x<width; x++){
 			Spectrum &spectrum = m_spds[y * width + x];
-			for (int s = 0; s < config::number_of_samples_per_pixel; ++s) {
-				Ray ray = m_observer->get_ray(x, y, s > 0, s>0, Xi);
-				spectrum = spectrum + m_scene->trace_ray(ray, 0, Xi);
+			for (int s1 = 0; s1 < config::number_of_samples_per_pixel; ++s1) {
+				for (int s2 = 0; s2 < config::number_of_samples_per_point; ++s2) {
+					Ray ray = m_observer->get_ray(x, y, s1 > 0, s2 > 0, Xi);
+					spectrum = spectrum + m_scene->trace_ray(ray, 0, Xi);
+				}
 			}
 			spectrum = spectrum * samples_recp * sensor_size;
         }
