@@ -8,7 +8,7 @@
 *      $ make
 *
 *  Usage:
-*      $ ./pathtracer <number of samples>
+*      $ ./pathtracer
 */
 
 #include <stdio.h>
@@ -18,7 +18,7 @@
 #include "vector.h"
 #include "material.h"
 #include "objects.h"
-#include "camera.h"
+#include "observer.h"
 #include "scene.h"
 #include "renderer.h"
 
@@ -26,13 +26,18 @@ int main(int argc, char *argv[]) {
 
     time_t start, stop;
     time(&start);               // Start execution timer
-    int samples = 4;            // Default samples per pixel
+	Observer::Config oconfig;
+	oconfig.image_width = 320;
+	oconfig.image_height = 240;
+	oconfig.fov = 60;
+	oconfig.position = Vec(-2, 0, 6);
+	oconfig.target = Vec(0, 0, -6);
+	oconfig.up = Vec(0, 1, 0);
+	oconfig.model = Observer::GT1290;
 
-    if (argc == 2) samples = atoi(argv[1]);
-
-	Spectrum mono_eq(config::path_of_mono_eq_file);
-	Camera camera = Camera(Vec(-2, 0, 6), Vec(0,0,-6), Vec(0, 1, 0), 320, 240, mono_eq);     // Create camera
-	Scene scene = Scene(Spectrum(config::path_of_absorption_coefficients_file));                                              // Create scene
+	//Camera camera = Camera(Vec(-2, 0, 6), Vec(0,0,-6), Vec(0, 1, 0), 320, 240, mono_eq);     // Create camera
+	Observer * observer = new MonoCamera(oconfig);
+	Scene scene = Scene(Spectrum(config::absorption_coefficients_file));                                              // Create scene
 
     // Add objects to scene
     //scene.add( dynamic_cast<Object*>(new Sphere(Vec(0,0,-1006), 1000, Material())) );
@@ -44,7 +49,7 @@ int main(int argc, char *argv[]) {
     //scene.add( dynamic_cast<Object*>(new Mesh(Vec(), "../obj/dragon2.obj", Material(DIFF, Vec(0.9, 0.9, 0.9)))) );
 
 
-    Renderer renderer = Renderer(&scene, &camera);  // Create renderer with our scene and camera
+    Renderer renderer = Renderer(&scene, observer);  // Create renderer with our scene and camera
     renderer.render();                       // Render image to pixel buffer
     renderer.save_image("render");              // Save image
 
@@ -54,6 +59,6 @@ int main(int argc, char *argv[]) {
     int hrs = (int)diff/3600;
     int mins = ((int)diff/60)-(hrs*60);
     int secs = (int)diff-(hrs*3600)-(mins*60);
-    printf("\rRendering (%i samples): Complete!\nTime Taken: %i hrs, %i mins, %i secs\n\n", samples, hrs, mins, secs);
+    printf("\rRendering : Complete!\nTime Taken: %i hrs, %i mins, %i secs\n\n", hrs, mins, secs);
     return 0;
 }
