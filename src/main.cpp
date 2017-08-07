@@ -34,23 +34,30 @@ int main(int argc, char *argv[]) {
 	oconfig.position = Vec(-2, 0, 0);
 	oconfig.target = Vec(0, 0, -6);
 	oconfig.up = Vec(0, 1, 0);
-	oconfig.model = Observer::GT1290;
+	oconfig.type = Observer::MONO;
+	oconfig.mono_eq_file = config::gt1290_eq_file;
 
-	//Camera camera = Camera(Vec(-2, 0, 6), Vec(0,0,-6), Vec(0, 1, 0), 320, 240, mono_eq);     // Create camera
-	Observer * observer = new MonoCamera(oconfig);
-	Scene scene = Scene(Spectrum(config::absorption_coefficients_file));                                              // Create scene
 
+	Scene::Config sconfig;
+	sconfig.model = Scene::VACUUM;
+	sconfig.abosrp_coefs_file = config::absorption_coefficients_file;
+	sconfig.absorp_coefs_scale = 100.0;
+
+	sconfig.objects.push_back(new Sphere(Vec(3, 0, 6), 1, Material(EMIT, Spectrum("../data/spike700.csv"), Spectrum(0.0))));
+	sconfig.objects.push_back(new Cylinder(Vec(0, 0, 0), Vec(0, 0, 1), 4, 12, Material(DIFF)));
+	
+	
     // Add objects to scene
     //scene.add( dynamic_cast<Object*>(new Sphere(Vec(0,0,-1006), 1000, Material())) );
     //scene.add( dynamic_cast<Object*>(new Sphere(Vec(-1004,0,0), 1000, Material(DIFF, Spectrum(0.0), Spectrum("../data/spike700.csv")))));
     //scene.add( dynamic_cast<Object*>(new Sphere(Vec(1004,0,0), 1000, Material(DIFF))) );
     //scene.add( dynamic_cast<Object*>(new Sphere(Vec(0,-1000,0), 1000, Material())) );
-    scene.add( dynamic_cast<Object*>(new Sphere(Vec(3,0,6), 1, Material(EMIT, Spectrum("../data/spike700.csv"), Spectrum(0.0)))) );
-    scene.add( dynamic_cast<Object*>(new Cylinder(Vec(0,0,0), Vec(0,0,1), 4, 12, Material(DIFF))));
+    //scene->add( dynamic_cast<Object*>(new Sphere(Vec(3,0,6), 1, Material(EMIT, Spectrum("../data/spike700.csv"), Spectrum(0.0)))) );
+    //scene->add( dynamic_cast<Object*>(new Cylinder(Vec(0,0,0), Vec(0,0,1), 4, 12, Material(DIFF))));
     //scene.add( dynamic_cast<Object*>(new Mesh(Vec(), "../obj/dragon2.obj", Material(DIFF, Vec(0.9, 0.9, 0.9)))) );
 
 
-    Renderer renderer = Renderer(&scene, observer);  // Create renderer with our scene and camera
+    Renderer renderer = Renderer(sconfig, oconfig);  // Create renderer with our scene and camera
     renderer.render();                       // Render image to pixel buffer
     renderer.save_image("render");              // Save image
 

@@ -9,10 +9,40 @@
 #include "renderer.h"
 #include "../lib/lodepng/lodepng.h"
 
-Renderer::Renderer(Scene *scene, Observer *observer) {
-    m_scene = scene;
-    m_observer = observer;
-    m_psds = new Spectrum[m_observer->get_width()*m_observer->get_height()];
+Renderer::Renderer(const Scene::Config &sconfig, const Observer::Config &oconfig) {
+	switch (sconfig.model) {
+	default:
+	case Scene::VACUUM:
+		m_scene = new Vacuum(sconfig);
+		break;
+	case Scene::AIR:
+		m_scene = new Air(sconfig);
+		break;
+	case Scene::UNDERWATER:
+		m_scene = new Underwater(sconfig);
+		break;
+	}
+
+	switch (oconfig.type) {
+	default:
+	case Observer::MONO:
+		m_observer = new MonoCamera(oconfig);
+		break;
+	case Observer::RGB:
+		m_observer = new RGBCamera(oconfig);
+		break;
+	case Observer::EYE:
+		m_observer = new Eye(oconfig);
+		break;
+	}
+
+	m_spds = new Spectrum[m_observer->get_width()*m_observer->get_height()];
+}
+
+Renderer::Renderer() {
+	delete m_scene;
+	delete m_observer;
+	delete m_spds;
 }
 
 void Renderer::render() {
@@ -29,7 +59,7 @@ void Renderer::render() {
                 (double)y/height*100);                   // progress
 
         for (int x=0; x<width; x++){
-			Spectrum &spectrum = m_psds[y * width + x];
+			Spectrum &spectrum = m_spds[y * width + x];
 			for (int s = 0; s < config::number_of_samples_per_pixel; ++s) {
 				Ray ray = m_observer->get_ray(x, y, s > 0, s>0, Xi);
 				spectrum = spectrum + m_scene->trace_ray(ray, 0, Xi);
@@ -38,7 +68,7 @@ void Renderer::render() {
         }
     }
 
-	m_observer->create_image(m_psds);
+	m_observer->create_image(m_spds);
 }
 
 void Renderer::save_image(const char *file_path) {
@@ -90,7 +120,7 @@ void Renderer::save_spectrum_images(const char * fprefix) {
 		double max_val = -DBL_MAX;
 		double min_val = DBL_MAX;
 		for (int j = 0; j < pixel_count; ++j) {
-			double radiance = m_psds[j][i];
+			double radiance = m_spds[j][i];
 			if (max_val < radiance) {
 				max_val = radiance;
 			}
@@ -101,7 +131,7 @@ void Renderer::save_spectrum_images(const char * fprefix) {
 		}
 
 		for (int j = 0; j<pixel_count; ++j) {
-			double radiance = m_psds[j][i];
+			double radiance = m_spds[j][i];
 			int iradiance = (int)mapValue(radiance, min_val, max_val, 0, 255.5);
 			pixel_buffer.push_back(iradiance);
 			pixel_buffer.push_back(iradiance);

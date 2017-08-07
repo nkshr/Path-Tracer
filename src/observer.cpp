@@ -26,7 +26,7 @@ Observer::Observer(const Config  &config) : m_config(config){
 	m_height_recp = 1. / m_config.image_height;
 	m_ratio = (double)m_config.image_width / m_config.image_height;
 
-	m_direction = (config.target - m_position).norm();
+	m_direction = (config.target - m_config.position).norm();
 	m_x_direction = m_config.up.cross(m_direction * -1).norm();
 	m_y_direction = m_x_direction.cross(m_direction).norm();
 
@@ -71,11 +71,11 @@ Ray Observer::get_ray(int x, int y, bool jitter_pinhole, bool jitter_pixel, unsi
         y_jitter_pixel = 0;
     }
 
-    Vec pixel = m_position + m_direction*2;
+    Vec pixel = m_config.position + m_direction*2;
     pixel = pixel - m_x_direction*m_ratio + m_x_direction*((x * 2 * m_ratio)*m_width_recp) + x_jitter_pixel;
     pixel = pixel + m_y_direction - m_y_direction*((y * 2.0)*m_height_recp + y_jitter_pixel);
 
-    return Ray(m_position, (pixel-m_position).norm(), Spectrum(0.0));
+    return Ray(m_config.position, (pixel-m_config.position).norm(), Spectrum(0.0));
 }
 
 void Observer::create_image(const Spectrum *psds) {
@@ -111,12 +111,7 @@ void Observer::read_image(const double *& buf, int &num_pixs, double &max_val, d
 }
 
 MonoCamera::MonoCamera(const Config &config) : Observer(config){
-	switch (m_config.model) {
-	default:
-	case GT1290:
-		m_mono_eq.load(config::gt1290_eq_file);
-		break;
-	}
+	m_mono_eq.load(m_config.mono_eq_file);
 }
 
 Vec MonoCamera::convert_psd_to_rgb(const Spectrum &psd) {
@@ -128,14 +123,9 @@ Vec MonoCamera::convert_psd_to_rgb(const Spectrum &psd) {
 }
 
 RGBCamera::RGBCamera(const Config &config) : Observer(config) {
-	switch (m_config.model) {
-	default:
-	case  MAKO:
-		m_r_eq.load(config::mako_r_eq_file);
-		m_g_eq.load(config::mako_g_eq_file);
-		m_b_eq.load(config::mako_b_eq_file);
-		break;
-	}
+	m_r_eq.load(m_config.r_eq_file);
+	m_g_eq.load(m_config.g_eq_file);
+	m_b_eq.load(m_config.b_eq_file);
 }
 
 Vec RGBCamera::convert_psd_to_rgb(const Spectrum &psd) {
@@ -147,11 +137,7 @@ Vec RGBCamera::convert_psd_to_rgb(const Spectrum &psd) {
 }
 
 Eye::Eye(const Config &config) : Observer(config) {
-	switch (m_config.model) {
-	default:
-	case CIE31:
-		break;
-	}
+	m_XYZ_color.load(m_config.XYZ_cmf_file);
 }
 
 Vec Eye::convert_psd_to_rgb(const Spectrum &psd) {

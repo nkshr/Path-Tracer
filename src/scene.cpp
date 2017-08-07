@@ -8,6 +8,9 @@
 #include "ray.h"
 #include "config.h"
 
+Scene::Scene(const Config &config) : m_config(config) {
+};
+
 Scene::Scene(const Spectrum &atten_coefs):m_atten_coefs(atten_coefs) {
 	//atten_coefs.init("../data/Pope_absorp.txt", "");
 	//atten_coefs.scale(100);
@@ -69,10 +72,34 @@ Spectrum Scene::trace_ray(Ray ray, int depth, unsigned short *Xi) {
 	return  radiances;
 }
 
-Spectrum Scene::attenuate(const double dist, const Spectrum &spd) {
+Vacuum::Vacuum(const Config &config) : Scene(config) {
+
+}
+
+Spectrum Vacuum::attenuate(const double dist, const Spectrum &spd) {
+	return spd;
+}
+
+Air::Air(const Config  &config) : Scene(config) {
+
+}
+
+Spectrum Air::attenuate(const double  dist, const Spectrum &spd) {
 	Spectrum atten_spd;
 	for (int i = 0; i < config::number_of_samples_per_spectrum; ++i) {
 		atten_spd[i] = spd[i] * exp(-m_atten_coefs[i] * dist);
 	}
 	return  atten_spd;
 }
+
+Underwater::Underwater(const Config &config) : Scene(config){
+}
+
+Spectrum Underwater::attenuate(const double dist, const Spectrum &spd) {
+	Spectrum atten_spd;
+	for (int i = 0; i < config::number_of_samples_per_spectrum; ++i) {
+		atten_spd[i] = spd[i] * exp(-m_atten_coefs[i] * dist);
+	}
+	return  atten_spd;
+}
+

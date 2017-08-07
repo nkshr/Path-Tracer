@@ -11,11 +11,12 @@ class Renderer {
 private:
     Scene *m_scene;
     Observer *m_observer;
-	Spectrum *m_psds;
+	Spectrum *m_spds;
 
 public:
-    Renderer(Scene *scene, Observer *observer);
-    void render();
+	Renderer(const Scene::Config &sconfig, const Observer::Config &oconfig);
+	Renderer();
+	void render();
     void save_image(const char * file_path);
 	void save_spectrum_images(const char * file_path);
 };

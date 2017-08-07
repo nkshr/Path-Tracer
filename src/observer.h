@@ -13,26 +13,31 @@
 
 class Observer {
 public:
-	enum Model {
-		CIE31, GT1290, MAKO
+	enum  Type {
+		EYE, MONO, RGB
 	};
 
 	struct Config {
 		Config() : image_width(1280), image_height(960), fov(60),
-			position(Vec()),  target(Vec()), up(Vec()), model(GT1290){
+			position(Vec()),  target(Vec()), up(Vec()), type(MONO){
 		}
 
 		int image_width;
 		int image_height;
 		double fov;
-	  double sensor_size;
-	  double exposure_time;
+		double sensor_size;
+		double exposure_time;
 		double iso;
 		double pinhole_radius;
 		Vec position;
 		Vec target;
 		Vec up;
-		Model model;
+		Type type;
+		char * mono_eq_file;
+		char * r_eq_file;
+		char * g_eq_file;
+		char * b_eq_file;
+		char * XYZ_cmf_file;
 	};
 
 private:
@@ -44,7 +49,6 @@ private:
     double m_y_spacing;
     double m_y_spacing_half;
 
-    Vec m_position;
     Vec m_direction;
     Vec m_x_direction;
     Vec m_y_direction;
