@@ -4,7 +4,7 @@ namespace config {
 	static const int number_of_samples_per_spectrum = 41;
 	static constexpr double minimum_lambda = 380.0;
 	static constexpr double maximum_lambda = 780.0;
-	static const int number_of_samples_per_pixel = 4;
+	static const int number_of_samples_per_pixel = 1000;
 	static const int number_of_samples_per_intersection = 1;
 	static const int maximum_depth = 4;
 
