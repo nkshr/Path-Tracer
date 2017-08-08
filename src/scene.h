@@ -5,54 +5,43 @@
 #include "vector.h"
 #include "objects.h"
 
-class Scene {
+class Attenuation{
 public:
-	enum Model {
-		VACUUM, AIR, UNDERWATER
-	};
-
-	struct Config{
-		std::vector<Object*> objects;
-		Model model;
-		char * abosrp_coefs_file;
-		char * scat_coefs_file;
-		double absorp_coefs_scale;
-		double scat_coefs_scale;
-	};
-
-private:
-	Config m_config;
-    std::vector<Object*> m_objects;
-
-protected:
-	Spectrum m_atten_coefs;
-
-public:
-	Scene(const Config &config);
-    Scene(const Spectrum &atten_coefs);
-    void add(Object *object);
-    ObjectIntersection intersect(const Ray &ray);
-	Spectrum trace_ray(Ray ray, int depth, unsigned short *Xi);
-	virtual Spectrum attenuate(const double dist,  const Spectrum &spd) = 0;
+	virtual Spectrum attenuate(const double dist, const Spectrum &spd) = 0;
 };
 
-class Vacuum : public Scene {
-public:
-	Vacuum(const Config &config);
+class Vacuum : Attenuation {
+public: 
 	Spectrum attenuate(const double dist, const Spectrum &spd);
 };
 
-class Air : public Scene {
+class Water : Attenuation{
+private:
+	Spectrum m_atten_coefs;
+	Spectrum m_absorp_coefs;
+	Spectrum m_scat_coefs;
+
 public:
-	Air(const Config &config);
-	Spectrum attenuate(const double  dist, const Spectrum &spd);
+	Spectrum attenuate(const double dist, const Spectrum &spd);
+
+	void set_absorp_coefs(const Spectrum &coefs);
+	void set_scat_coefs(const Spectrum &coefs);
 };
 
-class Underwater :public Scene {
+class Scene {
+private:
+    std::vector<Object*> m_objects;
+	Attenuation  * m_attenuation;
+
+protected:
+
 public:
-	Underwater(const Config &config);
-	Spectrum attenuate(const double dist, const Spectrum  &spd);
+	Scene();
+    void add(Object *object);
+    ObjectIntersection intersect(const Ray &ray);
+	Spectrum trace_ray(Ray ray, int depth, unsigned short *Xi);
+
+	void set_attenuation(Attenuation * attenuation);
 };
 
-Scene * generateScene(const Scene::Config &config); 
 #endif //SCENE_H

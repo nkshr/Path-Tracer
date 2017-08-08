@@ -14,32 +14,32 @@
 
 class Observer {
 public:
-	enum  Type {
-		EYE, MONO, RGB
-	};
+	//enum  Type {
+	//	EYE, MONO, RGB
+	//};
 
-	struct Config {
-		Config() : image_width(1280), image_height(960), fov(60),
-			position(Vec()),  target(Vec()), up(Vec()), type(MONO){
-		}
+	//struct Config {
+	//	Config() : image_width(1280), image_height(960), fov(60),
+	//		position(Vec()),  target(Vec()), up(Vec()), type(MONO){
+	//	}
 
-		int image_width;
-		int image_height;
-		double fov;
-		double sensor_size;
-		double exposure_time;
-		double iso;
-		double pinhole_radius;
-		Vec position;
-		Vec target;
-		Vec up;
-		Type type;
-		char * mono_eq_file;
-		char * r_eq_file;
-		char * g_eq_file;
-		char * b_eq_file;
-		char * XYZ_cmf_file;
-	};
+	//	int image_width;
+	//	int image_height;
+	//	double fov;
+	//	double sensor_size;
+	//	double exposure_time;
+	//	double iso;
+	//	double pinhole_radius;
+	//	Vec position;
+	//	Vec target;
+	//	Vec up;
+	//	Type type;
+	//	char * mono_eq_file;
+	//	char * r_eq_file;
+	//	char * g_eq_file;
+	//	char * b_eq_file;
+	//	char * XYZ_cmf_file;
+	//};
 
 private:
     double m_width_recp;
@@ -55,27 +55,65 @@ private:
     Vec m_y_direction;
 
 	int m_num_pixels;
-
-	double m_max_pixel_val;
-	double m_min_pixel_val;
+	int m_pixel_count;
 
 	double *m_pixel_buffer;
+private:
+	int m_image_width;
+	int m_image_height;
+	double m_fov;
+	double m_sensor_width;
+	double m_sensor_height;
+	double m_exposure_time;
+	double m_iso;
+	double m_pinhole_radius;
+	Vec m_position;
+	Vec m_target;
+	Vec m_up;
+
+	double m_image_width_recp;
+	double m_image_height_recp;
+	double m_sensor_size;
 
 protected:
-	Config m_config;
+	//Config m_config;
 	Spectrum * m_spds;
 
 public:
     //Camera(Vec position, Vec target, Vec up, int width, int height, Spectrum mono_eq);
-	Observer(const Config &config);
+	Observer();
 	~Observer();
 
 	Ray get_ray(int x, int y, bool jitter_pixel, bool jitter_pinhole, unsigned short *Xi);
-	void create_image(const Spectrum * spds);
 	const double * read_image();
 
 	virtual Vec convert_spd_to_rgb(const Spectrum &spd) = 0;
 	void capture(Scene &scene);
+	void update();
+
+	void set_image_width(const int w);
+	void set_image_height(const int h);
+	void set_fov(const double fov);
+	void set_sensor_width(const double w);
+	void set_sensor_height(const double h);
+	void set_exposure_time(const double t);
+	void set_iso(const double iso);
+	void set_pinhole_radius(const double r);
+	void set_position(const Vec &position);
+	void set_target(const Vec &target);
+	void set_up(const Vec &up);
+
+	int get_image_width();
+	int get_image_height();
+	double get_fov();
+	double get_sensor_width();
+	double get_sensor_height();
+	double get_exposure_time();
+	double get_iso();
+	double get_pinhole_radius();
+	Vec get_position();
+	Vec get_target();
+	Vec get_up();
 };
 
 
@@ -84,8 +122,10 @@ private:
 	Spectrum m_mono_eq;
 
 public:
-	MonoCamera(const Config &config);
+	MonoCamera();
 	Vec convert_spd_to_rgb(const Spectrum  &spectrum);
+
+	void set_mono_eq(const Spectrum &mono_eq);
 };
 
 class RGBCamera : public Observer {
@@ -95,8 +135,12 @@ private:
 	Spectrum m_b_eq;
 
 public:
-	RGBCamera(const Config &config);
+	RGBCamera();
 	Vec convert_spd_to_rgb(const Spectrum &spd);
+
+	void set_r_eq(const Spectrum &r_eq);
+	void set_g_eq(const Spectrum &g_eq);
+	void set_b_eq(const Spectrum &b_eq);
 };
 
 
@@ -105,10 +149,12 @@ private:
 	XYZColor m_XYZ_color;
 
 public:
-	Eye(const Config &config);
+	Eye();
 	Vec convert_spd_to_rgb(const Spectrum &spd);
+
+	void set_XYZ_color(const XYZColor &XYZ_color);
 };
 
-Observer * generateObserver(Observer::Config &config);
+//Observer * generateObserver(Observer::Config &config);
 
 #endif //CAMERA_H

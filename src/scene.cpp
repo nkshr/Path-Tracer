@@ -8,13 +8,8 @@
 #include "ray.h"
 #include "config.h"
 
-Scene::Scene(const Config &config) : m_config(config) {
-};
+Scene::Scene() {
 
-Scene::Scene(const Spectrum &atten_coefs):m_atten_coefs(atten_coefs) {
-	//atten_coefs.init("../data/Pope_absorp.txt", "");
-	//atten_coefs.scale(100);
-  m_atten_coefs = Spectrum(1.0);
 }
 
 void Scene::add(Object *object) {
@@ -46,12 +41,12 @@ Spectrum Scene::trace_ray(Ray ray, int depth, unsigned short *Xi) {
 	}
 
 	if (isct.m.get_type() == EMIT) {
-		return attenuate(isct.u, isct.m.get_spectral_emissions());
+		return m_attenuation->attenuate(isct.u, isct.m.get_spectral_emissions());
 	}
 
 	const Spectrum albedos = isct.m.get_spectral_albedos();
 	if (++depth>config::maximum_depth) {
-		return attenuate(isct.u, isct.m.get_spectral_emissions());
+		return m_attenuation->attenuate(isct.u, isct.m.get_spectral_emissions());
 	}
 
 	Vec x = ray.origin + ray.direction * isct.u;
@@ -68,23 +63,15 @@ Spectrum Scene::trace_ray(Ray ray, int depth, unsigned short *Xi) {
 
 	radiances = radiances.element_wise_product(albedos);
 	radiances = radiances * 2.0  / (double)config::number_of_samples_per_intersection;
-	radiances = attenuate(isct.u, radiances);
+	radiances = m_attenuation->attenuate(isct.u, radiances);
 	return  radiances;
-}
-
-Vacuum::Vacuum(const Config &config) : Scene(config) {
-
 }
 
 Spectrum Vacuum::attenuate(const double dist, const Spectrum &spd) {
 	return spd;
 }
 
-Air::Air(const Config  &config) : Scene(config) {
-
-}
-
-Spectrum Air::attenuate(const double  dist, const Spectrum &spd) {
+Spectrum Water::attenuate(const double dist, const Spectrum &spd) {
 	Spectrum atten_spd;
 	for (int i = 0; i < config::number_of_samples_per_spectrum; ++i) {
 		atten_spd[i] = spd[i] * exp(-m_atten_coefs[i] * dist);
@@ -92,25 +79,16 @@ Spectrum Air::attenuate(const double  dist, const Spectrum &spd) {
 	return  atten_spd;
 }
 
-Underwater::Underwater(const Config &config) : Scene(config){
+void Water::set_absorp_coefs(const Spectrum &coefs) {
+	m_absorp_coefs = coefs;
+	m_atten_coefs = m_absorp_coefs + m_scat_coefs;
 }
 
-Spectrum Underwater::attenuate(const double dist, const Spectrum &spd) {
-	Spectrum atten_spd;
-	for (int i = 0; i < config::number_of_samples_per_spectrum; ++i) {
-		atten_spd[i] = spd[i] * exp(-m_atten_coefs[i] * dist);
-	}
-	return  atten_spd;
+void Water::set_scat_coefs(const Spectrum &coefs) {
+	m_scat_coefs = coefs;
+	m_atten_coefs = m_absorp_coefs + m_scat_coefs;
 }
 
-Scene * generateScene(const Scene::Config &config) {
-	switch (config.model) {
-	default:
-	case Scene::VACUUM:
-		return new Vacuum(config);
-	case Scene::AIR:
-		return new Air(config);
-	case Scene::UNDERWATER:
-		return new Underwater(config);
-	}
+void Scene::set_attenuation(Attenuation * attenuation) {
+	m_attenuation = attenuation;
 }

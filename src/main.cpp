@@ -20,38 +20,29 @@
 #include "objects.h"
 #include "observer.h"
 #include "scene.h"
-#include "renderer.h"
 #include "common.h"
 
 int main(int argc, char *argv[]) {
 
     time_t start, stop;
     time(&start);               // Start execution timer
-	Observer::Config oconfig;
-	oconfig.image_width = 320;
-	oconfig.image_height = 240;
-	oconfig.fov = 60;
-	oconfig.exposure_time = 1.0;
-	oconfig.position = Vec(-2, 0, 0);
-	oconfig.target = Vec(0, 0, -6);
-	oconfig.up = Vec(0, 1, 0);
-	oconfig.type = Observer::MONO;
-	oconfig.mono_eq_file = config::gt1290_eq_file;
-	oconfig.sensor_size = 1.0;
+	MonoCamera camera;
+	camera.set_image_width(320);
+	camera.set_image_height(240);
+	camera.set_exposure_time(1.0);
+	camera.set_position(Vec(-2.0, 0.0, 0.0));
+	camera.set_target(Vec(0.0, 0.0, -6.0));
+	camera.set_up(Vec(0.0, 1.0, 0.0));
+	camera.set_mono_eq(Spectrum(config::gt1290_eq_file));
+	camera.update();
 
-	Observer * observer = generateObserver(oconfig);
-
-	Scene::Config sconfig;
-	sconfig.model = Scene::VACUUM;
-	sconfig.abosrp_coefs_file = config::absorption_coefficients_file;
-	sconfig.absorp_coefs_scale = 100.0;
-
-	sconfig.objects.push_back(new Sphere(Vec(3, 0, 6), 1, Material(EMIT, Spectrum("../data/spike700.csv"), Spectrum(0.0))));
-	sconfig.objects.push_back(new Cylinder(Vec(0, 0, 0), Vec(0, 0, 1), 4, 12, Material(DIFF)));
-
-	Scene * scene = generateScene(sconfig);
-
-	write_png(observer->capture(*scene), oconfig.image_width, oconfig.image_height, "render.png");
+	Scene scene;
+	scene.add(new Sphere(Vec(3, 0, 6), 1, Material(EMIT, Spectrum("../data/spike700.csv"), Spectrum(0.0))));
+	scene.add(new Cylinder(Vec(0, 0, 0), Vec(0, 0, 1), 4, 12, Material(DIFF)));
+	
+	camera.capture(scene);
+	
+	//write_png(observer->capture(*scene), oconfig.image_width, oconfig.image_height, "render.png");
 
 
     // Print duration information

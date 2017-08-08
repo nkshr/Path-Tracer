@@ -124,5 +124,6 @@ class DMsg{
   }
 };
 
+
 bool write_png(const unsigned char * data,
-	const int width, const int height, const char * fname)
+	const int width, const int height, const char * fname);
