@@ -43,13 +43,6 @@ Observer::~Observer() {
 	delete[] m_pixel_buffer;
 }
 
-int Observer::get_width() { return m_config.image_width; }
-int Observer::get_height() { return m_config.image_height; }
-
-double Observer::get_sensor_size() {
-  return m_config.sensor_size;
-}
-
 // Returns ray from camera origin through pixel at x,y
 Ray Observer::get_ray(int x, int y, bool jitter_pixel, bool jitter_pinhole, unsigned short *Xi) {
     double x_jitter_pixel;
@@ -77,12 +70,12 @@ Ray Observer::get_ray(int x, int y, bool jitter_pixel, bool jitter_pinhole, unsi
     return Ray(m_config.position, (pixel-m_config.position).norm(), Spectrum(0.0));
 }
 
-void Observer::create_image(const Spectrum *psds) {
+void Observer::create_image(const Spectrum *spds) {
   DMsg dmsg("create_image");
   m_max_pixel_val = -DBL_MAX;
   m_min_pixel_val = DBL_MAX;
 	for (int i = 0; i < m_num_pixels; ++i) {
-		Vec rgb = convert_psd_to_rgb(psds[i]);
+		Vec rgb = convert_spd_to_rgb(spds[i]);
 		rgb = rgb * m_config.exposure_time;
 
 		double tmp = max(rgb.x, rgb.y, rgb.z);
@@ -102,20 +95,51 @@ void Observer::create_image(const Spectrum *psds) {
 	}
 }
 
-void Observer::read_image(const double *& buf, int &num_pixs, double &max_val, double &min_val) {
-	buf = m_pixel_buffer;
-	num_pixs = m_config.image_width * m_config.image_height;
-	max_val = m_max_pixel_val;
-	min_val = m_min_pixel_val;
+const double * Observer::read_image() {
+	return m_pixel_buffer;
+}
+
+void Observer::capture(Scene &scene) {
+	const double spd_scale = m_config.sensor_size / (config::number_of_samples_per_pixel * config::number_of_samples_per_point);
+
+	// Main Loop
+	#pragma omp parallel for schedule(dynamic, 1)       // OpenMP
+	for (int y = 0; y<m_config.image_height; y++) {
+		unsigned short Xi[3] = { (unsigned short)0, (unsigned short)0,(unsigned short)(y*y*y) };               // Stores seed for erand48
+		fprintf(stderr, "\rRendering : %.2f%% ",      // Prints
+			(double)y / m_config.image_height * 100);                   // progress
+
+		for (int x = 0; x<m_config.image_width; x++) {
+			Spectrum &spd = m_spds[y * m_config.image_width + x];
+			for (int s1 = 0; s1 < config::number_of_samples_per_pixel; ++s1) {
+				for (int s2 = 0; s2 < config::number_of_samples_per_point; ++s2) {
+					Ray ray = get_ray(x, y, s1 > 0, s2 > 0, Xi);
+					spd = spd + scene.trace_ray(ray, 0, Xi);
+				}
+			}
+			spd = spd * spd_scale * m_config.sensor_size;
+		}
+	}
+
+	for (int i = 0; i < m_num_pixels; ++i) {
+		Vec rgb = convert_spd_to_rgb(m_spds[i]);
+		rgb = rgb * m_config.exposure_time;
+
+		const int ipb = i * 3;
+		m_pixel_buffer[ipb] = rgb.x;
+		m_pixel_buffer[ipb + 1] = rgb.y;
+		m_pixel_buffer[ipb + 2] = rgb.z;
+	}
+
 }
 
 MonoCamera::MonoCamera(const Config &config) : Observer(config){
 	m_mono_eq.load(m_config.mono_eq_file);
 }
 
-Vec MonoCamera::convert_psd_to_rgb(const Spectrum &psd) {
+Vec MonoCamera::convert_spd_to_rgb(const Spectrum &spd) {
 	Vec rgb;
-	rgb.x = m_mono_eq * psd;
+	rgb.x = m_mono_eq * spd;
 	rgb.y = rgb.x;
 	rgb.z = rgb.y;
 	return rgb;
@@ -127,11 +151,11 @@ RGBCamera::RGBCamera(const Config &config) : Observer(config) {
 	m_b_eq.load(m_config.b_eq_file);
 }
 
-Vec RGBCamera::convert_psd_to_rgb(const Spectrum &psd) {
+Vec RGBCamera::convert_spd_to_rgb(const Spectrum &spd) {
 	Vec rgb;
-	rgb.x = m_r_eq * psd;
-	rgb.y = m_g_eq * psd;
-	rgb.z = m_b_eq * psd;
+	rgb.x = m_r_eq * spd;
+	rgb.y = m_g_eq * spd;
+	rgb.z = m_b_eq * spd;
 	return rgb;
 }
 
@@ -139,7 +163,7 @@ Eye::Eye(const Config &config) : Observer(config) {
 	m_XYZ_color.load(m_config.XYZ_cmf_file);
 }
 
-Vec Eye::convert_psd_to_rgb(const Spectrum &psd) {
+Vec Eye::convert_spd_to_rgb(const Spectrum &spd) {
 	Vec rgb;
 	return rgb;
 }
@@ -157,3 +181,4 @@ Observer * generateObserver(Observer::Config &config) {
 		break;
 	}
 }
+

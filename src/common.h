@@ -1,5 +1,6 @@
 #pragma once
 #include <cfloat>
+#include <algorithm>
 #include <cstring>
 #include <iostream>
 
@@ -122,3 +123,6 @@ class DMsg{
     std::cerr << "Exiting " << m_msg << std::endl;
   }
 };
+
+bool write_png(const unsigned char * data,
+	const int width, const int height, const char * fname)
