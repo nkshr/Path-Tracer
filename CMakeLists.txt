@@ -23,9 +23,9 @@ set(SOURCE_FILES
     src/objects.cpp
     src/observer.cpp
     src/scene.cpp
-    src/renderer.cpp
 	src/color.cpp
 	src/spectrum.cpp
+	src/common.cpp
 	lib/rand48/rand48.c
     lib/lodepng/lodepng.cpp
     lib/tiny_obj_loader/tiny_obj_loader.cc
@@ -36,7 +36,6 @@ set(HEADER_FILES
 	src/material.h
 	src/objects.h
 	src/ray.h
-	src/renderer.h
 	src/scene.h
 	src/vector.h
 	src/color.h
