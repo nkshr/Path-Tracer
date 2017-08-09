@@ -69,7 +69,7 @@ void Observer::capture(Scene &scene) {
 					spd = spd + scene.trace_ray(ray, 0, Xi);
 				}
 			}
-			spd = spd * spd_scale * m_sensor_size;
+			spd = spd * spd_scale;
 		}
 	}
 
@@ -107,6 +107,8 @@ void Observer::update() {
 	if (m_spds)
 		delete[] m_spds;
 	m_spds = new Spectrum[m_num_pixels];
+
+	m_sensor_size = m_sensor_width * m_sensor_height;
 }
 
 void Observer::set_image_width(const int w) {

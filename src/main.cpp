@@ -27,9 +27,11 @@ int main(int argc, char *argv[]) {
     time_t start, stop;
     time(&start);               // Start execution timer
 	MonoCamera camera;
-	camera.set_image_width(320);
-	camera.set_image_height(240);
+	camera.set_image_width(32);
+	camera.set_image_height(24);
 	camera.set_exposure_time(1.0);
+	camera.set_sensor_width(1.0);
+	camera.set_sensor_height(1.0);
 	camera.set_position(Vec(-2.0, 0.0, 0.0));
 	camera.set_target(Vec(0.0, 0.0, -6.0));
 	camera.set_up(Vec(0.0, 1.0, 0.0));
