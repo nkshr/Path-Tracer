@@ -128,10 +128,10 @@ class DMsg{
 bool write_png(const unsigned char * data,
 	const int width, const int height, const char * fname);
 
-inline void mapValues(double* const data, const int num_data,
+inline void mapValues(double* const vals, const int num_vals,
 	const double xmin, const double xmax, const double new_xmin, const double new_xmax) {
-	for (int i = 0; i < num_data; ++i) {
-		data[i] = mapValue(data[i], xmin, xmax, new_xmin, new_xmax);
+	for (int i = 0; i < num_vals; ++i) {
+	        vals[i] = mapValue(vals[i], xmin, xmax, new_xmin, new_xmax);
 	}
 }
 
