@@ -46,10 +46,10 @@ int main(int argc, char *argv[]) {
 
 	double * pixel_buffer = camera.copy_image();
 	double min_val, max_val;
-	get_min_max(pixel_buffer, camera.get_num_pixels(), min_val, max_val);
+	getMinMax(pixel_buffer, camera.get_num_pixels(), min_val, max_val);
 	mapValues(pixel_buffer, camera.get_num_pixels(), min_val, max_val, 0, 255.9);
 
-	write_png(convert_double_to_uchar(pixel_buffer, camera.get_num_pixels()), camera.get_image_width(), camera.get_image_height(), "render.png");
+	write_png(convertDouble3cToUchar4c(pixel_buffer, camera.get_num_pixels()), camera.get_image_width(), camera.get_image_height(), "render.png");
 
 
     // Print duration information
