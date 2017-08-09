@@ -6,8 +6,7 @@
 #include "common.h"
 #include "spectrum.h"
 
-Observer::Observer(){
-	update();
+Observer::Observer(): m_pixel_buffer(NULL), m_spds(NULL){
 }
 
 Observer::~Observer() {
@@ -56,7 +55,7 @@ void Observer::capture(Scene &scene) {
 	const double spd_scale = m_sensor_size / (config::number_of_samples_per_pixel * config::number_of_samples_per_point);
 
 	// Main Loop
-	#pragma omp parallel for schedule(dynamic, 1)       // OpenMP
+	//#pragma omp parallel for schedule(dynamic, 1)       // OpenMP
 	for (int y = 0; y<m_image_height; y++) {
 		unsigned short Xi[3] = { (unsigned short)0, (unsigned short)0,(unsigned short)(y*y*y) };               // Stores seed for erand48
 		fprintf(stderr, "\rRendering : %.2f%% ",      // Prints
@@ -100,10 +99,14 @@ void Observer::update() {
 	m_x_spacing_half = m_x_spacing * 0.5;
 	m_y_spacing_half = m_y_spacing * 0.5;
 
-	if (m_num_pixels)
+	if (m_pixel_buffer)
 		delete[] m_pixel_buffer;
 	m_num_pixels = m_image_width * m_image_height;
 	m_pixel_buffer = new double[m_num_pixels * 3];
+
+	if (m_spds)
+		delete[] m_spds;
+	m_spds = new Spectrum[m_num_pixels];
 }
 
 void Observer::set_image_width(const int w) {
