@@ -69,7 +69,7 @@ void Observer::capture(Scene &scene) {
 					spd = spd + scene.trace_ray(ray, 0, Xi);
 				}
 			}
-			//spd = spd * spd_scale;
+			spd = spd * spd_scale;
 		}
 	}
 
