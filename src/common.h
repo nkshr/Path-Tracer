@@ -135,8 +135,8 @@ inline void mapValues(double* const data, const int num_data,
 	}
 }
 
-inline unsigned char * convert_double_to_uchar(const double * data, const int num_data) {
-	unsigned char * uc_data = new unsigned char[num_data];
+inline unsigned char * convert_double3c_to_uchar4c(const double * data, const int num_data) {
+	unsigned char * uc_data = new unsigned char[num_data * 4];
 	for (int i = 0; i < num_data; ++i) {
 		if (data[i] > 255.0) {
 			uc_data[i] = 255;

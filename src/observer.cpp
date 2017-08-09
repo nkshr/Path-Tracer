@@ -45,7 +45,7 @@ const double * Observer::read_image() {
 }
 
 double * Observer::copy_image() {
-	const int size = m_num_pixels * sizeof(double);
+	const int size = m_num_pixels * sizeof(double) * 3;
 	double * pixel_buffer = new double[size];
 	memcpy((void*)pixel_buffer, (void*)m_pixel_buffer, size);
 	return pixel_buffer;
