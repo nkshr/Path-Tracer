@@ -51,7 +51,6 @@ int main(int argc, char *argv[]) {
 
 	write_png(convertDouble3cToUchar4c(pixel_buffer, camera.get_num_pixels()), camera.get_image_width(), camera.get_image_height(), "render.png");
 
-
     // Print duration information
     time(&stop);
     double diff = difftime(stop, start);
