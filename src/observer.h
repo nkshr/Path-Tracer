@@ -14,8 +14,6 @@
 
 class Observer {
 private:
-    double m_width_recp;
-    double m_height_recp;
     double m_ratio;
     double m_x_spacing;
     double m_x_spacing_half;

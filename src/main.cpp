@@ -39,9 +39,11 @@ int main(int argc, char *argv[]) {
 	camera.update();
 
 	Scene scene;
-	scene.add(new Sphere(Vec(3, 0, 6), 1, Material(EMIT, Spectrum("../data/spike700.csv"), Spectrum(0.0))));
-	scene.add(new Cylinder(Vec(0, 0, 0), Vec(0, 0, 1), 4, 12, Material(DIFF)));
+	//scene.add(new Sphere(Vec(3, 0, 6), 1, Material(EMIT, Spectrum("../data/spike700.csv"), Spectrum(0.0))));
+	//scene.add(new Cylinder(Vec(0, 0, 0), Vec(0, 0, 1), 4, 12, Material(DIFF)));
+	scene.add(new Sphere(Vec(0.0, 0.0, -6.0), 1, Material(EMIT, Spectrum("../data/spike700.csv"), Spectrum(0.0))));
 	scene.set_attenuation(new Vacuum());
+
 	camera.capture(scene);
 
 	double * pixel_buffer = camera.copy_image();
