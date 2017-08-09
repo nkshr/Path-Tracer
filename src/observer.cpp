@@ -45,6 +45,13 @@ const double * Observer::read_image() {
 	return m_pixel_buffer;
 }
 
+double * Observer::copy_image() {
+	const int size = m_num_pixels * sizeof(double);
+	double * pixel_buffer = new double[size];
+	memcpy((void*)pixel_buffer, (void*)m_pixel_buffer, size);
+	return pixel_buffer;
+}
+
 void Observer::capture(Scene &scene) {
 	const double spd_scale = m_sensor_size / (config::number_of_samples_per_pixel * config::number_of_samples_per_point);
 
@@ -149,6 +156,10 @@ int Observer::get_image_width() {
 
 int Observer::get_image_height() {
 	return m_image_height;
+}
+
+int Observer::get_num_pixels() {
+	return m_num_pixels;
 }
 
 double Observer::get_fov() {

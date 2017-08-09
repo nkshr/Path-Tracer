@@ -127,3 +127,40 @@ class DMsg{
 
 bool write_png(const unsigned char * data,
 	const int width, const int height, const char * fname);
+
+inline void mapValues(double* const data, const int num_data,
+	const double xmin, const double xmax, const double new_xmin, const double new_xmax) {
+	for (int i = 0; i < num_data; ++i) {
+		data[i] = mapValue(data[i], xmin, xmax, new_xmin, new_xmax);
+	}
+}
+
+inline unsigned char * convert_double_to_uchar(const double * data, const int num_data) {
+	unsigned char * uc_data = new unsigned char[num_data];
+	for (int i = 0; i < num_data; ++i) {
+		if (data[i] > 255.0) {
+			uc_data[i] = 255;
+		}
+		else if (data[i] < 0.0) {
+			uc_data[i] = 0;
+		}
+		else {
+			uc_data[i] = static_cast<int>(data[i]);
+		}
+	}
+
+	return uc_data;
+}
+
+inline void get_min_max(const double * data, const int num_data,
+	double &min_val, double &max_val) {
+	min_val = DBL_MAX;
+	max_val = -DBL_MAX;
+	for (int i = 0; i < num_data; ++i) {
+		if (min_val > data[i])
+			min_val = data[i];
+
+		if (max_val < data[i])
+			max_val = data[i];
+	}
+}

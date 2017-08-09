@@ -7,15 +7,16 @@
 
 class Attenuation{
 public:
-	virtual Spectrum attenuate(const double dist, const Spectrum &spd) = 0;
+	virtual Spectrum attenuate(const double dist, const Spectrum &spd) = 0 ;
 };
 
-class Vacuum : Attenuation {
+class Vacuum : public Attenuation {
 public: 
+	Vacuum() {};
 	Spectrum attenuate(const double dist, const Spectrum &spd);
 };
 
-class Water : Attenuation{
+class Water : public Attenuation{
 private:
 	Spectrum m_atten_coefs;
 	Spectrum m_absorp_coefs;

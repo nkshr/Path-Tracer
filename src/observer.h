@@ -13,34 +13,6 @@
 #include "scene.h"
 
 class Observer {
-public:
-	//enum  Type {
-	//	EYE, MONO, RGB
-	//};
-
-	//struct Config {
-	//	Config() : image_width(1280), image_height(960), fov(60),
-	//		position(Vec()),  target(Vec()), up(Vec()), type(MONO){
-	//	}
-
-	//	int image_width;
-	//	int image_height;
-	//	double fov;
-	//	double sensor_size;
-	//	double exposure_time;
-	//	double iso;
-	//	double pinhole_radius;
-	//	Vec position;
-	//	Vec target;
-	//	Vec up;
-	//	Type type;
-	//	char * mono_eq_file;
-	//	char * r_eq_file;
-	//	char * g_eq_file;
-	//	char * b_eq_file;
-	//	char * XYZ_cmf_file;
-	//};
-
 private:
     double m_width_recp;
     double m_height_recp;
@@ -86,6 +58,7 @@ public:
 
 	Ray get_ray(int x, int y, bool jitter_pixel, bool jitter_pinhole, unsigned short *Xi);
 	const double * read_image();
+	double * copy_image();
 
 	virtual Vec convert_spd_to_rgb(const Spectrum &spd) = 0;
 	void capture(Scene &scene);
@@ -105,6 +78,7 @@ public:
 
 	int get_image_width();
 	int get_image_height();
+	int get_num_pixels();
 	double get_fov();
 	double get_sensor_width();
 	double get_sensor_height();

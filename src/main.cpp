@@ -39,10 +39,15 @@ int main(int argc, char *argv[]) {
 	Scene scene;
 	scene.add(new Sphere(Vec(3, 0, 6), 1, Material(EMIT, Spectrum("../data/spike700.csv"), Spectrum(0.0))));
 	scene.add(new Cylinder(Vec(0, 0, 0), Vec(0, 0, 1), 4, 12, Material(DIFF)));
-	
+	scene.set_attenuation(new Vacuum());
 	camera.capture(scene);
-	
-	//write_png(observer->capture(*scene), oconfig.image_width, oconfig.image_height, "render.png");
+
+	double * pixel_buffer = camera.copy_image();
+	double min_val, max_val;
+	get_min_max(pixel_buffer, camera.get_num_pixels(), min_val, max_val);
+	mapValues(pixel_buffer, camera.get_num_pixels(), min_val, max_val, 0, 255.9);
+
+	write_png(convert_double_to_uchar(pixel_buffer, camera.get_num_pixels()), camera.get_image_width(), camera.get_image_height(), "render.png");
 
 
     // Print duration information
