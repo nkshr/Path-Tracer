@@ -137,7 +137,8 @@ inline void mapValues(double* const data, const int num_data,
 
 inline unsigned char * convertDouble3cToUchar4c(const double * data, const int num_data) {
 	unsigned char * uc_data = new unsigned char[num_data * 4];
-	for (int i = 0, j = 0; j < num_data;) {
+	const int jmax = num_data * 3;
+	for (int i = 0, j = 0; j < jmax;) {
 		uc_data[i++] = static_cast<unsigned char>(floor(data[j++]));
 		uc_data[i++] = static_cast<unsigned char>(floor(data[j++]));
 		uc_data[i++] = static_cast<unsigned char>(floor(data[j++]));
@@ -147,15 +148,15 @@ inline unsigned char * convertDouble3cToUchar4c(const double * data, const int n
 	return uc_data;
 }
 
-inline void getMinMax(const double * data, const int num_data,
+inline void getMinMax(const double * vals, const int num_vals,
 	double &min_val, double &max_val) {
 	min_val = DBL_MAX;
 	max_val = -DBL_MAX;
-	for (int i = 0; i < num_data; ++i) {
-		if (min_val > data[i])
-			min_val = data[i];
+	for (int i = 0; i < num_vals; ++i) {
+		if (min_val > vals[i])
+			min_val = vals[i];
 
-		if (max_val < data[i])
-			max_val = data[i];
+		if (max_val < vals[i])
+			max_val = vals[i];
 	}
 }

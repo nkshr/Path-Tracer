@@ -45,9 +45,9 @@ const double * Observer::read_image() {
 }
 
 double * Observer::copy_image() {
-	const int size = m_num_pixels * sizeof(double) * 3;
+	const int size = m_num_pixels *  3;
 	double * pixel_buffer = new double[size];
-	memcpy((void*)pixel_buffer, (void*)m_pixel_buffer, size);
+	memcpy((void*)pixel_buffer, (void*)m_pixel_buffer, size  * sizeof(double));
 	return pixel_buffer;
 }
 
@@ -69,7 +69,7 @@ void Observer::capture(Scene &scene) {
 					spd = spd + scene.trace_ray(ray, 0, Xi);
 				}
 			}
-			spd = spd * spd_scale;
+			//spd = spd * spd_scale;
 		}
 	}
 
