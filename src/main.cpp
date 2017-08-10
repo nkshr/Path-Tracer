@@ -35,7 +35,8 @@ int main(int argc, char *argv[]) {
 	camera.set_position(Vec(-2.0, 0.0, 6.0));
 	camera.set_target(Vec(0.0, 0.0, -6.0));
 	camera.set_up(Vec(0.0, 1.0, 0.0));
-	camera.set_mono_eq(Spectrum(config::gt1290_eq_file));
+	camera.set_iso(1.0);
+	camera.set_mono_eq(Spectrum(1.0));
 	camera.update();
 
 	Scene scene;

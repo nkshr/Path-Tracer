@@ -25,7 +25,6 @@ private:
     Vec m_y_direction;
 
 	int m_num_pixels;
-	int m_pixel_count;
 
 	double *m_pixel_buffer;
 private:

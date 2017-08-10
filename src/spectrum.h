@@ -22,8 +22,10 @@ public:
 	}
 
 	Spectrum(const char *fname) {
-		if (!load(fname))
+	  if (!load(fname)){
+	    std::cerr << "Error : Couldn't load " << fname << "." << std::endl;
 			*this = Spectrum(0.0);
+	  }
 	}
 
 	Spectrum operator+(const Spectrum &r) {
