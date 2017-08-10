@@ -74,9 +74,9 @@ private:
 	double m_w;
 	double m_h;
 	double m_depth;
-	Vec m_dir;
 	Vec m_x_dir;
 	Vec m_y_dir;
+	Vec m_z_dir;
 
 	Triangle m_tris[12];
 
