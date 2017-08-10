@@ -21,7 +21,7 @@ private:
 	Spectrum m_spectral_emissions;
 
 public:
-	Material( MaterialType t=DIFF, Spectrum e = Spectrum(0.0), Spectrum a = Spectrum(0.56));
+	Material( MaterialType t=DIFF, Spectrum e = Spectrum(0.0), Spectrum a = Spectrum(config::general_albedo));
 	MaterialType get_type() const;
 	Ray get_reflected_ray( const Ray &r, Vec &p, const Vec &n, unsigned short *Xi ) const;
 	Spectrum get_spectral_albedos() const;

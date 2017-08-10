@@ -32,16 +32,16 @@ int main(int argc, char *argv[]) {
 	camera.set_exposure_time(1.0);
 	camera.set_sensor_width(1.0);
 	camera.set_sensor_height(1.0);
-	camera.set_position(Vec(-2.0, 0.0, 0.0));
+	camera.set_position(Vec(-2.0, 0.0, 6.0));
 	camera.set_target(Vec(0.0, 0.0, -6.0));
 	camera.set_up(Vec(0.0, 1.0, 0.0));
 	camera.set_mono_eq(Spectrum(config::gt1290_eq_file));
 	camera.update();
 
 	Scene scene;
-	//scene.add(new Sphere(Vec(3, 0, 6), 1, Material(EMIT, Spectrum("../data/spike700.csv"), Spectrum(0.0))));
-	//scene.add(new Cylinder(Vec(0, 0, 0), Vec(0, 0, 1), 4, 12, Material(DIFF)));
-	scene.add(new Sphere(Vec(0.0, 0.0, -6.0), 1, Material(EMIT, Spectrum("../data/spike700.csv"), Spectrum(0.0))));
+	scene.add(new Cylinder(Vec(0, 0, 0), Vec(0, 0, 1), 4, 12, Material(DIFF)));
+	scene.add(new Sphere(Vec(5.0, 0.0, 6.0), 1, Material(EMIT, Spectrum("../data/spike700.csv"), Spectrum(0.0))));
+	scene.add(new Cuboid(Vec(0.0, 0.0, -3.0), Vec(0.0, 0.0, -1.0), Vec(0.0, 1.0, 0.0), 2.0, 3.0, 1.0, Material(DIFF)));
 	scene.set_attenuation(new Vacuum());
 
 	camera.capture(scene);

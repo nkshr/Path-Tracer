@@ -218,7 +218,7 @@ Cuboid::Cuboid(Vec p_, Vec dir_, Vec up_, double w_, double h_, double depth_, M
 	m_tris[11] = Triangle(v4, v2, v0, Vec(), Vec(), Vec(), &m_m);
 }
 
-ObjectIntersection Cuboid::get_intersect(const Ray &r) {
+ObjectIntersection Cuboid::get_intersection(const Ray &r) {
 	ObjectIntersection isct;
 	double t = DBL_MAX;
 	for (int i = 0; i < 4; ++i) {

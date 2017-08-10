@@ -18,6 +18,6 @@ namespace config {
 	static constexpr int buffer_size = 1024;
 	constexpr double lambda_step = (double)(maximum_lambda- minimum_lambda)/(double)(number_of_samples_per_spectrum - 1);
 	static constexpr double eps = 1e-4;
-	static constexpr double general_albedo = 0.18;
+	static constexpr double general_albedo = 0.56;
 };
 #endif

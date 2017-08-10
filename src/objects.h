@@ -82,7 +82,7 @@ private:
 
 public:
 	Cuboid(Vec p_, Vec dir_, Vec up_, double w_, double h_, double depth_, Material m_);
-	virtual ObjectIntersection get_intersect(const Ray &r);
+	virtual ObjectIntersection get_intersection(const Ray &r);
 };
 
 //class Mesh : public Object {

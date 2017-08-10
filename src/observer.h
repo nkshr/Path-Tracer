@@ -50,8 +50,7 @@ protected:
 	Spectrum * m_spds;
 
 public:
-    //Camera(Vec position, Vec target, Vec up, int width, int height, Spectrum mono_eq);
-	Observer();
+ 	Observer();
 	~Observer();
 
 	Ray get_ray(int x, int y, bool jitter_pixel, bool jitter_pinhole, unsigned short *Xi);
