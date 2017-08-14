@@ -37,7 +37,7 @@ Ray Observer::get_ray(int x, int y, bool jitter_pixel, bool jitter_pinhole, unsi
     pixel = pixel - m_x_direction*m_ratio + m_x_direction*((x * 2 * m_ratio)*m_image_width_recp) + x_jitter_pixel;
     pixel = pixel + m_y_direction - m_y_direction*((y * 2.0)*m_image_height_recp + y_jitter_pixel);
 
-    return Ray(m_position, (pixel-m_position).norm(), Spectrum(0.0));
+    return Ray(m_position, (pixel-m_position).norm());
 }
 
 const double * Observer::read_image() {

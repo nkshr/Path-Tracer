@@ -55,16 +55,7 @@ Spectrum Scene::trace_ray(Ray ray, int depth, unsigned short *Xi) {
 	Spectrum radiances(0.0);
 	for (int i = 0; i < config::number_of_samples_per_intersection; ++i) {
 		Ray reflected = isct.m.get_reflected_ray(ray, x, isct.n, Xi);
-		double dot_product = reflected.direction.dot(isct.n);
-		if (dot_product < 0.0)
-			dot_product = 0.0;
-		radiances = radiances + trace_ray(reflected, depth, Xi) *dot_product;
-		//if (reflected.direction.dot(isct.n) < 0) {
-		//	std::cout << reflected.direction.dot(isct.n) << std::endl;
-		//}
-		//if (ray.direction.dot(isct.n) > 0) {
-		//	std::cout << ray.direction.dot(isct.n) << std::endl;
-		//}
+		radiances = radiances + trace_ray(reflected, depth, Xi) * std::max(0.0, reflected.direction.dot(isct.n));
 	}
 
 	radiances = radiances.element_wise_product(albedos);

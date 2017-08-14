@@ -248,3 +248,38 @@ ObjectIntersection Cuboid::get_intersection(const Ray &r) {
 
 	return isct;
 }
+
+Plane::Plane(Vec p, Vec n, Material m) : Object(p, m), m_n(n) {
+
+}
+
+ObjectIntersection Plane::get_intersection(const Ray &r) {
+	ObjectIntersection isct;
+	const double rn = r.direction.dot(m_n);
+	if (abs(rn) < config::eps) {
+		return isct;
+	}
+
+	isct.u = (m_p - r.origin).dot(m_n) / rn;
+	isct.m = m_m;
+	isct.n = m_n;
+	isct.hit = true;
+	
+	return isct;
+}
+
+Disc::Disc(Vec p, Vec n, double r, Material m) : Plane(p, n, m) , m_r(r){
+
+}
+
+ObjectIntersection Disc::get_intersection(const Ray &r) {
+	ObjectIntersection isct = Plane::get_intersection(r);
+	if (isct.hit) {
+		Vec isct_pt = r.origin + r.direction * isct.u;
+		if (isct_pt.mag() > m_r) {
+			isct = ObjectIntersection();
+		}
+	}
+
+	return isct;
+}

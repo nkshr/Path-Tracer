@@ -103,4 +103,19 @@ public:
 //};
 //
 
+class Plane : public Object {
+private:
+	Vec m_n;
+public:
+	Plane(Vec p, Vec n, Material m);
+	virtual ObjectIntersection get_intersection(const Ray &r);
+};
+
+class Disc : public Plane {
+private:
+	double m_r;
+public:
+	Disc(Vec p, Vec n, double r, Material m);
+	virtual ObjectIntersection get_intersection(const Ray &r);
+};
 #endif // OBJECTS_H
