@@ -9,7 +9,8 @@ protected:
 	Vec m_p;
 public:
 	Light(Spectrum spd, Vec p);
-	virtual Spectrum illuminate(const Vec &p) = 0;
+	virtual void illuminate(const Vec &p, Ray &shadow_ray, Spectrum  &spd) = 0;
+
 };
 
 class Laser : public Light {
@@ -19,5 +20,13 @@ private:
 
 public:
 	Laser(Spectrum spd, Vec p, Vec d, const double r);
-	void illuminate(const Vec &p, Ray &shadow_ray, Spectrum  &spd);
+	virtual void illuminate(const Vec &p, Ray &shadow_ray, Spectrum  &spd);
+};
+
+class PointLight : public Light {
+private:
+protected:
+	PointLight(Spectrum spd, Vec p);
+	virtual void illuminate(const Vec &p, Ray &shadow_ray, Spectrum  &spd);
+
 };

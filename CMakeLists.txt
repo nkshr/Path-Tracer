@@ -27,6 +27,7 @@ set(SOURCE_FILES
 	src/spectrum.cpp
 	src/common.cpp
 	src/light.cpp
+	src/attenuation.cpp
 	lib/rand48/rand48.c
     lib/lodepng/lodepng.cpp
     lib/tiny_obj_loader/tiny_obj_loader.cc
@@ -45,6 +46,7 @@ set(HEADER_FILES
 	src/config.h
 	src/triangle.h
 	src/light.h
+	src/attenuation.h
 	lib/rand48/erand48.h
 	lib/lodepng/lodepng.h
 	lib/tiny_obj_loader/tiny_obj_loader.h

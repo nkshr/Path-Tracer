@@ -4,7 +4,7 @@
 Light::Light(Spectrum spd, Vec p) :  m_spd(spd), m_p(p){
 }
 
-Laser::Laser(Spectrum spd, Vec p, Vec d, const double r) : Light(spd, m_p), m_d(d), m_r(r){
+Laser::Laser(Spectrum spd, Vec p, Vec d, const double r) : Light(spd, p), m_d(d), m_r(r){
 	
 }
 
@@ -19,3 +19,11 @@ void Laser::illuminate(const Vec &p, Ray &shadow_ray, Spectrum &spd) {
 	spd = Spectrum(0.0);
 }
 
+PointLight::PointLight(Spectrum spd, Vec p) : Light(spd, p){
+
+}
+
+void PointLight::illuminate(const Vec &p, Ray &shadow_ray, Spectrum &spd) {
+	shadow_ray = Ray(p, (m_p - p).norm() * -1);
+	spd = m_spd;
+}
