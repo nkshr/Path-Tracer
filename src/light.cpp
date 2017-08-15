@@ -1,12 +1,13 @@
 #include "light.h"
 
-Light::Light(const Vec &p) : m_position(p){
+Light::Light(Vec p, Object * object) : m_position(p){
 }
 
-Laser::Laser(const Vec &p, const Vec&dir, const double r) : Light(p), m_disc(p, dir, r, Material()){
+Laser::Laser(Vec p, Vec dir, const double r) : Light(p, new Disc(p, dir, r, Material())){
 
 }
 
 void Laser::illuminate(const Vec &p) {
 	
 }
+

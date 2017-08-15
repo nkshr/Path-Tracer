@@ -7,17 +7,17 @@ class Light {
 protected:
 	Vec m_position;
 	Spectrum m_spd;
+	Object * m_object;
 
 public:
-	Light(const Vec &p);
+	Light(Vec p, Object * object);
 	virtual void illuminate(const Vec &p) = 0;
 };
 
 class Laser : public Light {
 private:
-	Disc m_disc;
 
 public:
-	Laser(const Vec &p, const Vec &dir, const double r);
+	Laser(Vec p, Vec dir, const double r);
 	void illuminate(const Vec &p);
 };
