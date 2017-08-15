@@ -283,3 +283,7 @@ ObjectIntersection Disc::get_intersection(const Ray &r) {
 
 	return isct;
 }
+
+Vec Plane::get_normal() const {
+	return m_n;
+}

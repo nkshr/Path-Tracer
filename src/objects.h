@@ -109,6 +109,7 @@ private:
 public:
 	Plane(Vec p, Vec n, Material m);
 	virtual ObjectIntersection get_intersection(const Ray &r);
+	Vec get_normal() const;
 };
 
 class Disc : public Plane {

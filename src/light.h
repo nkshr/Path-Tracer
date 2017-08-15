@@ -5,19 +5,19 @@
 
 class Light {
 protected:
-	Vec m_position;
 	Spectrum m_spd;
-	Object * m_object;
-
+	Vec m_p;
 public:
-	Light(Vec p, Object * object);
-	virtual void illuminate(const Vec &p) = 0;
+	Light(Spectrum spd, Vec p);
+	virtual Spectrum illuminate(const Vec &p) = 0;
 };
 
 class Laser : public Light {
 private:
+	Vec m_d;
+	double m_r;
 
 public:
-	Laser(Vec p, Vec dir, const double r);
-	void illuminate(const Vec &p);
+	Laser(Spectrum spd, Vec p, Vec d, const double r);
+	void illuminate(const Vec &p, Ray &shadow_ray, Spectrum  &spd);
 };

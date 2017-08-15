@@ -4,6 +4,8 @@
 #include <cstring>
 #include <iostream>
 
+#include "ray.h"
+#include "vector.h"
 #include "config.h"
 
 inline double linearInterpolation(const double  x, const double x1, const double  x2,
@@ -159,4 +161,28 @@ inline void getMinMax(const double * vals, const int num_vals,
 		if (max_val < vals[i])
 			max_val = vals[i];
 	}
+}
+
+inline bool calcRayPlaneIntersection(const Ray &r, const Vec &n, const Vec &p, double &t) {
+	const double rn = r.direction.dot(n);
+	if (abs(rn) < config::eps) {
+		return false;
+	}
+
+	t = (p - r.origin).dot(n) / rn;
+	return true;
+}
+
+inline bool calcRayDiscIntersection(const Ray &ray, const Vec &n, const Vec &p,
+	const double radius, double &t) {
+	if (!calcRayPlaneIntersection(ray, n, p, t)) {
+		return false;
+	}
+
+	Vec isct_pt = ray.origin + ray.direction * t;
+	if (isct_pt.mag() > radius) {
+		return false;
+	}
+
+	return true;
 }
