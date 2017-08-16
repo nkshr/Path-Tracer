@@ -1,19 +1,34 @@
 #pragma once
 #include "ray.h"
 #include "scene.h"
+#include "objects.h"
+#include "observer.h"
+#include "light.h"
 
 class Tracer {
 protected:
-	ObjectIntersection intersect(const Ray &ray, const std::vector<Object*> &objects);
-	Attenuation * m_attenuation;
+	Observer * m_observer;
 	std::vector<Object*> m_objects;
-	std::vector<Object*> m_lights;
+	ObjectIntersection Tracer::intersect(const Ray &ray);
+	Attenuation *m_attenuation;
+
+	int m_max_depth;
+	int m_num_bounces;
+	int m_num_samples_per_point;
+	int m_num_samples_per_pixel;
+
+	virtual Spectrum trace_ray(Ray ray, int depth, unsigned short * Xi);
 
 public:
-	Spectrum trace_ray(Ray ray, int depth, unsigned short * Xi);
+
+	double * trace_ray();
 };
 
 class ShadowRay : public Tracer{
+protected:
+	std::vector<Light*> lights;
+
+	virtual Spectrum trace_ray(Ray ray, int depth, unsigned short * Xi);
+
 public:
-	Spectrum trace_ray(Ray ray, int depth, unsigned short * Xi, const std::vector<Object*> &objects);
 };
