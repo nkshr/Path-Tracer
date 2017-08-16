@@ -39,13 +39,13 @@ int main(int argc, char *argv[]) {
 	camera.set_mono_eq(Spectrum(1.0));
 	camera.update();
 
-	Scene scene;
+	//Scene scene;
 	//scene.add(new Cylinder(Vec(0, 0, 0), Vec(0, 0, 1), 4, 12, Material(DIFF)));
 	//scene.add(new Sphere(Vec(0.0, 0.0, 6.0), 1, Material(EMIT, Spectrum("../data/spike700.csv"), Spectrum(0.0))));
-	scene.add(new Cuboid(Vec(0.0, 0.0, 0.0), Vec(0.0, 0.0, 1.0), Vec(0.0, 1.0, 0.0), 2.0, 3.0, 1.0, Material(DIFF)));
-	scene.set_attenuation(new Vacuum());
+	//scene.add(new Cuboid(Vec(0.0, 0.0, 0.0), Vec(0.0, 0.0, 1.0), Vec(0.0, 1.0, 0.0), 2.0, 3.0, 1.0, Material(DIFF)));
+	//scene.set_attenuation(new Vacuum());
 
-	camera.capture(scene);
+	//camera.capture(scene);
 
 	double * pixel_buffer = camera.copy_image();
 	double min_val, max_val;

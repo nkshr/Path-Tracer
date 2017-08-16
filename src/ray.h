@@ -2,7 +2,6 @@
 #define RAY_H
 
 #include "vector.h"
-#include "spectrum.h"
 
 struct Ray {
     Vec origin, direction, direction_inv;

@@ -30,8 +30,8 @@ double  * Tracer::trace_ray() {
 
 		for (int x = 0; x < width; ++x) {
 			Spectrum spd(0.0);
-			for (int s0 = 0; s0 < num_samples_per_pixel; ++s0) {
-				for (int s1 = 0; s1 < num_samples_per_point; ++s1) {
+			for (int s0 = 0; s0 < m_num_samples_per_pixel; ++s0) {
+				for (int s1 = 0; s1 < m_num_samples_per_point; ++s1) {
 					Ray ray = m_observer->get_ray(x, y, s0 > 0, s1 > 0, Xi);
 					spd = spd + trace_ray(ray, 0, Xi);
 				}
