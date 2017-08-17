@@ -18,3 +18,12 @@ public:
 };
 
 typedef Light PointLight;
+
+class SpotLight : public Light{
+private:
+	double m_ang;
+	Vec m_d;
+public:
+	SpotLight(Vec p, Spectrum srad, double deg, Vec d);
+	virtual Spectrum get_spectral_radiance(const Ray& shadow_ray) const;
+};
