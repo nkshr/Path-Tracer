@@ -10,7 +10,6 @@
 #include "common.h"
 #include "spectrum.h"
 #include "color.h"
-#include "scene.h"
 
 class Observer {
 private:
@@ -57,7 +56,7 @@ public:
 	double * copy_image();
 
 	virtual Vec convert_spd_to_rgb(const Spectrum &spd) = 0;
-	void capture(Scene &scene);
+	//void capture(Scene &scene);
 	void update();
 
 	void set_image_width(const int w);

@@ -1,5 +1,4 @@
 #include "attenuation.h"
-
 Spectrum Vacuum::attenuate(const double dist, const Spectrum &spd) {
 	return spd;
 }
@@ -21,4 +20,3 @@ void Water::set_scat_coefs(const Spectrum &coefs) {
 	m_scat_coefs = coefs;
 	m_atten_coefs = m_absorp_coefs + m_scat_coefs;
 }
-

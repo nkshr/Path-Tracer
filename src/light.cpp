@@ -1,29 +1,17 @@
 #include "light.h"
-#include "common.h"
 
-Light::Light(Spectrum spd, Vec p) :  m_spd(spd), m_p(p){
+Light::Light(Vec p, Spectrum spectral_radiance) : m_p(p), m_srad(spectral_radiance){
 }
 
-Laser::Laser(Spectrum spd, Vec p, Vec d, const double r) : Light(spd, p), m_d(d), m_r(r){
-	
+Ray Light::get_shadow_ray(const Vec &p) const {
+	return Ray (p, (m_p - p).norm());
 }
 
-void Laser::illuminate(const Vec &p, Ray &shadow_ray, Spectrum &spd) {
-	shadow_ray = Ray(p, m_d * -1);
 
-	double t;
-	if (calcRayDiscIntersection(shadow_ray, m_d, m_p, m_r, t)) {
-		spd = m_spd;
-	}
-
-	spd = Spectrum(0.0);
+Vec Light::get_position() const {
+	return m_p;
 }
 
-PointLight::PointLight(Spectrum spd, Vec p) : Light(spd, p){
-
-}
-
-void PointLight::illuminate(const Vec &p, Ray &shadow_ray, Spectrum &spd) {
-	shadow_ray = Ray(p, (m_p - p).norm() * -1);
-	spd = m_spd;
+Spectrum Light::get_spectral_radiance(const Ray &shadow_ray) const {
+	return m_srad;
 }

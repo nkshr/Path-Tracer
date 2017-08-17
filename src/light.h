@@ -2,31 +2,19 @@
 #include "vector.h"
 #include "spectrum.h"
 #include "objects.h"
+#include "ray.h"
 
 class Light {
 protected:
-	Spectrum m_spd;
 	Vec m_p;
-public:
-	Light(Spectrum spd, Vec p);
-	virtual void illuminate(const Vec &p, Ray &shadow_ray, Spectrum  &spd) = 0;
-
-};
-
-class Laser : public Light {
-private:
-	Vec m_d;
-	double m_r;
+	Spectrum m_srad;
 
 public:
-	Laser(Spectrum spd, Vec p, Vec d, const double r);
-	virtual void illuminate(const Vec &p, Ray &shadow_ray, Spectrum  &spd);
+	Light(Vec p, Spectrum spectral_radiance);
+	virtual Ray get_shadow_ray(const Vec &p) const;
+	virtual Spectrum get_spectral_radiance(const Ray& shadow_ray) const;
+
+	Vec get_position() const;
 };
 
-class PointLight : public Light {
-private:
-protected:
-	PointLight(Spectrum spd, Vec p);
-	virtual void illuminate(const Vec &p, Ray &shadow_ray, Spectrum  &spd);
-
-};
+typedef Light PointLight;

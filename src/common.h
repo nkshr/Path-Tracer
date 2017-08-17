@@ -3,10 +3,13 @@
 #include <algorithm>
 #include <cstring>
 #include <iostream>
+#include <vector>
 
-#include "ray.h"
-#include "vector.h"
 #include "config.h"
+#include "vector.h"
+#include "ray.h"
+
+#define DMSG DMsg(__FUNCSIG__)
 
 inline double linearInterpolation(const double  x, const double x1, const double  x2,
 	const double y1, const double y2) {
@@ -163,7 +166,7 @@ inline void getMinMax(const double * vals, const int num_vals,
 	}
 }
 
-inline bool calcRayPlaneIntersection(const Ray &r, const Vec &n, const Vec &p, double &t) {
+inline bool getRayPlaneIntersection(const Ray &r, const Vec &n, const Vec &p, double &t) {
 	const double rn = r.direction.dot(n);
 	if (abs(rn) < config::eps) {
 		return false;
@@ -173,9 +176,9 @@ inline bool calcRayPlaneIntersection(const Ray &r, const Vec &n, const Vec &p, d
 	return true;
 }
 
-inline bool calcRayDiscIntersection(const Ray &ray, const Vec &n, const Vec &p,
+inline bool getRayDiscIntersection(const Ray &ray, const Vec &n, const Vec &p,
 	const double radius, double &t) {
-	if (!calcRayPlaneIntersection(ray, n, p, t)) {
+	if (!getRayPlaneIntersection(ray, n, p, t)) {
 		return false;
 	}
 
@@ -183,6 +186,51 @@ inline bool calcRayDiscIntersection(const Ray &ray, const Vec &n, const Vec &p,
 	if (isct_pt.mag() > radius) {
 		return false;
 	}
+
+	return true;
+}
+
+inline bool getRayRectangleIntersection(const Ray &r, const Vec &n,  const Vec &u, const Vec &p, const double w, const double h, double &t) {
+	if (!getRayPlaneIntersection(r, n, p, t)) {
+		return false;
+	}
+
+	const Vec isct = r.origin + r.direction * t;
+	
+	const Vec x_dir = u.cross(n).norm();
+	const Vec y_dir = n.cross(x_dir).norm();
+
+	const Vec wx = x_dir * w;
+	const Vec hy = y_dir * h;
+	const Vec half_wx = wx * 0.5;
+	const Vec half_hy = hy * 0.5;
+	
+	const Vec p0 = p + half_wx + half_hy;
+	const Vec p1 = p0 - hy;
+	const Vec p2 = p1 - wx;
+	const Vec p3 = p2 + hy;
+
+	const Vec v0 = p1 - p0;
+	const Vec v1 = p2 - p1;
+	const Vec v2 = p3 - p2;
+	const Vec v3 = p0 - p3;
+
+	const Vec v4 = isct - p0;
+	const Vec v5 = isct - p1;
+	const Vec v6 = isct - p2;
+	const Vec v7 = isct - p3;
+
+	if (v0.dot(v4) < 0)
+		return false;
+
+	if (v1.dot(v5) < 0)
+		return false;
+
+	if (v2.dot(v6) < 0)
+		return false;
+
+	if (v3.dot(v7) < 0)
+		return false;
 
 	return true;
 }
