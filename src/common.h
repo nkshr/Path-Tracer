@@ -234,3 +234,14 @@ inline bool getRayRectangleIntersection(const Ray &r, const Vec &n,  const Vec &
 
 	return true;
 }
+
+
+inline double deg_to_rad(double deg) {
+	constexpr double tmp = config::pi / 180.0;
+	return tmp * deg;
+}
+
+inline double rad_to_deg(double rad) {
+	constexpr double tmp = 180.0 / config::pi;
+	return tmp * rad;
+}
