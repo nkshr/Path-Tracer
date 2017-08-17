@@ -19,33 +19,40 @@ if(OPENMP_FOUND)
 endif()
 
 set(SOURCE_FILES
-    src/material.cpp
+	src/attenuation.cpp
+	src/color.cpp
+	src/common.cpp
+	src/light.cpp
+    src/main.cpp
+	src/material.cpp
     src/objects.cpp
     src/observer.cpp
     src/scene.cpp
-	src/color.cpp
 	src/spectrum.cpp
-	src/common.cpp
+	src/tracer.cpp
 	lib/rand48/rand48.c
     lib/lodepng/lodepng.cpp
-    lib/tiny_obj_loader/tiny_obj_loader.cc
+    #lib/tiny_obj_loader/tiny_obj_loader.cc
 	)
 
 set(HEADER_FILES
-  src/observer.h
-	src/material.h
-	src/objects.h
-	src/ray.h
-	src/scene.h
-	src/vector.h
+	src/attenuation.h
 	src/color.h
-	src/spectrum.h
 	src/common.h
 	src/config.h
+	src/light.h
+	src/material.h
+    src/objects.h
+    src/observer.h
+	src/ray.h
+    src/scene.h
+	src/spectrum.h
+	src/tracer.h
 	src/triangle.h
+	src/vector.h
 	lib/rand48/erand48.h
 	lib/lodepng/lodepng.h
-	lib/tiny_obj_loader/tiny_obj_loader.h
+	#lib/tiny_obj_loader/tiny_obj_loader.h
 	)
 
 set(DATA
@@ -54,9 +61,3 @@ set(DATA
 	)
 
 add_executable(pathtracer src/main.cpp ${SOURCE_FILES} ${HEADER_FILES} ${DATA})
-add_executable(spectrum_test src/spectrum_test src/spectrum.cpp src/spectrum.h)
-#add_executable(spectrum_template_generator src/spectrum_template_generator.cpp)
-
-add_test(NAME attenuation_test
-	COMMAND attenuation_test.exe
-	 [WORKING_DIRECTORY build])
