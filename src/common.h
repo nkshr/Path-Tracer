@@ -9,6 +9,8 @@
 #include "vector.h"
 #include "ray.h"
 
+#define DMSG DMsg(__FUNCSIG__)
+
 inline double linearInterpolation(const double  x, const double x1, const double  x2,
 	const double y1, const double y2) {
 	const double a = (x - x1) / (x2 - x1);
