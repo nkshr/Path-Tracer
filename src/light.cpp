@@ -16,11 +16,13 @@ Spectrum Light::get_spectral_radiance(const Ray &shadow_ray) const {
 	return m_srad;
 }
 
-SpotLight::SpotLight(Vec p, Spectrum srad, double deg, Vec d) : Light(p, srad), m_ang(deg_to_rad(deg)), m_d(d){
+SpotLight::SpotLight(Vec p, Spectrum srad, double deg, Vec d) : Light(p, srad), 
+m_ang(deg_to_rad(deg)), m_d(d.norm()){
+	m_cos = cos(m_ang);
 }
 
 Spectrum SpotLight::get_spectral_radiance(const Ray& shadow_ray) const {
-	if (m_d.dot(shadow_ray.direction) < cos(m_ang)) {
+	if (m_d.dot(shadow_ray.direction * -1) > m_cos) {
 		return m_srad;
 	}
 

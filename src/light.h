@@ -22,6 +22,7 @@ typedef Light PointLight;
 class SpotLight : public Light{
 private:
 	double m_ang;
+	double m_cos;
 	Vec m_d;
 public:
 	SpotLight(Vec p, Spectrum srad, double deg, Vec d);
