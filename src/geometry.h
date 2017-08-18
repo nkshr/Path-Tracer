@@ -2,25 +2,21 @@
 #include "ray.h"
 
 namespace geo {
-	class Geometry {
+	struct Geometry {
+	public:
+		Vec position;
+
 		virtual bool get_ray_intersection(const Ray &ray, double &t) = 0;
 	};
 
-	class Rectangle : public Geometry {
-	private:
-		Vec m_p;
-		Vec m_n;
-		Vec m_u;
-		Vec m_t;
-
-		Vec m_x_dir;
-		Vec m_y_dir;
-
-		double m_w;
-		double m_h;
-
+	struct Rectangle : public Geometry {
 	public:
-		Rectangle(Vec p, Vec n, Vec up, double w, double h);
+		Vec normal;
+		Vec up;
+
+		double width;
+		double height;
+
 		virtual bool get_ray_intersection(const Ray &ray, double &t);
 	};
 };
