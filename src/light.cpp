@@ -1,24 +1,32 @@
 #include "light.h"
-
-Light::Light(Vec p, Spectrum spectral_radiance) : m_p(p), m_srad(spectral_radiance){
+PointLight::PointLight(Vec p, Spectrum spectral_radiance){
+	m_p = p;
+	m_srad = spectral_radiance;
 }
 
-Ray Light::get_shadow_ray(const Vec &p) const {
+Ray PointLight::get_shadow_ray(const Vec &p) const {
 	return Ray (p, (m_p - p).norm());
 }
 
 
-Vec Light::get_position() const {
+Vec PointLight::get_position() const {
 	return m_p;
 }
 
-Spectrum Light::get_spectral_radiance(const Ray &shadow_ray) const {
+Spectrum PointLight::get_spectral_radiance(const Ray &shadow_ray) const {
 	return m_srad;
 }
 
-SpotLight::SpotLight(Vec p, Spectrum srad, double deg, Vec d) : Light(p, srad), 
-m_ang(deg_to_rad(deg)), m_d(d.norm()){
+SpotLight::SpotLight(Vec p, Vec d, Spectrum srad, double deg){
+	m_p = p;
+	m_d = d.norm();
+	m_srad = srad;
+	m_ang =deg_to_rad(deg);
 	m_cos = cos(m_ang);
+}
+
+Ray SpotLight::get_shadow_ray(const Vec &p) const {
+	return Ray(p, (m_p - p).norm());
 }
 
 Spectrum SpotLight::get_spectral_radiance(const Ray& shadow_ray) const {
@@ -29,7 +37,25 @@ Spectrum SpotLight::get_spectral_radiance(const Ray& shadow_ray) const {
 	return Spectrum(0.0);
 }
 
-Liser::Liser(Vec p, Spectrum srad, double w, double h, Vec target, Vec up) : 
-	Light(p, srad), m_w(w), m_h(h), m_target(target), m_up(up){
+Vec SpotLight::get_position() const {
+	return m_p;
+}
 
+Liser::Liser(Vec p, Spectrum srad, double w, double h, Vec target, Vec up){
+	m_rect.normal = (target-p).norm();
+	m_rect.up;
+	m_rect.width = w;
+	m_rect.height = h;
+}
+
+Ray Liser::get_shadow_ray(const Vec &p) const {
+	return Ray(p, m_rect.normal);
+}
+
+Spectrum Liser::get_spectral_radiance(const Ray &shadow_ray) const {
+	return m_srad;
+}
+
+Vec Liser::get_position() const {
+	return m_rect.position;
 }
