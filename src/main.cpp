@@ -42,31 +42,32 @@ int main(int argc, char *argv[]) {
 	camera->set_mono_eq(Spectrum(1.0));
 	camera->update();
 
+	Scene scene;
+	scene.observer = camera;
+
 	Vacuum * vacuum = new Vacuum();
 
 	//scene.add(new Cylinder(Vec(0, 0, 0), Vec(0, 0, 1), 4, 12, Material(DIFF)));
 	//scene.add(new Sphere(Vec(0.0, 0.0, 6.0), 1, Material(EMIT, Spectrum("../data/spike700.csv"), Spectrum(0.0))));
 	//scene.add(new Cuboid(Vec(0.0, 0.0, 0.0), Vec(0.0, 0.0, 1.0), Vec(0.0, 1.0, 0.0), 2.0, 3.0, 1.0, Material(DIFF)));
 
-	std::vector<Object*> objects;
 	//objects.push_back(new Sphere(Vec(3.0, 0.0, 0.0), 1, Material(EMIT, Spectrum("../data/spike700.csv"))));
 	//objects.push_back(new Cuboid(Vec(0.0, 0.0, 0.0), Vec(0.0, 0.0, 1.0), Vec(0.0, 1.0, 0.0), 2.0, 3.0, 1.0, Material(DIFF)));
-	objects.push_back(new Cylinder(Vec(0, 0, 0), Vec(0, 0, 1), 6, 12, Material(DIFF)));
-	objects.push_back(new Sphere(Vec(0, 0, -5), 1, DIFF));
+	scene.objects.push_back(new Cylinder(Vec(0, 0, 0), Vec(0, 0, 1), 6, 12, Material(DIFF)));
+	scene.objects.push_back(new Sphere(Vec(0, 0, -5), 1, DIFF));
 
-	std::vector<Light*> lights;
 	//lights.push_back(new PointLight(Vec(3, 3, 0), Spectrum(1.0)));
-	lights.push_back(new SpotLight(Vec(0, 0, 0), Spectrum(1.0), 30, Vec(0, 0, -1)));
+	//lights.push_back(new SpotLight(Vec(0, 0, 0), Vec(0, 0, -1), Spectrum(1.0), 30));
+	scene.lights.push_back(new Liser(Vec(0, 0, 0), Vec(0, 0, -1), Vec(0, 1, 0), 1, 1, Spectrum(1.0)));
 
+	
 	ShadowRayPathTracer * tracer = new ShadowRayPathTracer();
 	tracer->set_max_depth(3);
 	tracer->set_num_bounces(1);
 	tracer->set_num_samples_per_pixel(20);
 	tracer->set_num_samples_per_point(1);
-	tracer->set_observer(camera);
 	tracer->set_attenuation(vacuum);
-	tracer->set_objects(objects);
-	tracer->set_lights(lights);
+	tracer->set_scene(scene);
 
 	double * pixel_buffer = tracer->trace_rays();
 

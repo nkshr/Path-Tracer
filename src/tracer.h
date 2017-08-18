@@ -8,9 +8,8 @@
 
 class Tracer {
 protected:
-	Observer * m_observer;
-	std::vector<Object*> m_objects;
-	ObjectIntersection Tracer::intersect(const Ray &ray);
+	Scene m_scene;
+	//ObjectIntersection Tracer::intersect(const Ray &ray);
 	Attenuation *m_attenuation;
 
 	int m_max_depth;
@@ -19,10 +18,9 @@ protected:
 	int m_num_samples_per_pixel;
 
 	virtual Spectrum trace_ray(const Ray &ray, int depth, unsigned short * Xi) = 0;
-
+	
 public:
-	void set_observer(Observer * observer);
-	void set_objects(std::vector<Object*> objects);
+	void set_scene(Scene scene);
 	void set_attenuation(Attenuation * attenuation);
 	void set_max_depth(int max_depth);
 	void set_num_bounces(int num_bounces);
@@ -38,11 +36,7 @@ private:
 
 class ShadowRayPathTracer : public Tracer{
 protected:
-	std::vector<Light*> m_lights;
 
 	virtual Spectrum trace_ray(const Ray &ray, int depth, unsigned short * Xi);
-
-public:
-	void set_lights(std::vector<Light*> lights);
-
+	bool visible(Light * light);
 };

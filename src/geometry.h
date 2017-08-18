@@ -6,7 +6,7 @@ namespace geo {
 	public:
 		Vec position;
 
-		virtual bool get_ray_intersection(const Ray &ray, double &t) = 0;
+		virtual bool intersect(const Ray &ray, double &t) const = 0;
 	};
 
 	struct Rectangle : public Geometry {
@@ -17,6 +17,6 @@ namespace geo {
 		double width;
 		double height;
 
-		virtual bool get_ray_intersection(const Ray &ray, double &t);
+		virtual bool intersect(const Ray &ray, double &t) const;
 	};
 };

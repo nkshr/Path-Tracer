@@ -8,7 +8,7 @@
 class Light {
 protected:
 public:
-	virtual Ray get_shadow_ray(const Vec &p) const = 0;
+	virtual Vec get_shadow_ray_dir(const Vec &p) const = 0;
 	virtual Spectrum get_spectral_radiance(const Ray& shadow_ray) const = 0;
 	virtual Vec get_position() const = 0;
 };
@@ -21,7 +21,7 @@ protected:
 public:
 	PointLight(Vec p, Spectrum spectral_radiance);
 
-	virtual Ray get_shadow_ray(const Vec &p) const;
+	virtual Vec get_shadow_ray_dir(const Vec &p) const;
 	virtual Spectrum get_spectral_radiance(const Ray& shadow_ray) const;
 	virtual Vec get_position() const;
 };
@@ -36,7 +36,7 @@ private:
 public:
 	SpotLight(Vec p, Vec d, Spectrum srad, double deg);
 
-	virtual Ray get_shadow_ray(const Vec &p) const;
+	virtual Vec get_shadow_ray_dir(const Vec &p) const = 0;
 	virtual Spectrum get_spectral_radiance(const Ray& shadow_ray) const;
 	virtual Vec get_position() const;
 };
@@ -47,10 +47,9 @@ private:
 	Spectrum m_srad;
 
 public:
-	Liser(Vec p, Spectrum srad, double w, double h, Vec target, Vec up);
+	Liser(Vec p, Vec target, Vec up, double w, double h, Spectrum srad);
 
-	virtual Ray get_shadow_ray(const Vec &p) const;
+	virtual Vec get_shadow_ray_dir(const Vec &p) const;
 	virtual Spectrum get_spectral_radiance(const Ray& shadow_ray) const;
 	virtual Vec get_position() const;
-
 };

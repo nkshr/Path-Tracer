@@ -14,7 +14,7 @@ struct Scene {
 	std::vector<Light*> lights;
 	Observer * observer;
 
-	ObjectIntersection intersect(const Ray &ray) {
+	ObjectIntersection get_intersection(const Ray &ray) {
 		ObjectIntersection isct = ObjectIntersection();
 		ObjectIntersection temp;
 		const size_t size = objects.size();
@@ -27,16 +27,6 @@ struct Scene {
 			}
 		}
 		return isct;
-	}
-
-	~Scene() {
-		for (int i = 0; i < objects.size(); ++i) {
-			delete objects[i];
-		}
-
-		for (int i = 0; i < lights.size(); ++i) {
-			delete lights[i];
-		}
 	}
 };
 #endif //SCENE_H

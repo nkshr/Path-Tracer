@@ -4,8 +4,8 @@ PointLight::PointLight(Vec p, Spectrum spectral_radiance){
 	m_srad = spectral_radiance;
 }
 
-Ray PointLight::get_shadow_ray(const Vec &p) const {
-	return Ray (p, (m_p - p).norm());
+Vec PointLight::get_shadow_ray_dir(const Vec &p) const {
+	return (m_p - p).norm();
 }
 
 
@@ -25,8 +25,8 @@ SpotLight::SpotLight(Vec p, Vec d, Spectrum srad, double deg){
 	m_cos = cos(m_ang);
 }
 
-Ray SpotLight::get_shadow_ray(const Vec &p) const {
-	return Ray(p, (m_p - p).norm());
+Vec SpotLight::get_shadow_ray_dir(const Vec &p) const {
+	return (m_p - p).norm();
 }
 
 Spectrum SpotLight::get_spectral_radiance(const Ray& shadow_ray) const {
@@ -41,18 +41,33 @@ Vec SpotLight::get_position() const {
 	return m_p;
 }
 
-Liser::Liser(Vec p, Spectrum srad, double w, double h, Vec target, Vec up){
+Liser::Liser(Vec p, Vec target, Vec up, double w, double h, Spectrum srad){
 	m_rect.normal = (target-p).norm();
-	m_rect.up;
+	m_rect.up = up;
 	m_rect.width = w;
 	m_rect.height = h;
+
+	m_srad = srad;
 }
 
-Ray Liser::get_shadow_ray(const Vec &p) const {
-	return Ray(p, m_rect.normal);
+Vec Liser::get_shadow_ray_dir(const Vec &p) const {
+	Ray shadow_ray(p, m_rect.normal * -1);
+	//double t;
+	//if (!m_rect.intersect(shadow_ray, t))
+	//	return Vec();
+
+	//if (t < 0)
+	//	return Vec();
+
+	return shadow_ray.direction;
 }
 
 Spectrum Liser::get_spectral_radiance(const Ray &shadow_ray) const {
+	double t;
+	if (!m_rect.intersect(shadow_ray, t)) {
+		return Spectrum(0.0);
+	}
+
 	return m_srad;
 }
 

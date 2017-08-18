@@ -166,7 +166,7 @@ inline void getMinMax(const double * vals, const int num_vals,
 	}
 }
 
-inline bool getRayPlaneIntersection(const Ray &r, const Vec &n, const Vec &p, double &t) {
+inline bool calcRayPlaneIntersection(const Ray &r, const Vec &n, const Vec &p, double &t) {
 	const double rn = r.direction.dot(n);
 	if (abs(rn) < config::eps) {
 		return false;
@@ -176,9 +176,9 @@ inline bool getRayPlaneIntersection(const Ray &r, const Vec &n, const Vec &p, do
 	return true;
 }
 
-inline bool getRayDiscIntersection(const Ray &ray, const Vec &n, const Vec &p,
+inline bool calcRayDiscIntersection(const Ray &ray, const Vec &n, const Vec &p,
 	const double radius, double &t) {
-	if (!getRayPlaneIntersection(ray, n, p, t)) {
+	if (!calcRayPlaneIntersection(ray, n, p, t)) {
 		return false;
 	}
 
@@ -190,8 +190,8 @@ inline bool getRayDiscIntersection(const Ray &ray, const Vec &n, const Vec &p,
 	return true;
 }
 
-inline bool getRayRectangleIntersection(const Ray &r, const Vec &n,  const Vec &u, const Vec &p, const double w, const double h, double &t) {
-	if (!getRayPlaneIntersection(r, n, p, t)) {
+inline bool calcRayRectangleIntersection(const Ray &r, const Vec &n,  const Vec &u, const Vec &p, const double w, const double h, double &t) {
+	if (!calcRayPlaneIntersection(r, n, p, t)) {
 		return false;
 	}
 

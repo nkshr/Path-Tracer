@@ -4,25 +4,25 @@
 #include "objects.h"
 #include  "common.h"
 
-ObjectIntersection Tracer::intersect(const Ray &ray) {
-	ObjectIntersection isct = ObjectIntersection();
-	ObjectIntersection temp;
-	const size_t size = m_objects.size();
-
-	for (int i = 0; i<size; i++) {
-		temp = m_objects.at((unsigned)i)->get_intersection(ray);
-
-		if (temp.hit) {
-			if (isct.u == 0 || temp.u < isct.u) isct = temp;
-		}
-	}
-	return isct;
-}
+//ObjectIntersection Tracer::intersect(const Ray &ray) {
+//	ObjectIntersection isct = ObjectIntersection();
+//	ObjectIntersection temp;
+//	const size_t size = m_objects.size();
+//
+//	for (int i = 0; i<size; i++) {
+//		temp = m_objects.at((unsigned)i)->get_intersection(ray);
+//
+//		if (temp.hit) {
+//			if (isct.u == 0 || temp.u < isct.u) isct = temp;
+//		}
+//	}
+//	return isct;
+//}
 
 double  * Tracer::trace_rays() {
-	const int height = m_observer->get_image_height();
-	const int width = m_observer->get_image_width();
-	double * pixel_buffer = new double[m_observer->get_num_pixels() * 3];
+	const int height = m_scene.observer->get_image_height();
+	const int width = m_scene.observer->get_image_width();
+	double * pixel_buffer = new double[m_scene.observer->get_num_pixels() * 3];
 	int ipb = 0;
 
 	//#pragma omp parallel for schedule(dynamic, 1)       // OpenMP
@@ -35,12 +35,12 @@ double  * Tracer::trace_rays() {
 			Spectrum spd(0.0);
 			for (int s0 = 0; s0 < m_num_samples_per_pixel; ++s0) {
 				for (int s1 = 0; s1 < m_num_samples_per_point; ++s1) {
-					Ray ray = m_observer->get_ray(x, y, s0 > 0, s1 > 0, Xi);
+					Ray ray = m_scene.observer->get_ray(x, y, s0 > 0, s1 > 0, Xi);
 					spd = spd + trace_ray(ray, 0, Xi);
 				}
 			}
 
-			Vec rgb = m_observer->convert_spd_to_rgb(spd);
+			Vec rgb = m_scene.observer->convert_spd_to_rgb(spd);
 			pixel_buffer[ipb++] = rgb.x;
 			pixel_buffer[ipb++] = rgb.y;
 			pixel_buffer[ipb++] = rgb.z;
@@ -50,12 +50,8 @@ double  * Tracer::trace_rays() {
 	return pixel_buffer;
 }
 
-void Tracer::set_observer(Observer * observer) {
-	m_observer = observer;
-}
-
-void Tracer::set_objects(std::vector<Object*> objects) {
-	m_objects = objects;
+void Tracer::set_scene(Scene scene) {
+	m_scene = scene;
 }
 
 void Tracer::set_attenuation(Attenuation * attenuation) {
@@ -79,7 +75,7 @@ void Tracer::set_num_samples_per_pixel(int num_samples_per_pixel) {
 }
 
 Spectrum PathTracer::trace_ray(const Ray &ray, int depth, unsigned short * Xi) {
-	ObjectIntersection isct = intersect(ray);
+	ObjectIntersection isct = m_scene.get_intersection(ray);
 
 	// If no hit, return world colour
 	if (!isct.hit) {
@@ -111,7 +107,7 @@ Spectrum PathTracer::trace_ray(const Ray &ray, int depth, unsigned short * Xi) {
 }
 
 Spectrum ShadowRayPathTracer::trace_ray(const Ray &ray, int depth, unsigned short * Xi) {
-	ObjectIntersection isct = intersect(ray);
+	ObjectIntersection isct = m_scene.get_intersection(ray);
 
 	// If no hit, return world colour
 	if (!isct.hit) {
@@ -134,13 +130,14 @@ Spectrum ShadowRayPathTracer::trace_ray(const Ray &ray, int depth, unsigned shor
 		}
 
 		Spectrum direct_diffuse(0.0);
-		for (int i = 0; i < m_lights.size(); ++i) {
-			Ray shadow_ray = m_lights[i]->get_shadow_ray(x);
+		for (int i = 0; i < m_scene.lights.size(); ++i) {
+			Ray shadow_ray(x, m_scene.lights[i]->get_shadow_ray_dir(x));
+
 			shadow_ray.origin = shadow_ray.origin + shadow_ray.direction * config::eps;
-			ObjectIntersection isct_temp = intersect(shadow_ray);
-			const double d = (m_lights[i]->get_position() - x).mag();
+			ObjectIntersection isct_temp = m_scene.get_intersection(shadow_ray);
+			const double d = (m_scene.lights[i]->get_position() - x).mag();
 			if (!isct_temp.hit || d < isct_temp.u) {
-				direct_diffuse = direct_diffuse + m_lights[i]->get_spectral_radiance(shadow_ray) * std::max(0.0, isct.n.dot(shadow_ray.direction));
+				direct_diffuse = direct_diffuse + m_scene.lights[i]->get_spectral_radiance(shadow_ray) * std::max(0.0, isct.n.dot(shadow_ray.direction));
 			}
 		}
 
@@ -156,6 +153,7 @@ Spectrum ShadowRayPathTracer::trace_ray(const Ray &ray, int depth, unsigned shor
 	}
 }
 
-void ShadowRayPathTracer::set_lights(std::vector<Light*> lights) {
-	m_lights = lights;
+bool ShadowRayPathTracer::visible(Light *light) {
+	
+	return true;
 }
