@@ -28,3 +28,8 @@ Spectrum SpotLight::get_spectral_radiance(const Ray& shadow_ray) const {
 
 	return Spectrum(0.0);
 }
+
+Liser::Liser(Vec p, Spectrum srad, double w, double h, Vec target, Vec up) : 
+	Light(p, srad), m_w(w), m_h(h), m_target(target), m_up(up){
+
+}

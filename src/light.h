@@ -28,3 +28,14 @@ public:
 	SpotLight(Vec p, Spectrum srad, double deg, Vec d);
 	virtual Spectrum get_spectral_radiance(const Ray& shadow_ray) const;
 };
+
+class Liser : public Light{
+private:
+	double m_w;
+	double m_h;
+	Vec m_target;
+	Vec m_up;
+public:
+	Liser(Vec p, Spectrum srad, double w, double h, Vec target, Vec up);
+
+};
