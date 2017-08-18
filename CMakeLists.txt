@@ -22,6 +22,7 @@ set(SOURCE_FILES
 	src/attenuation.cpp
 	src/color.cpp
 	src/common.cpp
+	src/geometry.cpp
 	src/light.cpp
     src/main.cpp
 	src/material.cpp
@@ -40,6 +41,7 @@ set(HEADER_FILES
 	src/color.h
 	src/common.h
 	src/config.h
+	src/geometry.h
 	src/light.h
 	src/material.h
     src/objects.h
