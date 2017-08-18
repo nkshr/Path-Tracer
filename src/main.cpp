@@ -55,7 +55,8 @@ int main(int argc, char *argv[]) {
 	objects.push_back(new Sphere(Vec(0, 0, -5), 1, DIFF));
 
 	std::vector<Light*> lights;
-	lights.push_back(new PointLight(Vec(3, 3, 0), Spectrum(1.0)));
+	//lights.push_back(new PointLight(Vec(3, 3, 0), Spectrum(1.0)));
+	lights.push_back(new SpotLight(Vec(0, 0, 0), Spectrum(1.0), 30, Vec(0, 0, -1)));
 
 	ShadowRayPathTracer * tracer = new ShadowRayPathTracer();
 	tracer->set_max_depth(3);
