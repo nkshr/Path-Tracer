@@ -4,6 +4,6 @@
 
 namespace geo {
 	bool Rectangle::intersect(const Ray &ray, double &t) const {
-		return calcRayRectangleIntersection(ray, normal, up, position, width, height, t);
+		return calcRayRectangleIntersection(ray, position, normal, up, width, height, t);
 	}
 }
