@@ -16,12 +16,20 @@ ObjectIntersection::ObjectIntersection(bool hit_, double u_, Vec n_, Material m_
 }
 
 
-Sphere::Sphere( Vec p_, double r_, Material m_ ) : Object(p_, m_), m_r(r_){
+Sphere::Sphere( Vec p_, double r_, Material m_ ){
+	m_p = p_;
+	m_m = m_;
+	m_r = r_;
 }
 
 double Sphere::get_radius() { return m_r; }
 
-Cylinder::Cylinder(Vec p_, Vec d_, double r_, double h_, Material m_) : Object(p_, m_), m_d(d_.norm()), m_r(r_), m_h(h_){
+Cylinder::Cylinder(Vec p_, Vec d_, double r_, double h_, Material m_){
+	m_p = p_;
+	m_d = d_.norm();
+	m_r = r_;
+	m_h = h_;
+	m_m = m_;
 }
 
 double Cylinder::get_radius() {
@@ -180,8 +188,13 @@ void Object::is_inside(bool is_inside) {
 //	return isct;
 //}
 
-Cuboid::Cuboid(Vec p_, Vec dir_, Vec up_, double w_, double h_, double depth_, Material m_) : 
-	Object(p_, m_), m_z_dir(dir_.norm()), m_w(w_), m_h(h_), m_depth(depth_){
+Cuboid::Cuboid(Vec p_, Vec dir_, Vec up_, double w_, double h_, double depth_, Material m_){
+	m_p = p_;
+	m_m = m_;
+	m_z_dir = dir_.norm();
+	m_w = w_;
+	m_h = h_;
+	m_depth = depth_;
 	m_x_dir = up_.cross(m_z_dir).norm();
 	m_y_dir = m_z_dir.cross(m_x_dir).norm();
 
@@ -258,8 +271,10 @@ ObjectIntersection Cuboid::get_intersection(const Ray &r) {
 	return isct;
 }
 
-Plane::Plane(Vec p, Vec n, Material m) : Object(p, m), m_n(n) {
-
+Plane::Plane(Vec p, Vec n, Material m) {
+	m_p = p;
+	m_m = m;
+	m_n = n;
 }
 
 ObjectIntersection Plane::get_intersection(const Ray &r) {
