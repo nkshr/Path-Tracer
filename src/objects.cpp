@@ -44,97 +44,43 @@ Vec Cylinder::get_direction() {
 	return m_d;
 }
 
-//http://mrl.nyu.edu/~dzorin/rend05/lecture2.pdf
-ObjectIntersection Cylinder::get_intersection(const Ray&ray) {
-	const double hhalf = m_h * 0.5;
-	const Vec p0 = m_p - m_d * hhalf;
-	const Vec p1 = m_p + m_d * hhalf;
+ObjectIntersection Cylinder::get_intersection(const Ray&ray) {	
+	ObjectIntersection isct(false, DBL_MAX);
 
-	const Vec x0 = ray.origin - p0;
-	const Vec x1 = ray.direction - m_d * ray.direction.dot(m_d);
-	const Vec x2 = x0 - m_d * x0.dot(m_d);
+	double t;
+	Vec dh_half = m_d * 0.5 * m_h;
 
-	const double a = x1.dot(x1);
-	const double b = x1.dot(x2) * 2.0;
-	const double c = x2.dot(x2) - m_r * m_r;
+	if (calcRayTubeIntersection(ray, m_p, m_d, m_r, m_h, t)) {
+		Vec isct_pt = ray.origin + ray.direction * t;
+		Vec p = m_p - dh_half;
+		Vec a = isct_pt - p;
+		Vec b = m_d * a.dot(m_d);
+		isct.u = t;
+		isct.n = (isct_pt - b - p).norm();
+		isct.hit = true;
+	}
+	
 
-	std::vector<std::pair<double, Vec> > tns;
-	const double d = b*b - 4 * a * c;
-
-	double ts[4];
-	if (!(d < 0)) {
-		const double sqrt_d = sqrt(d);
-		const double a2_recip = 1.0 / (2.0 * a);
-        double t = (-b + sqrt_d) * a2_recip;
-		ts[0] = t;
-		if (t>0) {
-			Vec q = ray.origin + ray.direction * t;
-
-			if (m_d.dot(q - p0) > 0 && m_d.dot(q - p1) < 0) {
-			  Vec n = (m_d * q.dot(m_d) - q).norm();
-			  tns.push_back(std::pair<double, Vec>(t, n));
-			}
-		}
-		
-		t = (-b - sqrt_d) * a2_recip;
-		ts[1] = t;
-		if (t>0) {
-			Vec q = ray.origin + ray.direction * t;
-
-			if (m_d.dot(q - p0) > 0 && m_d.dot(q - p1) < 0) {
-			  Vec n = (m_d * q.dot(m_d) - q).norm();
-			  tns.push_back(std::pair<double, Vec>(t, n));
-			}
+	if (calcRayDiscIntersection(ray, m_p + dh_half, m_d, m_r, t)) {
+		if (t > 0 && t < isct.u) {
+			isct.u = t;
+			isct.n = m_d;
+			isct.hit = true;
 		}
 	}
 
-	double t  = (m_d.dot(p0 - ray.origin)) / (m_d.dot(ray.direction));
-	ts[2] = t;
-	double r2 = m_r * m_r;
-	if (t>0) {
-		Vec q = ray.origin + ray.direction * t;
-		Vec qp = q - p0;
-		if (qp.dot(qp) <= r2) {
-		  Vec n = m_d;
-		  tns.push_back(std::pair<double, Vec>(t, n));
+	if (calcRayDiscIntersection(ray, m_p - dh_half, m_d * -1, m_r, t)) {
+		if (t > 0 && t < isct.u) {
+			isct.u = t;
+			isct.n = m_d * -1;
+			isct.hit = true;
 		}
 	}
 
-	t = (m_d.dot(p1 - ray.origin)) / (m_d.dot(ray.direction)); ts[3] = t;
-	if (t>0) {
-		Vec q = ray.origin + ray.direction * t;
-		Vec qp = q - p1;
-		if (qp.dot(qp) <= r2) {
-		  Vec n = m_d*(-1);
-		  tns.push_back(std::pair<double, Vec>(t, n));
-		}
-	}
+	if (isct.hit)
+		isct.m = m_m;
 
-	if(!tns.size()){
-	  //std::cout << "tns.size() : " << tns.size() << std::endl;
-	 // exit(EXIT_FAILURE);
-	 //std::cout << sqrtf(pow(ray.origin.x, 2.0) + pow(ray.origin.y , 2.0)) << " " << ray.origin.z << std::endl;
-	  return ObjectIntersection(false, 0.0, Vec(), m_m);
-	}
-
-	if(tns.size() >= 3){
-	  std::cout << "tns.size() : " << tns.size() << std::endl;
-	  exit(EXIT_FAILURE);
-	}
-
-	std::pair<double, Vec> tn = tns[0];
-	if(tns.size() == 2){
-	  if(tn.first > tns[1].first){
-	    tn = tns[1];
-	  }
-	  tn.second = tn.second * (-1.0);
-	  std::cout << "tns.size() : " << tns.size() << std::endl;
-	  std::cout << "first : " << tn.first << std::endl;
-	  std::cout << ray.origin << std::endl;
-	  exit(EXIT_FAILURE);
-	}
-
-	return ObjectIntersection(true, tn.first, tn.second, m_m);
+	return isct;
 }
 
 // Check if ray intersects with sphere. Returns ObjectIntersection data structure
