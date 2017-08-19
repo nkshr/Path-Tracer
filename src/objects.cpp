@@ -155,6 +155,14 @@ Material Object::get_material() {
 	return m_m;
 }
 
+bool Object::is_inside() const{
+	return m_is_inside;
+}
+
+void Object::is_inside(bool is_inside) {
+	m_is_inside = is_inside;
+}
+
 //Rectangle::Rectangle(Vec p_, Vec n_, double w_, double h_, Material m_) : 
 //	Object(p_, m_), m_n(n_), m_w(w_), m_h(w_){
 //}

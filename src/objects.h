@@ -23,12 +23,16 @@ class Object {
 protected:
 	Vec m_p;
 	Material m_m;
+	bool m_is_inside;
+
 public:
 	Object(Vec p_, Material m_):m_p(p_), m_m(m_) {
 	}
 	virtual ObjectIntersection get_intersection(const Ray &r) = 0;
 	Vec get_position();
 	Material get_material();
+	bool is_inside() const;
+	void is_inside(bool is_inside);
 };
 
 
