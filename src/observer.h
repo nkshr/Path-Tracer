@@ -10,6 +10,7 @@
 #include "common.h"
 #include "spectrum.h"
 #include "color.h"
+#include  "objects.h"
 
 class Observer {
 private:
@@ -44,8 +45,8 @@ private:
 	double m_sensor_size;
 
 protected:
-	//Config m_config;
 	Spectrum * m_spds;
+	Object * m_medium;
 
 public:
  	Observer();
@@ -70,6 +71,7 @@ public:
 	void set_position(const Vec &position);
 	void set_target(const Vec &target);
 	void set_up(const Vec &up);
+	void set_medium(Object * object);
 
 	int get_image_width();
 	int get_image_height();
@@ -83,6 +85,7 @@ public:
 	Vec get_position();
 	Vec get_target();
 	Vec get_up();
+	Object* get_medium();
 };
 
 

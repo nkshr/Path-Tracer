@@ -51,40 +51,6 @@ double * Observer::copy_image() {
 	return pixel_buffer;
 }
 
-//void Observer::capture(Scene &scene) {
-//	const double spd_scale = m_sensor_size / (config::number_of_samples_per_pixel * config::number_of_samples_per_point);
-//
-//	// Main Loop
-//	//#pragma omp parallel for schedule(dynamic, 1)       // OpenMP
-//	for (int y = 0; y<m_image_height; y++) {
-//		unsigned short Xi[3] = { (unsigned short)0, (unsigned short)0,(unsigned short)(y*y*y) };               // Stores seed for erand48
-//		fprintf(stderr, "\rRendering : %.2f%% ",      // Prints
-//			(double)y / m_image_height * 100);                   // progress
-//
-//		for (int x = 0; x<m_image_width; x++) {
-//			Spectrum &spd = m_spds[y * m_image_width + x];
-//			for (int s1 = 0; s1 < config::number_of_samples_per_pixel; ++s1) {
-//				for (int s2 = 0; s2 < config::number_of_samples_per_point; ++s2) {
-//					Ray ray = get_ray(x, y, s1 > 0, s2 > 0, Xi);
-//					spd = spd + scene.trace_ray(ray, 0, Xi);
-//				}
-//			}
-//			spd = spd * spd_scale;
-//		}
-//	}
-//
-//	for (int i = 0; i < m_num_pixels; ++i) {
-//		Vec rgb = convert_spd_to_rgb(m_spds[i]);
-//		rgb = rgb * m_exposure_time;
-//
-//		const int ipb = i * 3;
-//		m_pixel_buffer[ipb] = rgb.x;
-//		m_pixel_buffer[ipb + 1] = rgb.y;
-//		m_pixel_buffer[ipb + 2] = rgb.z;
-//	}
-//
-//}
-
 void Observer::update() {
 	m_image_width_recp = 1. / m_image_width;
 	m_image_height_recp = 1. / m_image_height;
@@ -155,6 +121,10 @@ void Observer::set_up(const Vec &up) {
 	m_up = up;
 }
 
+void Observer::set_medium(Object *medium) {
+	m_medium = medium;
+}
+
 int Observer::get_image_width() {
 	return m_image_width;
 }
@@ -201,6 +171,10 @@ Vec Observer::get_target() {
 
 Vec Observer::get_up() {
 	return m_up;
+}
+
+Object* Observer::get_medium() {
+	return m_medium;
 }
 
 MonoCamera::MonoCamera(){
@@ -252,18 +226,3 @@ Vec Eye::convert_spd_to_rgb(const Spectrum &spd) {
 void Eye::set_XYZ_color(const XYZColor &XYZ_color) {
 	m_XYZ_color = XYZ_color;
 }
-
-//Observer * generateObserver(Observer::Config &config) {
-//	switch (config.type) {
-//	default:
-//	case Observer::MONO:
-//		return new MonoCamera(config);
-//	case Observer::RGB:
-//		return new RGBCamera(config);
-//		break;
-//	case Observer::EYE:
-//		return new Eye(config);
-//		break;
-//	}
-//}
-

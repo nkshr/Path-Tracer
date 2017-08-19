@@ -23,7 +23,12 @@ struct Scene {
 			temp = objects.at((unsigned)i)->get_intersection(ray);
 
 			if (temp.hit) {
-				if (isct.u == 0 || temp.u < isct.u) isct = temp;
+				if (isct.u == 0 || temp.u < isct.u) {
+					isct = temp;
+					if (objects[i] == observer->get_medium()) {
+						isct.n = isct.n * -1;
+					}
+				}
 			}
 		}
 		return isct;

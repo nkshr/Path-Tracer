@@ -29,6 +29,24 @@ int main(int argc, char *argv[]) {
 
     time_t start, stop;
     time(&start);               // Start execution timer
+
+	Scene scene;
+
+
+	//scene.add(new Cylinder(Vec(0, 0, 0), Vec(0, 0, 1), 4, 12, Material(DIFF)));
+	//scene.add(new Sphere(Vec(0.0, 0.0, 6.0), 1, Material(EMIT, Spectrum("../data/spike700.csv"), Spectrum(0.0))));
+	//scene.add(new Cuboid(Vec(0.0, 0.0, 0.0), Vec(0.0, 0.0, 1.0), Vec(0.0, 1.0, 0.0), 2.0, 3.0, 1.0, Material(DIFF)));
+
+	//objects.push_back(new Sphere(Vec(3.0, 0.0, 0.0), 1, Material(EMIT, Spectrum("../data/spike700.csv"))));
+	//objects.push_back(new Cuboid(Vec(0.0, 0.0, 0.0), Vec(0.0, 0.0, 1.0), Vec(0.0, 1.0, 0.0), 2.0, 3.0, 1.0, Material(DIFF)));
+	scene.objects.push_back(new Cylinder(Vec(0, 0, 0), Vec(0, 0, -1), 6, 12, Material(DIFF)));
+	scene.objects.push_back(new Sphere(Vec(0, 0, -5), 1, DIFF));
+
+	scene.lights.push_back(new PointLight(Vec(3, 3, 0), Spectrum(1.0)));
+	//scene.lights.push_back(new SpotLight(Vec(0, 0, 0), Vec(0, 0, -1), Spectrum(1.0), 30));
+	//scene.lights.push_back(new Liser(Vec(0, 0, 0), Vec(0, 0, -1), Vec(0, 1, 0), 1, 1, Spectrum(1.0)));
+	
+
 	MonoCamera * camera = new MonoCamera();
 	camera->set_image_width(320);
 	camera->set_image_height(240);
@@ -40,27 +58,14 @@ int main(int argc, char *argv[]) {
 	camera->set_up(Vec(0.0, 1.0, 0.0));
 	camera->set_iso(1.0);
 	camera->set_mono_eq(Spectrum(1.0));
+	camera->set_medium(scene.objects[0]); //Cylinder
+
 	camera->update();
 
-	Scene scene;
 	scene.observer = camera;
 
 	Vacuum * vacuum = new Vacuum();
 
-	//scene.add(new Cylinder(Vec(0, 0, 0), Vec(0, 0, 1), 4, 12, Material(DIFF)));
-	//scene.add(new Sphere(Vec(0.0, 0.0, 6.0), 1, Material(EMIT, Spectrum("../data/spike700.csv"), Spectrum(0.0))));
-	//scene.add(new Cuboid(Vec(0.0, 0.0, 0.0), Vec(0.0, 0.0, 1.0), Vec(0.0, 1.0, 0.0), 2.0, 3.0, 1.0, Material(DIFF)));
-
-	//objects.push_back(new Sphere(Vec(3.0, 0.0, 0.0), 1, Material(EMIT, Spectrum("../data/spike700.csv"))));
-	//objects.push_back(new Cuboid(Vec(0.0, 0.0, 0.0), Vec(0.0, 0.0, 1.0), Vec(0.0, 1.0, 0.0), 2.0, 3.0, 1.0, Material(DIFF)));
-	scene.objects.push_back(new Cylinder(Vec(0, 0, 0), Vec(0, 0, 1), 6, 12, Material(DIFF)));
-	scene.objects.push_back(new Sphere(Vec(0, 0, -5), 1, DIFF));
-
-	//lights.push_back(new PointLight(Vec(3, 3, 0), Spectrum(1.0)));
-	//lights.push_back(new SpotLight(Vec(0, 0, 0), Vec(0, 0, -1), Spectrum(1.0), 30));
-	scene.lights.push_back(new Liser(Vec(0, 0, 0), Vec(0, 0, -1), Vec(0, 1, 0), 1, 1, Spectrum(1.0)));
-
-	
 	ShadowRayPathTracer * tracer = new ShadowRayPathTracer();
 	tracer->set_max_depth(3);
 	tracer->set_num_bounces(1);
@@ -68,7 +73,7 @@ int main(int argc, char *argv[]) {
 	tracer->set_num_samples_per_point(1);
 	tracer->set_attenuation(vacuum);
 	tracer->set_scene(scene);
-
+	
 	double * pixel_buffer = tracer->trace_rays();
 
 	double min_val, max_val;
