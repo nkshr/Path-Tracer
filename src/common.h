@@ -166,34 +166,37 @@ inline void getMinMax(const double * vals, const int num_vals,
 	}
 }
 
-inline bool calcRayPlaneIntersection(const Ray &r, const Vec &n, const Vec &p, double &t) {
+inline bool calcRayPlaneIntersection(const Ray &r, const Vec &p, const Vec &n, double &t) {
 	const double rn = r.direction.dot(n);
 	if (abs(rn) < config::eps) {
 		return false;
 	}
 
 	t = (p - r.origin).dot(n) / rn;
-	return true;
+
+	if (t > 0)
+		return true;
+
+	return false;
 }
 
-inline bool calcRayDiscIntersection(const Ray &ray, const Vec &n, const Vec &p,
+inline bool calcRayDiscIntersection(const Ray &ray, const Vec &p, const Vec &n,
 	const double radius, double &t) {
-	if (!calcRayPlaneIntersection(ray, n, p, t)) {
-		return false;
-	}
+	if(!calcRayPlaneIntersection(ray, p, n, t))
+		return  false;
 
 	Vec isct_pt = ray.origin + ray.direction * t;
-	if (isct_pt.mag() > radius) {
+	if ((isct_pt - p).mag() > radius) {
 		return false;
 	}
 
 	return true;
 }
 
-inline bool calcRayRectangleIntersection(const Ray &r, const Vec &n,  const Vec &u, const Vec &p, const double w, const double h, double &t) {
-	if (!calcRayPlaneIntersection(r, n, p, t)) {
+inline bool calcRayRectangleIntersection(const Ray &r, const Vec &p, const Vec &n,  const Vec &u,
+	 const double w, const double h, double &t) {
+	if(!calcRayPlaneIntersection(r, p, n, t))
 		return false;
-	}
 
 	const Vec isct = r.origin + r.direction * t;
 	
@@ -235,6 +238,52 @@ inline bool calcRayRectangleIntersection(const Ray &r, const Vec &n,  const Vec 
 	return true;
 }
 
+//http://mrl.nyu.edu/~dzorin/rend05/lecture2.pdf
+inline bool calcRayTubeIntersection(const Ray &ray, Vec p, Vec dir,
+	double r, double h, double &t) {
+	const double hhalf = h * 0.5;
+	const Vec p0 = p - dir * hhalf;
+	const Vec p1 = p + dir * hhalf;
+
+	const Vec x0 = ray.origin - p0;
+	const Vec x1 = ray.direction - dir * ray.direction.dot(dir);
+	const Vec x2 = x0 - dir * x0.dot(dir);
+
+	const double a = x1.dot(x1);
+	const double b = x1.dot(x2) * 2.0;
+	const double c = x2.dot(x2) - r * r;
+	const double d = b*b - 4 * a * c;
+
+	if (!(d < 0)) {
+		const double sqrt_d = sqrt(d);
+		const double a2_recip = 1.0 / (2.0 * a);
+		double t_temp = (-b + sqrt_d) * a2_recip;
+		bool intersected = false;
+		t = DBL_MAX;
+
+		if (t_temp > 0) {
+			Vec q = ray.origin + ray.direction * t_temp;
+			if (dir.dot(q - p0) > 0 && dir.dot(q - p1) < 0) {
+				t = t_temp;
+				intersected = true;
+			}
+		}
+
+		t_temp = (-b - sqrt_d) * a2_recip;
+		if (t_temp > 0 && t_temp < t) {
+			Vec q = ray.origin + ray.direction * t_temp;
+			if (dir.dot(q - p0) > 0 && dir.dot(q - p1) < 0) {
+				t = t_temp;
+				intersected = true;
+			}
+		}
+
+		if(intersected)
+			return true;
+	}
+
+	return false;
+}
 
 inline double deg_to_rad(double deg) {
 	constexpr double tmp = config::pi / 180.0;
