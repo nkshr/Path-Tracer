@@ -6,11 +6,10 @@
 #include "common.h"
 #include "spectrum.h"
 
-Observer::Observer(): m_pixel_buffer(NULL), m_spds(NULL){
+Observer::Observer(){
 }
 
 Observer::~Observer() {
-	delete[] m_pixel_buffer;
 }
 
 // Returns ray from camera origin through pixel at x,y
@@ -40,17 +39,6 @@ Ray Observer::get_ray(int x, int y, bool jitter_pixel, bool jitter_pinhole, unsi
     return Ray(m_position, (pixel-m_position).norm());
 }
 
-const double * Observer::read_image() {
-	return m_pixel_buffer;
-}
-
-double * Observer::copy_image() {
-	const int size = m_num_pixels *  3;
-	double * pixel_buffer = new double[size];
-	memcpy((void*)pixel_buffer, (void*)m_pixel_buffer, size  * sizeof(double));
-	return pixel_buffer;
-}
-
 void Observer::update() {
 	m_image_width_recp = 1. / m_image_width;
 	m_image_height_recp = 1. / m_image_height;
@@ -65,14 +53,7 @@ void Observer::update() {
 	m_x_spacing_half = m_x_spacing * 0.5;
 	m_y_spacing_half = m_y_spacing * 0.5;
 
-	if (m_pixel_buffer)
-		delete[] m_pixel_buffer;
 	m_num_pixels = m_image_width * m_image_height;
-	m_pixel_buffer = new double[m_num_pixels * 3];
-
-	if (m_spds)
-		delete[] m_spds;
-	m_spds = new Spectrum[m_num_pixels];
 
 	m_sensor_size = m_sensor_width * m_sensor_height;
 }

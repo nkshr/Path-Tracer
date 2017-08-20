@@ -5,10 +5,6 @@ namespace config {
 	constexpr int number_of_samples_per_spectrum = 41;
 	constexpr double minimum_lambda = 380.0;
 	constexpr double maximum_lambda = 780.0;
-	//static constexpr int number_of_samples_per_pixel = 20;
-	//static constexpr int number_of_samples_per_intersection = 1;
-	//static constexpr int number_of_samples_per_point = 1;
-	//static constexpr int maximum_depth = 4;
 	constexpr char* const absorption_coefficients_file = "../data/Pope_abosorp_coefs.csv";
 	constexpr char* const scattering_coefficients_file = "../data";
 	constexpr char* const gt1290_eq_file = "../data/gt1290.csv";

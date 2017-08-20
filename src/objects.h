@@ -33,6 +33,7 @@ public:
 	Material get_material();
 	bool is_inside() const;
 	void is_inside(bool is_inside);
+	
 };
 
 

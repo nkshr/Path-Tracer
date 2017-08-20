@@ -26,7 +26,6 @@ private:
 
 	int m_num_pixels;
 
-	double *m_pixel_buffer;
 private:
 	int m_image_width;
 	int m_image_height;
@@ -45,7 +44,6 @@ private:
 	double m_sensor_size;
 
 protected:
-	Spectrum * m_spds;
 	Object * m_medium;
 
 public:
@@ -53,9 +51,7 @@ public:
 	~Observer();
 
 	Ray get_ray(int x, int y, bool jitter_pixel, bool jitter_pinhole, unsigned short *Xi);
-	const double * read_image();
-	double * copy_image();
-
+	
 	virtual Vec convert_spd_to_rgb(const Spectrum &spd) = 0;
 	//void capture(Scene &scene);
 	void update();
