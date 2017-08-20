@@ -89,6 +89,6 @@ int main(int argc, char *argv[]) {
     int hrs = (int)diff/3600;
     int mins = ((int)diff/60)-(hrs*60);
     int secs = (int)diff-(hrs*3600)-(mins*60);
-    printf("\rRendering : Complete!\nTime Taken: %i hrs, %i mins, %i secs\n\n", hrs, mins, secs);
+    printf("Time Taken: %i hrs, %i mins, %i secs\n\n", hrs, mins, secs);
     return 0;
 }

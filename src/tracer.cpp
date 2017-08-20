@@ -47,6 +47,7 @@ double  * Tracer::trace_rays() {
 		}
 	}
 
+	fprintf(stderr, "\rRendering : 100.00%%\n");
 	return pixel_buffer;
 }
 
