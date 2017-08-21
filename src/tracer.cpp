@@ -23,8 +23,10 @@ double  * Tracer::trace_rays() {
 	const int height = m_scene.observer->get_image_height();
 	const int width = m_scene.observer->get_image_width();
 	double * pixel_buffer = new double[m_scene.observer->get_num_pixels() * 3];
+	double sensor_size = m_scene.observer->get_sensor_height() * m_scene.observer->get_sensor_width();
+	
 	int ipb = 0;
-
+	
 	//#pragma omp parallel for schedule(dynamic, 1)       // OpenMP
 	for (int y = 0; y < height; ++y) {
 		unsigned short Xi[3] = { (unsigned short)0, (unsigned short)0,(unsigned short)(y*y*y) };               // Stores seed for erand48
@@ -35,10 +37,22 @@ double  * Tracer::trace_rays() {
 			Spectrum spd(0.0);
 			for (int s0 = 0; s0 < m_num_samples_per_pinhole; ++s0) {
 				for (int s1 = 0; s1 < m_num_samples_per_pixel; ++s1) {
-					Ray ray = m_scene.observer->get_ray(x, y, s0 > 0, s1 > 0, Xi);
+					Vec start = m_scene.observer->sample_point_in_pinhole(Xi);
+					Vec end = m_scene.observer->sample_point_in_pixel(x, y, Xi);
+					Ray ray(start, (end - start).norm());
 					spd = spd + trace_ray(ray, 0, Xi);
 				}
+
+				spd = spd * sensor_size;
 			}
+
+			Vec ray_vec = (m_scene.observer->get_pixel_position(x, y) - m_scene.observer->get_position()).norm();
+			Vec view_dir = (m_scene.observer->get_target() - m_scene.observer->get_position()).norm();
+			double proj_pinhole_area = pow(m_scene.observer->get_pinhole_radius(), 2.f) * config::pi * std::max(view_dir.dot(ray_vec.norm()), 0.0);
+			double pinhole_solid_angle = proj_pinhole_area / ray_vec.dot(ray_vec);
+
+			spd = spd * proj_pinhole_area;
+
 
 			Vec rgb = m_scene.observer->convert_spd_to_rgb(spd);
 			pixel_buffer[ipb++] = rgb.x;

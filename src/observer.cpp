@@ -156,6 +156,43 @@ double Observer::get_pinhole_radius() {
 	return m_pinhole_radius;
 }
 
+Vec Observer::get_pixel_position(int x, int y) {
+	Vec pt = m_position + m_fvec;
+
+	pt = pt - m_x_direction*m_ratio + m_x_direction*((x * 2 * m_ratio)*m_image_width_recp) + m_x_spacing_half;
+	pt = pt + m_y_direction - m_y_direction*((y * 2.0)*m_image_height_recp) + m_y_spacing_half;
+
+	return pt;
+}
+
+Vec Observer::sample_point_in_pinhole(unsigned short * Xi) {
+	Vec pt = m_position;
+
+	double x_jitter;
+	double y_jitter;
+	generateUniformRandInCircle(Xi, x_jitter, y_jitter);
+
+	pt = pt + m_x_direction * m_pinhole_radius * x_jitter;
+	pt = pt + m_y_direction * m_pinhole_radius * y_jitter;
+
+	return pt;
+}
+
+Vec Observer::sample_point_in_pixel(int x, int y, unsigned short *Xi) {
+	Vec pt = m_position + m_fvec;
+
+	double x_jitter;
+	double y_jitter;
+
+	x_jitter = (erand48(Xi) * m_x_spacing);
+	y_jitter = (erand48(Xi) * m_y_spacing);
+
+	pt = pt - m_x_direction*m_ratio + m_x_direction*((x * 2 * m_ratio)*m_image_width_recp) + x_jitter;
+	pt = pt + m_y_direction - m_y_direction*((y * 2.0)*m_image_height_recp + y_jitter);
+
+	return pt;
+}
+
 Vec Observer::get_position() {
 	return m_position;
 }

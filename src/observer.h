@@ -82,10 +82,13 @@ public:
 	double get_exposure_time();
 	double get_iso();
 	double get_pinhole_radius();
-	
+	Vec get_pixel_position(int x, int y);
+	Vec sample_point_in_pinhole(unsigned short * Xi);
+	Vec sample_point_in_pixel(int x, int y, unsigned short * Xi);
 	Vec get_position();
 	Vec get_target();
 	Vec get_up();
+
 	Object* get_medium();
 };
 
