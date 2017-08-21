@@ -20,9 +20,10 @@ private:
     double m_y_spacing;
     double m_y_spacing_half;
 
-    Vec m_direction;
+    //Vec m_direction;
     Vec m_x_direction;
     Vec m_y_direction;
+	Vec m_z_direction;
 
 	int m_num_pixels;
 
@@ -42,6 +43,9 @@ private:
 	double m_image_width_recp;
 	double m_image_height_recp;
 	double m_sensor_size;
+	
+	double m_forcal_length;
+	Vec m_fvec;
 
 protected:
 	Object * m_medium;
@@ -53,7 +57,6 @@ public:
 	Ray get_ray(int x, int y, bool jitter_pixel, bool jitter_pinhole, unsigned short *Xi);
 	
 	virtual Vec convert_spd_to_rgb(const Spectrum &spd) = 0;
-	//void capture(Scene &scene);
 	void update();
 
 	void set_image_width(const int w);
@@ -72,12 +75,14 @@ public:
 	int get_image_width();
 	int get_image_height();
 	int get_num_pixels();
+
 	double get_fov();
 	double get_sensor_width();
 	double get_sensor_height();
 	double get_exposure_time();
 	double get_iso();
 	double get_pinhole_radius();
+	
 	Vec get_position();
 	Vec get_target();
 	Vec get_up();

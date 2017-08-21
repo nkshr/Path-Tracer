@@ -32,7 +32,7 @@ Ray Observer::get_ray(int x, int y, bool jitter_pixel, bool jitter_pinhole, unsi
 	else {
 	}
 
-    Vec pixel = m_position + m_direction*2;
+    Vec pixel = m_position + m_fvec;
     pixel = pixel - m_x_direction*m_ratio + m_x_direction*((x * 2 * m_ratio)*m_image_width_recp) + x_jitter_pixel;
     pixel = pixel + m_y_direction - m_y_direction*((y * 2.0)*m_image_height_recp + y_jitter_pixel);
 
@@ -44,10 +44,12 @@ void Observer::update() {
 	m_image_height_recp = 1. / m_image_height;
 	m_ratio = (double)m_image_width / m_image_height;
 
-	m_direction = (m_target - m_position).norm();
-	m_x_direction = m_up.cross(m_direction * -1).norm();
-	m_y_direction = m_x_direction.cross(m_direction).norm();
+	//m_direction = (m_target - m_position).norm();
 
+	m_z_direction = (m_position - m_target).norm();
+	m_x_direction = m_up.cross(m_z_direction).norm();
+	m_y_direction = m_x_direction.cross(m_z_direction * -1).norm();
+		
 	m_x_spacing = (2.0 * m_ratio) / (double)m_image_width;
 	m_y_spacing = (double)2.0 / (double)m_image_height;
 	m_x_spacing_half = m_x_spacing * 0.5;
@@ -56,6 +58,9 @@ void Observer::update() {
 	m_num_pixels = m_image_width * m_image_height;
 
 	m_sensor_size = m_sensor_width * m_sensor_height;
+	
+	m_forcal_length = m_ratio / tan(m_fov * 0.5);
+	m_fvec = m_z_direction * m_forcal_length * -1;
 }
 
 void Observer::set_image_width(const int w) {
@@ -67,7 +72,7 @@ void Observer::set_image_height(const int h) {
 }
 
 void Observer::set_fov(const double fov) {
-	m_fov = fov;
+	m_fov = deg_to_rad(clamp(fov, 0.1, 179.9));
 }
 
 void Observer::set_sensor_width(const double w) {

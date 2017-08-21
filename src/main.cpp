@@ -59,6 +59,7 @@ int main(int argc, char *argv[]) {
 	camera->set_iso(1.0);
 	camera->set_mono_eq(Spectrum(1.0));
 	camera->set_medium(scene.objects[0]); //Cylinder
+	camera->set_fov(60);
 
 	camera->update();
 
