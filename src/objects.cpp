@@ -17,12 +17,25 @@ ObjectIntersection::ObjectIntersection(bool hit_, double u_, Vec n_, Material m_
 
 
 Sphere::Sphere( Vec p_, double r_, Material m_ ){
-	m_p = p_;
+	m_sphere.position = p_;
+	m_sphere.radius = r_;
 	m_m = m_;
-	m_r = r_;
 }
 
 double Sphere::get_radius() { return m_r; }
+
+
+// Check if ray intersects with sphere. Returns ObjectIntersection data structure
+ObjectIntersection Sphere::get_intersection(const Ray &ray) {
+	ObjectIntersection isct;
+	isct.m = m_m;
+	if (m_sphere.intersect(ray, isct.u)) {
+		isct.hit = true;
+		isct.n = (ray.origin + ray.direction * isct.u - m_sphere.position).norm();
+	}
+
+	return isct;
+}
 
 Cylinder::Cylinder(Vec p_, Vec d_, double r_, double h_, Material m_){
 	m_p = p_;
@@ -81,24 +94,6 @@ ObjectIntersection Cylinder::get_intersection(const Ray&ray) {
 		isct.m = m_m;
 
 	return isct;
-}
-
-// Check if ray intersects with sphere. Returns ObjectIntersection data structure
-ObjectIntersection Sphere::get_intersection(const Ray &ray) {
-	// Solve t^2*d.d + 2*t*(o-p).d + (o-p).(o-p)-R^2 = 0
-	bool hit = false;
-	double distance = 0;
-	Vec n = Vec();
-
-	Vec op = m_p-ray.origin;
-	double t, b=op.dot(ray.direction), det=b*b-op.dot(op)+m_r*m_r;
-	if (det<0) return ObjectIntersection(hit, distance, n, m_m); 
-	else det=sqrt(det);
-	distance = (t=b-det)>config::eps ? t : ((t=b+det)>config::eps ? t : 0);
-	if (distance != 0) hit = true, 
-		n = ((ray.origin + ray.direction * distance) - m_p).norm();
-
-	return ObjectIntersection(hit, distance, n, m_m);
 }
 
 Vec Object::get_position() {

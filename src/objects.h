@@ -6,6 +6,7 @@
 #include "material.h"
 #include "aabbox.h"
 #include "triangle.h"
+#include "geometry.h"
 #include "../lib/tiny_obj_loader/tiny_obj_loader.h"
 //#include "../lib/fastbvh/BVH.h"
 
@@ -41,7 +42,7 @@ class Sphere : public Object {
 
 private:
 	double m_r;	// Radius
-
+	geo::Sphere m_sphere;
 public:
 	Sphere(Vec p_, double r_, Material m_);	
 	double get_radius();
