@@ -13,30 +13,39 @@ Observer::~Observer() {
 }
 
 // Returns ray from camera origin through pixel at x,y
-Ray Observer::get_ray(int x, int y, bool jitter_pixel, bool jitter_pinhole, unsigned short *Xi) {
-    double x_jitter_pixel;
-    double y_jitter_pixel;
+Ray Observer::get_ray(int x, int y, bool start_jitter, bool end_jitter, unsigned short *Xi) {
+    double x_end_jitter;
+    double y_end_jitter;
 
     // If jitter == true, jitter point for anti-aliasing
-    if (jitter_pixel) {
-        x_jitter_pixel = (erand48(Xi) * m_x_spacing) - m_x_spacing_half;
-        y_jitter_pixel = (erand48(Xi) * m_y_spacing) - m_y_spacing_half;
+    if (end_jitter) {
+        x_end_jitter = (erand48(Xi) * m_x_spacing) - m_x_spacing_half;
+        y_end_jitter = (erand48(Xi) * m_y_spacing) - m_y_spacing_half;
     }
     else {
-        x_jitter_pixel = 0;
-        y_jitter_pixel = 0;
+        x_end_jitter = 0;
+        y_end_jitter = 0;
     }
 
-	if (jitter_pinhole) {
+	double x_start_jitter;
+	double y_start_jitter;
+	if (start_jitter) {
+		generateUniformRandInCircle(Xi, x_start_jitter, y_start_jitter);
 	}
 	else {
+		x_start_jitter = 0;
+		y_start_jitter = 0;
 	}
 
-    Vec pixel = m_position + m_fvec;
-    pixel = pixel - m_x_direction*m_ratio + m_x_direction*((x * 2 * m_ratio)*m_image_width_recp) + x_jitter_pixel;
-    pixel = pixel + m_y_direction - m_y_direction*((y * 2.0)*m_image_height_recp + y_jitter_pixel);
+	Vec start = m_position;
+	start = start + m_x_direction * m_pinhole_radius * x_start_jitter;
+	start = start + m_y_direction * m_pinhole_radius * y_start_jitter;
 
-    return Ray(m_position, (pixel-m_position).norm());
+    Vec end = m_position + m_fvec;
+    end = end - m_x_direction*m_ratio + m_x_direction*((x * 2 * m_ratio)*m_image_width_recp) + x_end_jitter;
+    end = end + m_y_direction - m_y_direction*((y * 2.0)*m_image_height_recp + y_end_jitter);
+
+    return Ray(start, (end-start).norm());
 }
 
 void Observer::update() {
@@ -72,7 +81,7 @@ void Observer::set_image_height(const int h) {
 }
 
 void Observer::set_fov(const double fov) {
-	m_fov = deg_to_rad(clamp(fov, 0.1, 179.9));
+	m_fov = degToRad(clamp(fov, 0.1, 179.9));
 }
 
 void Observer::set_sensor_width(const double w) {

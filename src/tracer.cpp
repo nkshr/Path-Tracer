@@ -33,8 +33,8 @@ double  * Tracer::trace_rays() {
 
 		for (int x = 0; x < width; ++x) {
 			Spectrum spd(0.0);
-			for (int s0 = 0; s0 < m_num_samples_per_pixel; ++s0) {
-				for (int s1 = 0; s1 < m_num_samples_per_point; ++s1) {
+			for (int s0 = 0; s0 < m_num_samples_per_pinhole; ++s0) {
+				for (int s1 = 0; s1 < m_num_samples_per_pixel; ++s1) {
 					Ray ray = m_scene.observer->get_ray(x, y, s0 > 0, s1 > 0, Xi);
 					spd = spd + trace_ray(ray, 0, Xi);
 				}
@@ -67,8 +67,8 @@ void Tracer::set_num_bounces(int num_bounces) {
 	m_num_bounces = num_bounces;
 }
 
-void Tracer::set_num_samples_per_point(int num_samples_per_point) {
-	m_num_samples_per_point = num_samples_per_point;
+void Tracer::set_num_samples_per_pinhole(int num_samples_per_pinhole) {
+	m_num_samples_per_pinhole = num_samples_per_pinhole;
 }
 
 void Tracer::set_num_samples_per_pixel(int num_samples_per_pixel) {

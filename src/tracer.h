@@ -14,7 +14,7 @@ protected:
 
 	int m_max_depth;
 	int m_num_bounces;
-	int m_num_samples_per_point;
+	int m_num_samples_per_pinhole;
 	int m_num_samples_per_pixel;
 
 	virtual Spectrum trace_ray(const Ray &ray, int depth, unsigned short * Xi) = 0;
@@ -24,7 +24,7 @@ public:
 	void set_attenuation(Attenuation * attenuation);
 	void set_max_depth(int max_depth);
 	void set_num_bounces(int num_bounces);
-	void set_num_samples_per_point(int num_samples_per_point);
+	void set_num_samples_per_pinhole(int num_samples_per_point);
 	void set_num_samples_per_pixel(int num_samples_per_pixel);
 	double * trace_rays();
 };

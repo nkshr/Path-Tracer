@@ -60,6 +60,7 @@ int main(int argc, char *argv[]) {
 	camera->set_mono_eq(Spectrum(1.0));
 	camera->set_medium(scene.objects[0]); //Cylinder
 	camera->set_fov(60);
+	camera->set_pinhole_radius(0.01);
 
 	camera->update();
 
@@ -71,7 +72,7 @@ int main(int argc, char *argv[]) {
 	tracer->set_max_depth(3);
 	tracer->set_num_bounces(1);
 	tracer->set_num_samples_per_pixel(20);
-	tracer->set_num_samples_per_point(1);
+	tracer->set_num_samples_per_pinhole(1);
 	tracer->set_attenuation(vacuum);
 	tracer->set_scene(scene);
 	

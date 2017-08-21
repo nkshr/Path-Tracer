@@ -54,7 +54,7 @@ public:
  	Observer();
 	~Observer();
 
-	Ray get_ray(int x, int y, bool jitter_pixel, bool jitter_pinhole, unsigned short *Xi);
+	Ray get_ray(int x, int y, bool start_jitter, bool end_jitter, unsigned short *Xi);
 	
 	virtual Vec convert_spd_to_rgb(const Spectrum &spd) = 0;
 	void update();
