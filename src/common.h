@@ -55,10 +55,9 @@ inline void convert_rgb_to_hsv(const double r, const double g, const double b,
 		s = c / v;
 }
 
-// Clamp double to min/max of 0/1
-inline double clamp(double x) { return x<0 ? 0 : x>1 ? 1 : x; }
-// Clamp to between 0-255
-inline int toInt(double x) { return int(clamp(x) * 255 + .5); }
+inline double clamp(double x, double xmin, double xmax) {
+	return x < xmin ? xmin : x > xmax ? xmax : x;
+}
 
 inline void invMat3x3(const double* m, double* inv_m) {
 	//m = [m0 m1 m2
