@@ -285,6 +285,28 @@ inline bool calcRayTubeIntersection(const Ray &ray, Vec p, Vec dir,
 	return false;
 }
 
+inline bool calcRaySphereIntersection(const Ray &ray, Vec p, double r, double &t) {
+	bool hit = false;
+	Vec n = Vec();
+	t = 0.0;
+	Vec op = p - ray.origin;
+	double b = op.dot(ray.direction), det = b*b - op.dot(op) + r*r;
+	if (det<0) 
+		return false;
+	else
+		det = sqrt(det);
+	
+	t = b - det;
+	if (t > config::eps)
+		return true;
+
+	t = b + det;
+	if (t > config::eps)
+		return true;
+
+	return false;
+}
+
 inline double degToRad(double deg) {
 	constexpr double tmp = config::pi / 180.0;
 	return tmp * deg;
