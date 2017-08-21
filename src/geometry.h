@@ -19,4 +19,11 @@ namespace geo {
 
 		virtual bool intersect(const Ray &ray, double &t) const;
 	};
+
+	struct Sphere : public Geometry {
+	public:
+		double radius;
+
+		virtual bool intersect(const Ray &ray, double &t) const;
+	};
 };
