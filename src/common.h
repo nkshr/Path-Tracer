@@ -8,6 +8,7 @@
 #include "config.h"
 #include "vector.h"
 #include "ray.h"
+#include "../lib/rand48/erand48.h"
 
 #define DMSG DMsg(__FUNCSIG__)
 
@@ -284,12 +285,20 @@ inline bool calcRayTubeIntersection(const Ray &ray, Vec p, Vec dir,
 	return false;
 }
 
-inline double deg_to_rad(double deg) {
+inline double degToRad(double deg) {
 	constexpr double tmp = config::pi / 180.0;
 	return tmp * deg;
 }
 
-inline double rad_to_deg(double rad) {
+inline double radToDeg(double rad) {
 	constexpr double tmp = 180.0 / config::pi;
 	return tmp * rad;
+}
+
+//http://xdpixel.com/random-points-in-a-circle/
+inline void generateUniformRandInCircle(unsigned short *Xi, double &x, double &y) {
+	double r = sqrt(erand48(Xi));
+	double theta = 2.0 * config::pi * erand48(Xi);
+	x = r * cos(theta);
+	y = r * sin(theta);
 }

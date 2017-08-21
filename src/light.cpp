@@ -21,7 +21,7 @@ SpotLight::SpotLight(Vec p, Vec d, Spectrum srad, double deg){
 	m_p = p;
 	m_d = d.norm();
 	m_srad = srad;
-	m_ang =deg_to_rad(deg);
+	m_ang =degToRad(deg);
 	m_cos = cos(m_ang);
 }
 
