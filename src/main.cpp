@@ -32,19 +32,14 @@ int main(int argc, char *argv[]) {
 
 	Scene scene;
 
-
-	//scene.add(new Cylinder(Vec(0, 0, 0), Vec(0, 0, 1), 4, 12, Material(DIFF)));
-	//scene.add(new Sphere(Vec(0.0, 0.0, 6.0), 1, Material(EMIT, Spectrum("../data/spike700.csv"), Spectrum(0.0))));
-	//scene.add(new Cuboid(Vec(0.0, 0.0, 0.0), Vec(0.0, 0.0, 1.0), Vec(0.0, 1.0, 0.0), 2.0, 3.0, 1.0, Material(DIFF)));
-
-	//objects.push_back(new Sphere(Vec(3.0, 0.0, 0.0), 1, Material(EMIT, Spectrum("../data/spike700.csv"))));
 	//objects.push_back(new Cuboid(Vec(0.0, 0.0, 0.0), Vec(0.0, 0.0, 1.0), Vec(0.0, 1.0, 0.0), 2.0, 3.0, 1.0, Material(DIFF)));
 	scene.objects.push_back(new Cylinder(Vec(0, 0, 0), Vec(0, 0, -1), 6, 12, Material(DIFF)));
 	scene.objects.push_back(new Sphere(Vec(0, 0, -5), 1, DIFF));
+	//scene.objects.push_back(new Sphere(Vec(3.0, 0.0, 0.0), 3, Material(EMIT, Spectrum("../data/spike700.csv"))));
 
-	scene.objects.push_back(new PointLight(Vec(3, 3, 0), Spectrum(1.0)));
-	//scene.lights.push_back(new SpotLight(Vec(0, 0, 0), Vec(0, 0, -1), Spectrum(1.0), 30));
-	//scene.lights.push_back(new Liser(Vec(0, 0, 0), Vec(0, 0, -1), Vec(0, 1, 0), 1, 1, Spectrum(1.0)));
+	//scene.objects.push_back(new PointLight(Vec(3, 3, 0), Spectrum(1.0)));
+	//scene.objects.push_back(new Laser(Vec(3, 3, 0), Vec(0, 0, -5), 1, 5, Spectrum(1.0), Material(DIFF)));
+	scene.objects.push_back(new SpotLight(Vec(0, 0, 0), Vec(0, 0, -1), Spectrum(1.0), 30));
 	
 
 	MonoCamera * camera = new MonoCamera();
@@ -69,7 +64,7 @@ int main(int argc, char *argv[]) {
 	Vacuum * vacuum = new Vacuum();
 
 	ShadowRayPathTracer * tracer = new ShadowRayPathTracer();
-	tracer->set_max_depth(3);
+	tracer->set_max_depth(5);
 	tracer->set_num_bounces(1);
 	tracer->set_num_samples_per_pixel(20);
 	tracer->set_num_samples_per_pinhole(1);

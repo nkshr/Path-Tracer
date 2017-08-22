@@ -65,13 +65,13 @@ ObjectIntersection Cylinder::get_intersection(const Ray&ray) {
 	double t;
 	Vec dh_half = m_d * 0.5 * m_h;
 
-	if (calcRayTubeIntersection(ray, m_p, m_d, m_r, m_h, t)) {
+	if (calcRayTubeIntersection(ray, m_p, m_d, m_r, m_h, t, isct.n)) {
 		Vec isct_pt = ray.origin + ray.direction * t;
 		Vec p = m_p - dh_half;
 		Vec a = isct_pt - p;
 		Vec b = m_d * a.dot(m_d);
 		isct.u = t;
-		isct.n = (isct_pt - b - p).norm();
+		//isct.n = (isct_pt - b - p).norm();
 		isct.hit = true;
 	}
 	
