@@ -127,15 +127,29 @@ bool Object::is_light() const{
 //	return isct;
 //}
 
-Cuboid::Cuboid(Vec p_, Vec dir_, Vec up_, double w_, double h_, double depth_, Material m_){
+Cuboid::Cuboid(Vec p_, Vec target_, Vec up_, double w_, double h_, double depth_, Material m_){
 	m_p = p_;
 	m_m = m_;
-	m_z_dir = dir_.norm();
 	m_w = w_;
 	m_h = h_;
 	m_depth = depth_;
+
+	m_z_dir = (target_ - m_p).norm() * -1;
 	m_x_dir = up_.cross(m_z_dir).norm();
-	m_y_dir = m_z_dir.cross(m_x_dir).norm();
+	m_y_dir = m_z_dir.cross(m_x_dir);
+
+	m_xw = m_x_dir * m_w;
+	m_yh = m_y_dir * m_h;
+	m_zd = m_z_dir * m_depth;
+	m_half_xw = m_xw * 0.5;
+	m_half_yh = m_yh * 0.5;
+	m_half_zd = m_zd * 0.5;
+}
+
+static int a = 0;
+static int b = 0;
+ObjectIntersection Cuboid::get_intersection(const Ray &r) {
+	ObjectIntersection isct(false, DBL_MAX, Vec(), m_m);
 
 	const Vec xw = m_x_dir * m_w;
 	const Vec yh = m_y_dir * m_h;
@@ -143,69 +157,44 @@ Cuboid::Cuboid(Vec p_, Vec dir_, Vec up_, double w_, double h_, double depth_, M
 	const Vec half_xw = xw * 0.5;
 	const Vec half_yh = yh * 0.5;
 	const Vec half_zd = zd * 0.5;
-	
-	const Vec v0 = m_p - half_xw + half_yh + half_zd;
-	const Vec v1 = v0 + xw;
-	const Vec v2 = v1 - yh;
-	const Vec v3 = v2 - xw;
 
-	const Vec v4 = v0 - zd;
-	const Vec v5 = v1 - zd;
-	const Vec v6 = v2 - zd;
-	const Vec v7 = v3 - zd;
-
-	//face0
-	m_tris[0] = Triangle(v0, v3, v2, Vec(), Vec(), Vec(), &m_m);
-	m_tris[1] = Triangle(v0, v2, v1, Vec(), Vec(), Vec(), &m_m);
-
-	//face1
-	m_tris[2] = Triangle(v2, v7, v6, Vec(), Vec(), Vec(), &m_m);
-	m_tris[3] = Triangle(v2, v3, v7, Vec(), Vec(), Vec(), &m_m);
-	m_tris[2] = m_tris[3] = m_tris[0];
-	//face2
-	m_tris[4] = Triangle(v6, v7, v4, Vec(), Vec(), Vec(), &m_m);
-	m_tris[5] = Triangle(v6, v4, v5, Vec(), Vec(), Vec(), &m_m);
-
-	//face3
-	m_tris[6] = Triangle(v5, v4, v0, Vec(), Vec(), Vec(), &m_m);
-	m_tris[7] = Triangle(v5, v0, v1, Vec(), Vec(), Vec(), &m_m);
-
-	//face4
-	m_tris[8] = Triangle(v7, v3, v0, Vec(), Vec(), Vec(), &m_m);
-	m_tris[9] = Triangle(v7, v0, v4, Vec(), Vec(), Vec(), &m_m);
-
-	//face5
-	m_tris[10] = Triangle(v6, v5, v1, Vec(), Vec(), Vec(), &m_m);
-	m_tris[11] = Triangle(v6, v1, v2, Vec(), Vec(), Vec(), &m_m);
-}
-
-static int a = 0;
-static int b = 0;
-ObjectIntersection Cuboid::get_intersection(const Ray &r) {
-	ObjectIntersection isct;
-	double tmin = DBL_MAX;
-	//std::vector<Triangle> tris;
-	for (int i = 0; i < 12; ++i) {
-		if (m_tris[i].intersect(r, isct.u, tmin, isct.n)) {
-			isct.hit = true;
-			isct.m = m_m;
-			tmin = isct.u;
-	//		tris.push_back(m_tris[i]);
+	Vec p = m_p + half_zd;
+	double t;
+	if (calcRayRectangleIntersection(r, p, m_z_dir, m_y_dir, m_w, m_h, t)) {
+		isct.hit = true;
+		if (t < isct.u) {
+			isct.u = t;
+			isct.n = m_z_dir;
 		}
 	}
 
-	//bool disp = false;
-	//if (r.direction.dot(isct.n)>0) {
-	//	std::cout << r.direction * isct.u + r.origin << std::endl;
-	//	a++;
-	//	disp = true;
-	//}
-	//if (isct.hit)
-	//	b++;
+	p = m_p - half_zd;
+	if (calcRayRectangleIntersection(r, p, m_z_dir * -1, m_y_dir, m_w, m_h, t)) {
+		isct.hit = true;
+		if (t < isct.u) {
+			isct.u = t;
+			isct.n = m_z_dir * -1;
+		}
+	}
 
-	//if (disp) {
-	//	std::cout << a  << " " << (double)b << std::endl;
-	//}
+
+	p = m_p + half_xw;
+	if (calcRayRectangleIntersection(r, p, m_x_dir, m_y_dir, m_w, m_h, t)) {
+		isct.hit = true;
+		if (t < isct.u) {
+			isct.u = t;
+			isct.n = m_x_dir;
+		}
+	}
+
+	p = m_p - half_xw;
+	if (calcRayRectangleIntersection(r, p, m_x_dir * -1, m_y_dir, m_w, m_h, t)) {
+		isct.hit = true;
+		if (t < isct.u) {
+			isct.u = t;
+			isct.n = m_x_dir  * -1;
+		}
+	}
 
 	return isct;
 }
