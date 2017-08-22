@@ -26,8 +26,8 @@ public:
 	Ray get_reflected_ray( const Ray &r, Vec &p, const Vec &n, unsigned short *Xi ) const;
 	Spectrum get_spectral_albedos() const;
 	Spectrum get_spectral_emissions() const;
-	double sample_albedo(const double lambda) const;
-	double sample_emission(const double lambda) const;
+	void set_spectral_emission(Spectrum e);
+	void set_type(MaterialType t);
 };
 
 

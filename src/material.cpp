@@ -48,6 +48,13 @@ Spectrum Material::get_spectral_emissions() const {
 	return m_spectral_emissions;
 }
 
+void Material::set_spectral_emission(Spectrum e) {
+	m_spectral_emissions = e;
+}
+
+void Material::set_type(MaterialType t) {
+	m_type = t;
+}
 //double Material::sample_albedo(const double lambda) const {
 //	return m_spectral_albedos.sample(lambda);
 //}
