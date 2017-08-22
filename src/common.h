@@ -324,3 +324,7 @@ inline void generateUniformRandInCircle(unsigned short *Xi, double &x, double &y
 	x = r * cos(theta);
 	y = r * sin(theta);
 }
+
+inline void shift(Vec n, Ray &ray) {
+	ray.origin = ray.origin + n * config::eps;
+}
