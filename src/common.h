@@ -285,6 +285,56 @@ inline bool calcRayTubeIntersection(const Ray &ray, Vec p, Vec dir,
 	return false;
 }
 
+inline bool calcRayTubeIntersection(const Ray &ray, Vec p, Vec dir,
+	double r, double h, double &t, Vec &n) {
+	const double hhalf = h * 0.5;
+	const Vec p0 = p - dir * hhalf;
+	const Vec p1 = p + dir * hhalf;
+
+	const Vec x0 = ray.origin - p0;
+	const Vec x1 = ray.direction - dir * ray.direction.dot(dir);
+	const Vec x2 = x0 - dir * x0.dot(dir);
+
+	const double a = x1.dot(x1);
+	const double b = x1.dot(x2) * 2.0;
+	const double c = x2.dot(x2) - r * r;
+	const double d = b*b - 4 * a * c;
+
+	if (!(d < 0)) {
+		const double sqrt_d = sqrt(d);
+		const double a2_recip = 1.0 / (2.0 * a);
+		double t_temp = (-b + sqrt_d) * a2_recip;
+		bool intersected = false;
+		t = DBL_MAX;
+
+		if (t_temp > 0) {
+			Vec q = ray.origin + ray.direction * t_temp;
+			if (dir.dot(q - p0) > 0 && dir.dot(q - p1) < 0) {
+				t = t_temp;
+				intersected = true;
+			}
+		}
+
+		t_temp = (-b - sqrt_d) * a2_recip;
+		if (t_temp > 0 && t_temp < t) {
+			Vec q = ray.origin + ray.direction * t_temp;
+			if (dir.dot(q - p0) > 0 && dir.dot(q - p1) < 0) {
+				t = t_temp;
+				intersected = true;
+			}
+		}
+
+		if (intersected) {
+			const Vec isct_pt = ray.origin + ray.direction * t;
+			const Vec temp = dir * dir.dot(isct_pt - p0);
+			n = (isct_pt - temp - p0).norm();
+			return true;
+		}
+	}
+
+	return false;
+}
+
 inline bool calcRaySphereIntersection(const Ray &ray, Vec p, double r, double &t) {
 	bool hit = false;
 	Vec n = Vec();
