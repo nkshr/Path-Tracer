@@ -122,6 +122,9 @@ Spectrum PathTracer::trace_ray(const Ray &ray, int depth, unsigned short * Xi) {
 }
 
 Spectrum ShadowRayPathTracer::trace_ray(const Ray &ray, int depth, unsigned short * Xi) {
+	if (depth > m_max_depth)
+		return Spectrum(0.0);
+
 	ObjectIntersection isct = m_scene.get_intersection(ray);
 
 	// If no hit, return world colour
@@ -129,7 +132,7 @@ Spectrum ShadowRayPathTracer::trace_ray(const Ray &ray, int depth, unsigned shor
 		return 0.0;
 	}
 
-	if (isct.m.get_type() == EMIT || ++depth>m_max_depth)  {
+	if (isct.m.get_type() == EMIT)  {
 		return m_attenuation->attenuate(isct.u, isct.m.get_spectral_emissions());
 	}
 	
@@ -141,13 +144,37 @@ Spectrum ShadowRayPathTracer::trace_ray(const Ray &ray, int depth, unsigned shor
 		for (int i = 0; i < m_num_bounces; ++i) {
 			Ray reflected = isct.m.get_reflected_ray(ray, x, isct.n, Xi);
 			shift(isct.n, reflected);
-			indirect_diffuse = indirect_diffuse + trace_ray(reflected, depth, Xi) * std::max(reflected.direction.dot(isct.n), 0.0);
+			indirect_diffuse = indirect_diffuse + trace_ray(reflected, depth+1, Xi) * std::max(reflected.direction.dot(isct.n), 0.0);
+		}
+
+		bool use_shadow_ray;
+		switch (m_srct) {
+		default:
+		case ALWAYS:
+			use_shadow_ray = true;
+			break;
+		case BEGGINING:
+			if (depth == 0) {
+				use_shadow_ray = true;
+			}
+			break;
+		case END:
+			if (depth == m_max_depth) {
+				use_shadow_ray = true;
+			}
+			break;
+		case NOT_USE:
+			use_shadow_ray = false;
+			break;
 		}
 
 		Spectrum direct_diffuse(0.0);
-		for (int i = 0; i < m_scene.objects.size(); ++i) {
-			if (m_scene.objects[i]->is_light()) {
-				direct_diffuse = direct_diffuse + m_scene.objects[i]->illuminate(m_scene, x, isct.n);
+
+		if (use_shadow_ray) {
+			for (int i = 0; i < m_scene.objects.size(); ++i) {
+				if (m_scene.objects[i]->is_light()) {
+					direct_diffuse = direct_diffuse + m_scene.objects[i]->illuminate(m_scene, x, isct.n);
+				}
 			}
 		}
 
@@ -158,7 +185,10 @@ Spectrum ShadowRayPathTracer::trace_ray(const Ray &ray, int depth, unsigned shor
 
 		return diffuse;
 	}
-	else {
-		return Spectrum(0.0);
-	}
+	
+	return Spectrum(0.0);
+}
+
+void ShadowRayPathTracer::set_type(ShadowRayCastType type){
+	m_srct = type;
 }

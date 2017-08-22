@@ -34,9 +34,16 @@ private:
 	virtual Spectrum trace_ray(const Ray &ray, int depth, unsigned short * Xi);
 };
 
+enum 	ShadowRayCastType {
+	ALWAYS, BEGGINING, END, NOT_USE
+};
+
 class ShadowRayPathTracer : public Tracer{
-protected:
+private:
+	ShadowRayCastType m_srct;
 
 	virtual Spectrum trace_ray(const Ray &ray, int depth, unsigned short * Xi);
-	//bool visible(Light * light);
+
+public:
+	void set_type(ShadowRayCastType type);
 };

@@ -70,7 +70,8 @@ int main(int argc, char *argv[]) {
 	tracer->set_num_samples_per_pinhole(1);
 	tracer->set_attenuation(vacuum);
 	tracer->set_scene(scene);
-	
+	tracer->set_type(NOT_USE);
+
 	double * pixel_buffer = tracer->trace_rays();
 
 	double min_val, max_val;
