@@ -26,4 +26,14 @@ namespace geo {
 
 		virtual bool intersect(const Ray &ray, double &t) const;
 	};
+
+	struct Tube : public Geometry {
+	public:
+		Vec direction;
+		double radius;
+		double height;
+		
+		virtual bool intersect(const Ray &ray, double &t) const;
+
+	};
 };

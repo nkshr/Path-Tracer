@@ -10,4 +10,8 @@ namespace geo {
 	bool Sphere::intersect(const Ray &ray, double &t) const {
 		return calcRaySphereIntersection(ray, position, radius, t);
 	}
+
+	bool Tube::intersect(const Ray &ray, double &t) const {
+		return calcRayTubeIntersection(ray, position, direction, radius, height, t);
+	}
 }
