@@ -24,17 +24,15 @@ class Object {
 protected:
 	Vec m_p;
 	Material m_m;
-	bool m_is_inside;
-
+	bool m_is_light;
 public:
 	//Object(Vec p_, Material m_):m_p(p_), m_m(m_) {
 	//}
 	virtual ObjectIntersection get_intersection(const Ray &r) = 0;
+	virtual Vec get_shadow_ray_dir(const Vec &p) const { return Vec(); };
 	Vec get_position();
 	Material get_material();
-	bool is_inside() const;
-	void is_inside(bool is_inside);
-	
+	bool is_light() const;
 };
 
 
@@ -48,6 +46,7 @@ public:
 	double get_radius();
 	
 	virtual ObjectIntersection get_intersection(const Ray &r);
+	virtual Vec get_shadow_ray_dir(const Vec &p) const;
 };
 
 class Cylinder : public Object {

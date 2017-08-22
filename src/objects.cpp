@@ -37,6 +37,11 @@ ObjectIntersection Sphere::get_intersection(const Ray &ray) {
 	return isct;
 }
 
+Vec Sphere::get_shadow_ray_dir(const Vec &p) const {
+	return (m_sphere.position - p).norm();
+}
+
+
 Cylinder::Cylinder(Vec p_, Vec d_, double r_, double h_, Material m_){
 	m_p = p_;
 	m_d = d_.norm();
@@ -104,12 +109,8 @@ Material Object::get_material() {
 	return m_m;
 }
 
-bool Object::is_inside() const{
-	return m_is_inside;
-}
-
-void Object::is_inside(bool is_inside) {
-	m_is_inside = is_inside;
+bool Object::is_light() const{
+	return m_is_light;
 }
 
 //Rectangle::Rectangle(Vec p_, Vec n_, double w_, double h_, Material m_) : 

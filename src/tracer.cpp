@@ -145,16 +145,21 @@ Spectrum ShadowRayPathTracer::trace_ray(const Ray &ray, int depth, unsigned shor
 		}
 
 		Spectrum direct_diffuse(0.0);
-		for (int i = 0; i < m_scene.lights.size(); ++i) {
-			Ray shadow_ray(x, m_scene.lights[i]->get_shadow_ray_dir(x));
-
-			shadow_ray.origin = shadow_ray.origin + shadow_ray.direction * config::eps;
-			ObjectIntersection isct_temp = m_scene.get_intersection(shadow_ray);
-			const double d = (m_scene.lights[i]->get_position() - x).mag();
-			if (!isct_temp.hit || d < isct_temp.u) {
-				direct_diffuse = direct_diffuse + m_scene.lights[i]->get_spectral_radiance(shadow_ray) * std::max(0.0, isct.n.dot(shadow_ray.direction));
+		for (int i = 0; i < m_scene.objects.size(); ++i) {
+			if (m_scene.objects[i]->is_light()) {
+			
 			}
 		}
+		//for (int i = 0; i < m_scene.lights.size(); ++i) {
+		//	Ray shadow_ray(x, m_scene.lights[i]->get_shadow_ray_dir(x));
+
+		//	shadow_ray.origin = shadow_ray.origin + shadow_ray.direction * config::eps;
+		//	ObjectIntersection isct_temp = m_scene.get_intersection(shadow_ray);
+		//	const double d = (m_scene.lights[i]->get_position() - x).mag();
+		//	if (!isct_temp.hit || d < isct_temp.u) {
+		//		direct_diffuse = direct_diffuse + m_scene.lights[i]->get_spectral_radiance(shadow_ray) * std::max(0.0, isct.n.dot(shadow_ray.direction));
+		//	}
+		//}
 
 		Spectrum diffuse = indirect_diffuse + direct_diffuse;
 		diffuse = diffuse.element_wise_product(albedos);
