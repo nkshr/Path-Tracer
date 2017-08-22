@@ -147,7 +147,7 @@ Spectrum ShadowRayPathTracer::trace_ray(const Ray &ray, int depth, unsigned shor
 			indirect_diffuse = indirect_diffuse + trace_ray(reflected, depth+1, Xi) * std::max(reflected.direction.dot(isct.n), 0.0);
 		}
 
-		bool use_shadow_ray;
+		bool use_shadow_ray = false;
 		switch (m_srct) {
 		default:
 		case ALWAYS:
