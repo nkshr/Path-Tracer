@@ -38,5 +38,5 @@ class ShadowRayPathTracer : public Tracer{
 protected:
 
 	virtual Spectrum trace_ray(const Ray &ray, int depth, unsigned short * Xi);
-	bool visible(Light * light);
+	//bool visible(Light * light);
 };

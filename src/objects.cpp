@@ -37,11 +37,6 @@ ObjectIntersection Sphere::get_intersection(const Ray &ray) {
 	return isct;
 }
 
-Vec Sphere::get_shadow_ray_dir(const Vec &p) const {
-	return (m_sphere.position - p).norm();
-}
-
-
 Cylinder::Cylinder(Vec p_, Vec d_, double r_, double h_, Material m_){
 	m_p = p_;
 	m_d = d_.norm();

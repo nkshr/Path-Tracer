@@ -11,10 +11,10 @@
 
 struct Scene {
 	std::vector<Object*> objects;
-	std::vector<Light*> lights;
+	//std::vector<Light*> lights;
 	Observer * observer;
 
-	ObjectIntersection get_intersection(const Ray &ray) {
+	ObjectIntersection get_intersection(const Ray &ray) const {
 		ObjectIntersection isct = ObjectIntersection();
 		ObjectIntersection temp;
 		const size_t size = objects.size();

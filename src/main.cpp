@@ -42,7 +42,7 @@ int main(int argc, char *argv[]) {
 	scene.objects.push_back(new Cylinder(Vec(0, 0, 0), Vec(0, 0, -1), 6, 12, Material(DIFF)));
 	scene.objects.push_back(new Sphere(Vec(0, 0, -5), 1, DIFF));
 
-	scene.lights.push_back(new PointLight(Vec(3, 3, 0), Spectrum(1.0)));
+	scene.objects.push_back(new PointLight(Vec(3, 3, 0), Spectrum(1.0)));
 	//scene.lights.push_back(new SpotLight(Vec(0, 0, 0), Vec(0, 0, -1), Spectrum(1.0), 30));
 	//scene.lights.push_back(new Liser(Vec(0, 0, 0), Vec(0, 0, -1), Vec(0, 1, 0), 1, 1, Spectrum(1.0)));
 	

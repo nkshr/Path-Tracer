@@ -140,14 +140,15 @@ Spectrum ShadowRayPathTracer::trace_ray(const Ray &ray, int depth, unsigned shor
 		Spectrum indirect_diffuse(0.0);
 		for (int i = 0; i < m_num_bounces; ++i) {
 			Ray reflected = isct.m.get_reflected_ray(ray, x, isct.n, Xi);
-			reflected.origin = reflected.origin + reflected.direction * config::eps;
+			shift(isct.n, reflected);
+			//reflected.origin = reflected.origin + reflected.direction * config::eps;
 			indirect_diffuse = indirect_diffuse + trace_ray(reflected, depth, Xi) * std::max(reflected.direction.dot(isct.n), 0.0);
 		}
 
 		Spectrum direct_diffuse(0.0);
 		for (int i = 0; i < m_scene.objects.size(); ++i) {
 			if (m_scene.objects[i]->is_light()) {
-			
+				direct_diffuse = direct_diffuse + m_scene.objects[i]->illuminate(m_scene, x, isct.n);
 			}
 		}
 		//for (int i = 0; i < m_scene.lights.size(); ++i) {
@@ -171,9 +172,4 @@ Spectrum ShadowRayPathTracer::trace_ray(const Ray &ray, int depth, unsigned shor
 	else {
 		return Spectrum(0.0);
 	}
-}
-
-bool ShadowRayPathTracer::visible(Light *light) {
-	
-	return true;
 }

@@ -10,6 +10,8 @@
 #include "../lib/tiny_obj_loader/tiny_obj_loader.h"
 //#include "../lib/fastbvh/BVH.h"
 
+struct Scene;
+
 struct ObjectIntersection {
 	bool hit;	// If there was an intersection
 	double u;	// Distance to intersection along ray
@@ -29,7 +31,8 @@ public:
 	//Object(Vec p_, Material m_):m_p(p_), m_m(m_) {
 	//}
 	virtual ObjectIntersection get_intersection(const Ray &r) = 0;
-	virtual Vec get_shadow_ray_dir(const Vec &p) const { return Vec(); };
+	virtual Spectrum illuminate(const Scene &scene, const Vec &p, const Vec &n) { return Spectrum(0.0); };
+
 	Vec get_position();
 	Material get_material();
 	bool is_light() const;
@@ -46,7 +49,8 @@ public:
 	double get_radius();
 	
 	virtual ObjectIntersection get_intersection(const Ray &r);
-	virtual Vec get_shadow_ray_dir(const Vec &p) const;
+	Spectrum illuminate(const Scene &scene, const Vec &p) { return Spectrum(0.0); };
+
 };
 
 class Cylinder : public Object {
