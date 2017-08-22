@@ -72,3 +72,13 @@ public:
 	virtual ObjectIntersection get_intersection(const Ray &r);
 	Spectrum illuminate(const Scene &scene, const Vec &p, const Vec &n);
 };
+
+//class Laser : public Object {
+//private:
+//	Spectrum m_srad;
+//
+//public:
+//	SpotLight(Vec p, Spectrum srad, double deg);
+//	virtual ObjectIntersection get_intersection(const Ray &r);
+//	Spectrum illuminate(const Scene &scene, const Vec &p, const Vec &n);
+//};

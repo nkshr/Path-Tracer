@@ -88,8 +88,11 @@ PointLight::PointLight(Vec p, Spectrum srad) {
 
 Spectrum PointLight::illuminate(const Scene &scene, const Vec &p, const Vec &n) {
 	Ray shadow_ray(p, (m_p - p).norm());
+	shift(n, shadow_ray);
+
 	ObjectIntersection isct = scene.get_intersection(shadow_ray);
 	const double d = (m_p - p).mag();
+
 	if (!isct.hit || d < isct.u) {
 		return m_srad * std::max(0.0, n.dot(shadow_ray.direction));
 	}
@@ -109,6 +112,7 @@ ObjectIntersection SpotLight::get_intersection(const Ray &ray) {
 
 Spectrum SpotLight::illuminate(const Scene &scene, const Vec  &p, const Vec &n) {
 	Ray shadow_ray(p, (m_p - p).norm());
+	shift(shadow_ray.direction, shadow_ray);
 	double dot = n.dot(shadow_ray.direction);
 	if (dot < cos(m_rad))
 		return Spectrum(0.0);

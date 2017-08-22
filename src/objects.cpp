@@ -20,6 +20,7 @@ Sphere::Sphere( Vec p_, double r_, Material m_ ){
 	m_sphere.position = p_;
 	m_sphere.radius = r_;
 	m_m = m_;
+	m_is_light = false;
 }
 
 double Sphere::get_radius() { return m_r; }
@@ -43,6 +44,7 @@ Cylinder::Cylinder(Vec p_, Vec d_, double r_, double h_, Material m_){
 	m_r = r_;
 	m_h = h_;
 	m_m = m_;
+	m_is_light = false;
 }
 
 double Cylinder::get_radius() {

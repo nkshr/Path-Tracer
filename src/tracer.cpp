@@ -141,7 +141,6 @@ Spectrum ShadowRayPathTracer::trace_ray(const Ray &ray, int depth, unsigned shor
 		for (int i = 0; i < m_num_bounces; ++i) {
 			Ray reflected = isct.m.get_reflected_ray(ray, x, isct.n, Xi);
 			shift(isct.n, reflected);
-			//reflected.origin = reflected.origin + reflected.direction * config::eps;
 			indirect_diffuse = indirect_diffuse + trace_ray(reflected, depth, Xi) * std::max(reflected.direction.dot(isct.n), 0.0);
 		}
 
