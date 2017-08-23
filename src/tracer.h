@@ -35,7 +35,7 @@ private:
 };
 
 enum 	ShadowRayCastType {
-	ALWAYS, BEGGINING, END, NOT_USE
+	ALWAYS, BEGINNING, END, NOT_USE
 };
 
 class ShadowRayPathTracer : public Tracer{

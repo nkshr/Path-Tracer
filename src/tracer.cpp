@@ -156,7 +156,7 @@ Spectrum ShadowRayPathTracer::trace_ray(const Ray &ray, int depth, unsigned shor
 		case ALWAYS:
 			use_shadow_ray = true;
 			break;
-		case BEGGINING:
+		case BEGINNING:
 			if (depth == 0) {
 				use_shadow_ray = true;
 			}
