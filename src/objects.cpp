@@ -17,8 +17,8 @@ ObjectIntersection::ObjectIntersection(bool hit_, double u_, Vec n_, Material m_
 
 
 Sphere::Sphere( Vec p_, double r_, Material m_ ){
-	m_sphere.position = p_;
-	m_sphere.radius = r_;
+	m_p = p_;
+	m_r = r_;
 	m_m = m_;
 	m_is_light = false;
 }
@@ -30,9 +30,9 @@ double Sphere::get_radius() { return m_r; }
 ObjectIntersection Sphere::get_intersection(const Ray &ray) {
 	ObjectIntersection isct;
 	isct.m = m_m;
-	if (m_sphere.intersect(ray, isct.u)) {
+	if (calcRaySphereIntersection(ray, m_p, m_r, isct.u)) {
 		isct.hit = true;
-		isct.n = (ray.origin + ray.direction * isct.u - m_sphere.position).norm();
+		isct.n = (ray.origin + ray.direction * isct.u - m_p).norm();
 	}
 
 	return isct;

@@ -41,7 +41,7 @@ class Sphere : public Object {
 
 private:
 	double m_r;	// Radius
-	geo::Sphere m_sphere;
+
 public:
 	Sphere(Vec p_, double r_, Material m_);	
 	double get_radius();
