@@ -84,6 +84,7 @@ ObjectIntersection PointLight::get_intersection(const Ray &ray) {
 PointLight::PointLight(Vec p, Spectrum srad) {
 	m_p = p;
 	m_srad = srad;
+	m_is_light = true;
 }
 
 Spectrum PointLight::illuminate(const Scene &scene, const Vec &p, const Vec &n) {
@@ -105,6 +106,7 @@ SpotLight::SpotLight(Vec p, Vec t, Spectrum srad, double deg) {
 	m_d = (t-m_p).norm();
 	m_srad = srad;
 	m_rad = degToRad(deg * 0.5);
+	m_is_light = true;
 }
 
 ObjectIntersection SpotLight::get_intersection(const Ray &ray) {

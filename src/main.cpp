@@ -45,8 +45,8 @@ int main(int argc, char *argv[]) {
 	MonoCamera * camera = new MonoCamera();
 	camera->set_image_width(320);
 	camera->set_image_height(240);
-	camera->set_exposure_time(1.0);
-	camera->set_sensor_width(1.0);
+	camera->set_exposure_time(3.2);
+	camera->set_sensor_width(2.4);
 	camera->set_sensor_height(1.0);
 	camera->set_position(Vec(0.0, 0.0, 5.0));
 	camera->set_target(Vec(0.0, 0.0, -6.0));
