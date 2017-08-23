@@ -36,6 +36,8 @@ private:
 	double m_exposure_time;
 	double m_iso;
 	double m_pinhole_radius;
+	double m_normalized_pinhole_radius;
+
 	Vec m_position;
 	Vec m_target;
 	Vec m_up;

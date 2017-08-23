@@ -70,6 +70,7 @@ void Observer::update() {
 	
 	m_forcal_length = m_ratio / tan(m_fov * 0.5);
 	m_fvec = m_z_direction * m_forcal_length * -1;
+	m_normalized_pinhole_radius = (1.0 / m_sensor_height) * m_pinhole_radius;
 }
 
 void Observer::set_image_width(const int w) {
@@ -172,8 +173,8 @@ Vec Observer::sample_point_in_pinhole(unsigned short * Xi) {
 	double y_jitter;
 	generateUniformRandInCircle(Xi, x_jitter, y_jitter);
 
-	pt = pt + m_x_direction * m_pinhole_radius * x_jitter;
-	pt = pt + m_y_direction * m_pinhole_radius * y_jitter;
+	pt = pt + m_x_direction * m_normalized_pinhole_radius * x_jitter;
+	pt = pt + m_y_direction * m_normalized_pinhole_radius * y_jitter;
 
 	return pt;
 }
