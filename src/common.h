@@ -377,6 +377,15 @@ inline void generateUniformRandInCircle(unsigned short *Xi, double &x, double &y
 	y = r * sin(theta);
 }
 
+inline Vec generateUniformSmapleInHemisphere(unsigned short * Xi) {
+	const double cos_theta = erand48(Xi);
+	const double sin_theta = sqrt(1 - cos_theta * cos_theta);
+	const double phi = 2 * config::pi * erand48(Xi);
+
+	return Vec(cos(phi) * sin_theta, sin(phi) * sin_theta, cos_theta);
+}
+
 inline void shift(Vec n, Ray &ray) {
 	ray.origin = ray.origin + n * config::eps;
 }
+
