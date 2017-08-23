@@ -168,21 +168,23 @@ inline void getMinMax(const double * vals, const int num_vals,
 
 inline bool calcRayPlaneIntersection(const Ray &r, const Vec &p, const Vec &n, double &t) {
 	const double rn = r.direction.dot(n);
-	if (abs(rn) < config::eps) {
-		return false;
+	if (fabs(rn) < config::eps) {
+	  return false;
 	}
 
 	t = (p - r.origin).dot(n) / rn;
 
-	if (t > 0)
+	if (t > 0){
 		return true;
-
-	return false;
+	}
+	else{
+	  return false;
+	}
 }
 
 inline bool calcRayDiscIntersection(const Ray &ray, const Vec &p, const Vec &n,
 	const double radius, double &t) {
-	if(!calcRayPlaneIntersection(ray, p, n, t))
+ 	if(!calcRayPlaneIntersection(ray, p, n, t))
 		return  false;
 
 	Vec isct_pt = ray.origin + ray.direction * t;
