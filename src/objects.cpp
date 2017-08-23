@@ -110,23 +110,6 @@ bool Object::is_light() const{
 	return m_is_light;
 }
 
-//Rectangle::Rectangle(Vec p_, Vec n_, double w_, double h_, Material m_) : 
-//	Object(p_, m_), m_n(n_), m_w(w_), m_h(w_){
-//}
-//
-//ObjectIntersection Rectangle::get_intersect(const Ray &r) {
-//	const double tmp = r.direction.dot(m_n);
-//	if (abs(tmp) < config::eps) {
-//		
-//	}
-//
-//	const double t = (m_p - r.origin).dot(m_n) / tmp;
-//
-//
-//	ObjectIntersection isct;
-//	return isct;
-//}
-
 Cuboid::Cuboid(Vec p_, Vec target_, Vec up_, double w_, double h_, double depth_, Material m_){
 	m_p = p_;
 	m_m = m_;

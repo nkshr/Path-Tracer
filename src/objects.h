@@ -28,8 +28,6 @@ protected:
 	Material m_m;
 	bool m_is_light;
 public:
-	//Object(Vec p_, Material m_):m_p(p_), m_m(m_) {
-	//}
 	virtual ObjectIntersection get_intersection(const Ray &r) = 0;
 	virtual Spectrum illuminate(const Scene &scene, const Vec &p, const Vec &n) { return Spectrum(0.0); };
 
@@ -67,17 +65,6 @@ public:
 	virtual ObjectIntersection get_intersection(const Ray &r);
 };
 
-//class Rectangle : public Object {
-//private:
-//	Vec m_n;
-//	double m_w;
-//	double m_h;
-//
-//public:
-//	Rectangle(Vec p_, Vec d_, double w_, double h_, Material m_);
-//	virtual ObjectIntersection get_intersect(const Ray &r);
-//};
-
 class Cuboid : public Object {
 private:
 	double m_w;
@@ -100,24 +87,6 @@ public:
 	Cuboid(Vec p_, Vec target_, Vec up_, double w_, double h_, double depth_, Material m_);
 	virtual ObjectIntersection get_intersection(const Ray &r);
 };
-
-//class Mesh : public Object {
-//
-//private:
-//	std::vector<tinyobj::shape_t> m_shapes;
-//    std::vector<tinyobj::material_t> m_materials;
-//    std::vector<Material> materials;
-//    std::vector<Triangle*> tris;
-//    Material m_m;	// Material
-//    KDNode *node;
-//	//BVH bvh;
-//
-//public:
-//	Mesh(Vec p_, const char* file_path, Material m_);
-//	virtual ObjectIntersection get_intersection(const Ray &r);
-//
-//};
-//
 
 class Plane : public Object {
 private:
