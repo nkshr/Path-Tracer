@@ -60,7 +60,7 @@ Vec Cylinder::get_direction() {
 }
 
 ObjectIntersection Cylinder::get_intersection(const Ray&ray) {	
-	ObjectIntersection isct(false, DBL_MAX);
+	ObjectIntersection isct(false, DBL_MAX, Vec(), m_m);
 
 	double t;
 	Vec dh_half = m_d * 0.5 * m_h;
@@ -77,7 +77,7 @@ ObjectIntersection Cylinder::get_intersection(const Ray&ray) {
 	
 
 	if (calcRayDiscIntersection(ray, m_p + dh_half, m_d, m_r, t)) {
-		if (t > 0 && t < isct.u) {
+		if (t < isct.u) {
 			isct.u = t;
 			isct.n = m_d;
 			isct.hit = true;
@@ -85,16 +85,12 @@ ObjectIntersection Cylinder::get_intersection(const Ray&ray) {
 	}
 
 	if (calcRayDiscIntersection(ray, m_p - dh_half, m_d * -1, m_r, t)) {
-		if (t > 0 && t < isct.u) {
+		if (t < isct.u) {
 			isct.u = t;
 			isct.n = m_d * -1;
 			isct.hit = true;
 		}
 	}
-
-	if (isct.hit)
-		isct.m = m_m;
-
 	return isct;
 }
 
