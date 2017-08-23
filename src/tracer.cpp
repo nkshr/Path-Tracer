@@ -25,9 +25,9 @@ double  * Tracer::trace_rays() {
 	double * pixel_buffer = new double[m_scene.observer->get_num_pixels() * 3];
 	double sensor_size = m_scene.observer->get_sensor_height() * m_scene.observer->get_sensor_width();
 	
-	int ipb = 0;
+	//int ipb = 0;
 	
-	//#pragma omp parallel for schedule(dynamic, 1)       // OpenMP
+	#pragma omp parallel for schedule(dynamic, 1)       // OpenMP
 	for (int y = 0; y < height; ++y) {
 		unsigned short Xi[3] = { (unsigned short)0, (unsigned short)0,(unsigned short)(y*y*y) };               // Stores seed for erand48
 		fprintf(stderr, "\rRendering : %.2f%% ",      // Prints
@@ -55,6 +55,7 @@ double  * Tracer::trace_rays() {
 
 
 			Vec rgb = m_scene.observer->convert_spd_to_rgb(spd);
+			int ipb = (y * width + x)*3;
 			pixel_buffer[ipb++] = rgb.x;
 			pixel_buffer[ipb++] = rgb.y;
 			pixel_buffer[ipb++] = rgb.z;
@@ -147,6 +148,8 @@ Spectrum ShadowRayPathTracer::trace_ray(const Ray &ray, int depth, unsigned shor
 			indirect_diffuse = indirect_diffuse + trace_ray(reflected, depth+1, Xi) * std::max(reflected.direction.dot(isct.n), 0.0);
 		}
 
+		indirect_diffuse = indirect_diffuse / (double)m_num_bounces;
+
 		bool use_shadow_ray = false;
 		switch (m_srct) {
 		default:
@@ -178,9 +181,8 @@ Spectrum ShadowRayPathTracer::trace_ray(const Ray &ray, int depth, unsigned shor
 			}
 		}
 
-		Spectrum diffuse = indirect_diffuse + direct_diffuse;
+		Spectrum diffuse = indirect_diffuse * 2 + direct_diffuse / config::pi;
 		diffuse = diffuse.element_wise_product(albedos);
-		diffuse = diffuse * 2.0 / (double)m_num_bounces;
 		diffuse = m_attenuation->attenuate(isct.u, diffuse);
 
 		return diffuse;
