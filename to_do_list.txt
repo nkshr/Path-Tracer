@@ -5,3 +5,4 @@ Add random
 Add illuminate of Sphere.
 Add exit condition to path trace algorithm.
 Test water attenuation.
+Make it possible to use DMSG on Ubuntu.
