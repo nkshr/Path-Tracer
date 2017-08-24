@@ -85,7 +85,7 @@ private:
 	Triangle m_tris[12];
 
 public:
-	Cuboid(Vec p_, Vec target_, Vec up_, double w_, double h_, double depth_, Material m_);
+	Cuboid(Vec p_, Vec dir_, Vec up_, double w_, double h_, double depth_, Material m_);
 	virtual ObjectIntersection get_intersection(const Ray &r);
 };
 

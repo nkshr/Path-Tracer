@@ -127,14 +127,14 @@ bool Object::is_light() const{
 	return m_is_light;
 }
 
-Cuboid::Cuboid(Vec p_, Vec target_, Vec up_, double w_, double h_, double depth_, Material m_){
+Cuboid::Cuboid(Vec p_, Vec dir_, Vec up_, double w_, double h_, double depth_, Material m_){
 	m_p = p_;
 	m_m = m_;
 	m_w = w_;
 	m_h = h_;
 	m_depth = depth_;
 
-	m_z_dir = (target_ - m_p).norm() * -1;
+	m_z_dir = dir_.norm() * -1;
 	m_x_dir = up_.cross(m_z_dir).norm();
 	m_y_dir = m_z_dir.cross(m_x_dir);
 
@@ -151,14 +151,7 @@ static int b = 0;
 ObjectIntersection Cuboid::get_intersection(const Ray &r) {
 	ObjectIntersection isct(false, DBL_MAX, Vec(), m_m);
 
-	const Vec xw = m_x_dir * m_w;
-	const Vec yh = m_y_dir * m_h;
-	const Vec zd = m_z_dir * m_depth;
-	const Vec half_xw = xw * 0.5;
-	const Vec half_yh = yh * 0.5;
-	const Vec half_zd = zd * 0.5;
-
-	Vec p = m_p + half_zd;
+	Vec p = m_p + m_half_zd;
 	double t;
 	if (calcRayRectangleIntersection(r, p, m_z_dir, m_y_dir, m_w, m_h, t)) {
 		isct.hit = true;
@@ -168,7 +161,7 @@ ObjectIntersection Cuboid::get_intersection(const Ray &r) {
 		}
 	}
 
-	p = m_p - half_zd;
+	p = m_p - m_half_zd;
 	if (calcRayRectangleIntersection(r, p, m_z_dir * -1, m_y_dir, m_w, m_h, t)) {
 		isct.hit = true;
 		if (t < isct.u) {
@@ -178,8 +171,8 @@ ObjectIntersection Cuboid::get_intersection(const Ray &r) {
 	}
 
 
-	p = m_p + half_xw;
-	if (calcRayRectangleIntersection(r, p, m_x_dir, m_y_dir, m_w, m_h, t)) {
+	p = m_p + m_half_xw;
+	if (calcRayRectangleIntersection(r, p, m_x_dir, m_y_dir, m_depth, m_h, t)) {
 		isct.hit = true;
 		if (t < isct.u) {
 			isct.u = t;
@@ -187,12 +180,30 @@ ObjectIntersection Cuboid::get_intersection(const Ray &r) {
 		}
 	}
 
-	p = m_p - half_xw;
-	if (calcRayRectangleIntersection(r, p, m_x_dir * -1, m_y_dir, m_w, m_h, t)) {
+	p = m_p - m_half_xw;
+	if (calcRayRectangleIntersection(r, p, m_x_dir * -1, m_y_dir, m_depth, m_h, t)) {
 		isct.hit = true;
 		if (t < isct.u) {
 			isct.u = t;
 			isct.n = m_x_dir  * -1;
+		}
+	}
+
+	p = m_p + m_half_yh;
+	if (calcRayRectangleIntersection(r, p, m_y_dir, m_z_dir, m_w, m_depth, t)) {
+		isct.hit = true;
+		if (t < isct.u) {
+			isct.u = t;
+			isct.n = m_y_dir;
+		}
+	}
+
+	p = m_p - m_half_yh;
+	if (calcRayRectangleIntersection(r, p, m_y_dir * -1, m_z_dir, m_w, m_depth, t)) {
+		isct.hit = true;
+		if (t < isct.u) {
+			isct.u = t;
+			isct.n = m_y_dir  * -1;
 		}
 	}
 
