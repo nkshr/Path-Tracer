@@ -11,13 +11,14 @@
 //#include "../lib/fastbvh/BVH.h"
 
 struct Scene;
+class Object;
 
 struct ObjectIntersection {
 	bool hit;	// If there was an intersection
 	double u;	// Distance to intersection along ray
 	Vec n;		// Normal of intersected face
 	Material m;	// Material of intersected face
-
+	Object * obj;
 	ObjectIntersection(bool hit_=false, double u_=0, Vec n_=Vec(), Material m_=Material());
 };
 
@@ -29,7 +30,7 @@ protected:
 	bool m_is_light;
 public:
 	virtual ObjectIntersection get_intersection(const Ray &r) = 0;
-	virtual Spectrum illuminate(const Scene &scene, const Vec &p, const Vec &n) { return Spectrum(0.0); };
+	virtual Spectrum illuminate(const Scene &scene, const Vec &p, const Vec &n, const int num_samples, unsigned short *Xi) { return Spectrum(0.0); };
 
 	Vec get_position();
 	Material get_material();
@@ -47,7 +48,7 @@ public:
 	double get_radius();
 	
 	virtual ObjectIntersection get_intersection(const Ray &r);
-	Spectrum illuminate(const Scene &scene, const Vec &p) { return Spectrum(0.0); };
+	Spectrum illuminate(const Scene &scene, const Vec &p, const Vec &n, const int num_samples, unsigned short *Xi);
 
 };
 

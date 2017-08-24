@@ -176,7 +176,7 @@ Spectrum ShadowRayPathTracer::trace_ray(const Ray &ray, int depth, unsigned shor
 		if (use_shadow_ray) {
 			for (int i = 0; i < m_scene.objects.size(); ++i) {
 				if (m_scene.objects[i]->is_light()) {
-					direct_diffuse = direct_diffuse + m_scene.objects[i]->illuminate(m_scene, x, isct.n);
+					direct_diffuse = direct_diffuse + m_scene.objects[i]->illuminate(m_scene, x, isct.n, m_num_samples_per_light, Xi);
 				}
 			}
 		}

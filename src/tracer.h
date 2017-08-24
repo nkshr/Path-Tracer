@@ -16,6 +16,7 @@ protected:
 	int m_num_bounces;
 	int m_num_samples_per_pinhole;
 	int m_num_samples_per_pixel;
+	int m_num_samples_per_light;
 
 	virtual Spectrum trace_ray(const Ray &ray, int depth, unsigned short * Xi) = 0;
 	

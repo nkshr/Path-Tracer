@@ -87,7 +87,7 @@ PointLight::PointLight(Vec p, Spectrum srad) {
 	m_is_light = true;
 }
 
-Spectrum PointLight::illuminate(const Scene &scene, const Vec &p, const Vec &n) {
+Spectrum PointLight::illuminate(const Scene &scene, const Vec &p, const Vec &n, const int num_samples, unsigned short *Xi) {
 	Ray shadow_ray(p, (m_p - p).norm());
 	shift(n, shadow_ray);
 
@@ -113,7 +113,8 @@ ObjectIntersection SpotLight::get_intersection(const Ray &ray) {
 	return ObjectIntersection();
 }
 
-Spectrum SpotLight::illuminate(const Scene &scene, const Vec  &p, const Vec &n) {
+Spectrum SpotLight::illuminate(const Scene &scene, const Vec  &p, const Vec &n, 
+	const int num_samples, unsigned short *Xi) {
 	Ray shadow_ray(p, (m_p - p).norm());
 	shift(shadow_ray.direction, shadow_ray);
 	double dot = m_d.dot(shadow_ray.direction) * -1;
@@ -180,6 +181,7 @@ ObjectIntersection Laser::get_intersection(const Ray &r) {
 	return isct;
 }
 
-Spectrum Laser::illuminate(const Scene &scene, const Vec &p, const Vec &n) {
+Spectrum Laser::illuminate(const Scene &scene, const Vec &p, const Vec &n, 
+	const int num_samples, unsigned short *Xi) {
 	return Spectrum(0.0);
 }

@@ -11,7 +11,8 @@ private:
 public:
 	PointLight(Vec p, Spectrum srad);
 	virtual ObjectIntersection get_intersection(const Ray &r);
-	Spectrum illuminate(const Scene &scene, const Vec &p, const Vec &n);
+	virtual Spectrum illuminate(const Scene &scene, const Vec &p, const Vec &n,
+		const int num_samples, unsigned short *Xi);
 };
 
 class  SpotLight : public Object {
@@ -23,7 +24,8 @@ private:
 public:
 	SpotLight(Vec p, Vec t, Spectrum srad, double deg);
 	virtual ObjectIntersection get_intersection(const Ray &r);
-	Spectrum illuminate(const Scene &scene, const Vec &p, const Vec &n);
+	virtual Spectrum illuminate(const Scene &scene, const Vec &p, const Vec &n,
+		const int num_samples, unsigned short *Xi);
 };
 
 class Laser : public Object {
@@ -37,5 +39,5 @@ private:
 public:
 	Laser(Vec p, Vec t, double r, double h, Spectrum srad, Material cover);
 	virtual ObjectIntersection get_intersection(const Ray &r);
-	virtual Spectrum illuminate(const Scene &scene, const Vec &p, const Vec &n);
+	virtual Spectrum illuminate(const Scene &scene, const Vec &p, const Vec &n, const int num_samples, unsigned short *Xi);
 };

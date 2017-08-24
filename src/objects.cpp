@@ -7,6 +7,7 @@
 #include "material.h"
 #include "objects.h"
 #include "color.h"
+#include "scene.h"
 //#include "../lib/fastbvh/BVH.h"
 
 
@@ -25,6 +26,26 @@ Sphere::Sphere( Vec p_, double r_, Material m_ ){
 
 double Sphere::get_radius() { return m_r; }
 
+Spectrum Sphere::illuminate(const Scene &scene, const Vec &p, const Vec &n, const int num_samples, unsigned short *Xi) {
+	Spectrum srad(0.0);
+	for (int i = 0; i < num_samples; ++i) {
+		const Vec sample = generateUniformSampleInHemisphere(Xi);
+		const Vec y_dir = (m_p - p).norm();
+
+		Vec x_dir, z_dir;
+		createRightHandCoordinateSystem(y_dir, x_dir, z_dir);
+
+		Vec hit_p = m_p + x_dir * sample.x + y_dir * sample.y + z_dir * sample.z;
+		Ray shadow_ray(p, (hit_p - p).norm());
+		ObjectIntersection isct = scene.get_intersection(shadow_ray);
+		if (isct.obj == this) {
+			srad = srad + m_m.get_spectral_emissions();
+		}
+	}
+
+	srad = srad * 2 * config::pi / (double)num_samples;
+	return srad;
+}
 
 // Check if ray intersects with sphere. Returns ObjectIntersection data structure
 ObjectIntersection Sphere::get_intersection(const Ray &ray) {

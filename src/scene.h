@@ -11,7 +11,6 @@
 
 struct Scene {
 	std::vector<Object*> objects;
-	//std::vector<Light*> lights;
 	Observer * observer;
 
 	ObjectIntersection get_intersection(const Ray &ray) const {
@@ -33,5 +32,6 @@ struct Scene {
 		}
 		return isct;
 	}
+
 };
 #endif //SCENE_H
