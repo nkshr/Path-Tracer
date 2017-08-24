@@ -377,21 +377,21 @@ inline void generateUniformRandInCircle(unsigned short *Xi, double &x, double &y
 	y = r * sin(theta);
 }
 
-inline Vec generateUniformSmapleInHemisphere(unsigned short * Xi) {
+inline Vec generateUniformSampleInHemisphere(unsigned short * Xi) {
 	const double cos_theta = erand48(Xi);
 	const double sin_theta = sqrt(1 - cos_theta * cos_theta);
 	const double phi = 2 * config::pi * erand48(Xi);
 
-	return Vec(cos(phi) * sin_theta, sin(phi) * sin_theta, cos_theta);
+	return Vec(cos(phi) * sin_theta, cos_theta, sin(phi) * sin_theta);
 }
 
-inline void createRightHandCoordinateSystem(const Vec &z, Vec &x, Vec &y) {
-	if (abs(z.x) > abs(z.y)) {
-		x = Vec(z.z, 0, -z.x);
-		y = z.cross(x);
+inline void createRightHandCoordinateSystem(const Vec &y, Vec &x, Vec &z) {
+	if (abs(y.x) > abs(y.y)) {
+		x = Vec(y.z, 0, -y.x);
+		z = x.cross(y);
 	}
 	else {
-		y = Vec(0, z.z, -z.y);
+		z = Vec(0, y.z, -y.y);
 		x = y.cross(z);
 	}
 }
