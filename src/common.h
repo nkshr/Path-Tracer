@@ -385,6 +385,17 @@ inline Vec generateUniformSmapleInHemisphere(unsigned short * Xi) {
 	return Vec(cos(phi) * sin_theta, sin(phi) * sin_theta, cos_theta);
 }
 
+inline void createRightHandCoordinateSystem(const Vec &z, Vec &x, Vec &y) {
+	if (abs(z.x) > abs(z.y)) {
+		x = Vec(z.z, 0, -z.x);
+		y = z.cross(x);
+	}
+	else {
+		y = Vec(0, z.z, -z.y);
+		x = y.cross(z);
+	}
+}
+
 inline void shift(Vec n, Ray &ray) {
 	ray.origin = ray.origin + n * config::eps;
 }
