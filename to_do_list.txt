@@ -1,3 +1,4 @@
 Test  Laser.
 Add exit condition to path trace algorithm.
 Let loader be separated from Spectrum.
+Integerate scene.h with objects.h
