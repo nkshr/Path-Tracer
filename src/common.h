@@ -400,3 +400,16 @@ inline void shift(Vec n, Ray &ray) {
 	ray.origin = ray.origin + n * config::eps;
 }
 
+inline void gammaCorrection(double * vals,  int num_vals, double gamma){
+  double min_val, max_val;
+  getMinMax(vals, num_vals, min_val, max_val);
+
+  const double diff = max_val - min_val;
+  const double gamma_recip = 1.0 / gamma;
+  
+  for(int i = 0; i < num_vals; ++i){
+    vals[i] = diff * pow(((vals[i] - min_val) / diff), gamma_recip) + min_val; 
+  }
+
+  mapValues(vals, num_vals, min_val, max_val, 0, 255.9);
+}
