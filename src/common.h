@@ -10,7 +10,11 @@
 #include "ray.h"
 #include "../lib/rand48/erand48.h"
 
-#define DMSG DMsg(__FUNCSIG__)
+#ifdef __linux__
+#define DMSG() DMsg(__PRETTY_FUNCTION__)
+#elseif _WIN32
+#define DMSG() DMsg(__FUNCSIG__)
+#endif
 
 inline double linearInterpolation(const double  x, const double x1, const double  x2,
 	const double y1, const double y2) {
