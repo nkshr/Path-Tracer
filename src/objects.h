@@ -4,11 +4,7 @@
 #include "vector.h"
 #include "ray.h"
 #include "material.h"
-#include "aabbox.h"
-#include "triangle.h"
 #include "geometry.h"
-#include "../lib/tiny_obj_loader/tiny_obj_loader.h"
-//#include "../lib/fastbvh/BVH.h"
 
 struct Scene;
 class Object;
@@ -81,8 +77,6 @@ private:
 	Vec m_half_xw;
 	Vec m_half_yh;
 	Vec m_half_zd;
-
-	Triangle m_tris[12];
 
 public:
 	Cuboid(Vec p_, Vec dir_, Vec up_, double w_, double h_, double depth_, Material m_);

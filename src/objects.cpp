@@ -8,8 +8,6 @@
 #include "objects.h"
 #include "color.h"
 #include "scene.h"
-//#include "../lib/fastbvh/BVH.h"
-
 
 ObjectIntersection::ObjectIntersection(bool hit_, double u_, Vec n_, Material m_)
 {

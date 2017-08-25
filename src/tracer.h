@@ -9,7 +9,6 @@
 class Tracer {
 protected:
 	Scene m_scene;
-	//ObjectIntersection Tracer::intersect(const Ray &ray);
 	Attenuation *m_attenuation;
 
 	int m_max_depth;

@@ -3,7 +3,10 @@
 #include <cmath>
 #include <iostream>
 
-#include "scene.h"
 #include "objects.h"
 #include "ray.h"
 #include "config.h"
+
+void foo(Object * object) {
+	return;
+}
