@@ -153,3 +153,5 @@ public:
 	  return config::lambda_step;
 	}
 };
+
+Spectrum load(const char *fname);
