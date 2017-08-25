@@ -9,9 +9,7 @@ double  * Tracer::trace_rays() {
 	const int width = m_scene.observer->get_image_width();
 	double * pixel_buffer = new double[m_scene.observer->get_num_pixels() * 3];
 	double sensor_size = m_scene.observer->get_sensor_height() * m_scene.observer->get_sensor_width();
-	
-	//int ipb = 0;
-	
+		
 	#pragma omp parallel for schedule(dynamic, 1)       // OpenMP
 	for (int y = 0; y < height; ++y) {
 		unsigned short Xi[3] = { (unsigned short)0, (unsigned short)0,(unsigned short)(y*y*y) };               // Stores seed for erand48
@@ -91,7 +89,7 @@ Spectrum PathTracer::trace_ray(const Ray &ray, int depth, unsigned short * Xi) {
 	}
 
 	if (isct.m.get_type() == EMIT)  {
-		if(depth == 0)
+		if(!m_use_shadow_ray || depth == 0)
 			return m_attenuation->attenuate(isct.u, isct.m.get_spectral_emissions());
 		else return Spectrum(0.0);
 	}
