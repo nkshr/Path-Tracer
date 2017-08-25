@@ -1,7 +1,6 @@
-Test Cuboid.
 Test  Laser.
 Add illuminate function of Sphere.
 Add exit condition to path trace algorithm.
-Test water attenuation.
 Make it possible to use DMSG on Ubuntu.
 Make number of sampling configurable in MC integration of illuminate of sphere.
+Let loader be separated from Spectrum.
