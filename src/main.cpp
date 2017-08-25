@@ -34,11 +34,11 @@ int main(int argc, char *argv[]) {
 
 	//objects.push_back(new Cuboid(Vec(0.0, 0.0, 0.0), Vec(0.0, 0.0, 1.0), Vec(0.0, 1.0, 0.0), 2.0, 3.0, 1.0, Material(DIFF)));
 	scene.objects.push_back(new Cylinder(Vec(0, 0, 0), Vec(0, 0, -1), 6, 12, Material(DIFF)));
-	scene.objects.push_back(new Cuboid(Vec(0, 0, -3), Vec(0, 1, 0), Vec(1, 0, 0), 1, 1, 1, Material(DIFF)));
-	//scene.objects.push_back(new Sphere(Vec(0, 0, -5), 1, DIFF));
+	//scene.objects.push_back(new Cuboid(Vec(0, 0, -3), Vec(0, 1, 0), Vec(1, 0, 0), 1, 1, 1, Material(DIFF)));
+	scene.objects.push_back(new Sphere(Vec(0, 0, -5), 1, Material(EMIT, Spectrum(1.0))));
 	//scene.objects.push_back(new Sphere(Vec(3.0, 0.0, 0.0), 3, Material(EMIT, Spectrum("../data/spike700.csv"))));
 
-	scene.objects.push_back(new PointLight(Vec(3, 3, 0), Spectrum(1.0)));
+	//scene.objects.push_back(new PointLight(Vec(3, 3, 0), Spectrum(1.0)));
 	//scene.objects.push_back(new Laser(Vec(3, 3, 0), Vec(0, 0, -5), 1, 5, Spectrum(1.0), Material(DIFF)));
 	//scene.objects.push_back(new SpotLight(Vec(0, 0, 0), Vec(0, 0, -1), Spectrum(1.0), 30));
 	
@@ -72,7 +72,7 @@ int main(int argc, char *argv[]) {
 	tracer->set_attenuation(vacuum);
 	tracer->set_scene(scene);
 	tracer->set_type(BEGINNING);
-
+	tracer->set_num_samples_per_light(3);
 	double * pixel_buffer = tracer->trace_rays();
 
 	double min_val, max_val;

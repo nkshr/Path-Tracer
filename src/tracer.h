@@ -27,6 +27,7 @@ public:
 	void set_num_bounces(int num_bounces);
 	void set_num_samples_per_pinhole(int num_samples_per_point);
 	void set_num_samples_per_pixel(int num_samples_per_pixel);
+	void set_num_samples_per_light(int num_samples_per_light);
 	double * trace_rays();
 };
 

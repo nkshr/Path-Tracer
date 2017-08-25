@@ -90,6 +90,10 @@ void Tracer::set_num_samples_per_pixel(int num_samples_per_pixel) {
 	m_num_samples_per_pixel = num_samples_per_pixel;
 }
 
+void Tracer::set_num_samples_per_light(int num_samples_per_light){
+  m_num_samples_per_light = num_samples_per_light;
+}
+
 Spectrum PathTracer::trace_ray(const Ray &ray, int depth, unsigned short * Xi) {
 	ObjectIntersection isct = m_scene.get_intersection(ray);
 
