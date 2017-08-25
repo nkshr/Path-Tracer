@@ -38,7 +38,7 @@ int main(int argc, char *argv[]) {
 	scene.objects.push_back(new Sphere(Vec(0, 0, -5), 1, Material(EMIT, Spectrum(1.0))));
 	//scene.objects.push_back(new Sphere(Vec(3.0, 0.0, 0.0), 3, Material(EMIT, Spectrum("../data/spike700.csv"))));
 
-	//scene.objects.push_back(new PointLight(Vec(3, 3, 0), Spectrum(1.0)));
+	scene.objects.push_back(new PointLight(Vec(3, 3, 0), Spectrum(1.0)));
 	//scene.objects.push_back(new Laser(Vec(3, 3, 0), Vec(0, 0, -5), 1, 5, Spectrum(1.0), Material(DIFF)));
 	//scene.objects.push_back(new SpotLight(Vec(0, 0, 0), Vec(0, 0, -1), Spectrum(1.0), 30));
 	
@@ -64,15 +64,16 @@ int main(int argc, char *argv[]) {
 
 	Vacuum * vacuum = new Vacuum();
 
-	ShadowRayPathTracer * tracer = new ShadowRayPathTracer();
-	tracer->set_max_depth(6);
+	PathTracer * tracer = new PathTracer();
+	tracer->set_max_depth(5);
 	tracer->set_num_bounces(1);
 	tracer->set_num_samples_per_pixel(20);
 	tracer->set_num_samples_per_pinhole(1);
 	tracer->set_attenuation(vacuum);
 	tracer->set_scene(scene);
-	tracer->set_type(BEGINNING);
 	tracer->set_num_samples_per_light(3);
+	tracer->use_shadow_ray(true);
+
 	double * pixel_buffer = tracer->trace_rays();
 
 	double min_val, max_val;

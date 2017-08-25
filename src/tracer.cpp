@@ -4,21 +4,6 @@
 #include "objects.h"
 #include  "common.h"
 
-//ObjectIntersection Tracer::intersect(const Ray &ray) {
-//	ObjectIntersection isct = ObjectIntersection();
-//	ObjectIntersection temp;
-//	const size_t size = m_objects.size();
-//
-//	for (int i = 0; i<size; i++) {
-//		temp = m_objects.at((unsigned)i)->get_intersection(ray);
-//
-//		if (temp.hit) {
-//			if (isct.u == 0 || temp.u < isct.u) isct = temp;
-//		}
-//	}
-//	return isct;
-//}
-
 double  * Tracer::trace_rays() {
 	const int height = m_scene.observer->get_image_height();
 	const int width = m_scene.observer->get_image_width();
@@ -95,38 +80,6 @@ void Tracer::set_num_samples_per_light(int num_samples_per_light){
 }
 
 Spectrum PathTracer::trace_ray(const Ray &ray, int depth, unsigned short * Xi) {
-	ObjectIntersection isct = m_scene.get_intersection(ray);
-
-	// If no hit, return world colour
-	if (!isct.hit) {
-		return 0.0;
-	}
-
-	if (isct.m.get_type() == EMIT) {
-		return m_attenuation->attenuate(isct.u, isct.m.get_spectral_emissions());
-	}
-
-	const Spectrum albedos = isct.m.get_spectral_albedos();
-	if (++depth>m_max_depth) {
-		return m_attenuation->attenuate(isct.u, isct.m.get_spectral_emissions());
-	}
-
-	Vec x = ray.origin + ray.direction * isct.u;
-
-	Spectrum radiances(0.0);
-	for (int i = 0; i < m_num_bounces; ++i) {
-		Ray reflected = isct.m.get_reflected_ray(ray, x, isct.n, Xi);
-		radiances = radiances + trace_ray(reflected, depth, Xi) * std::max(reflected.direction.dot(isct.n), 0.0);
-	}
-
-	radiances = radiances.element_wise_product(albedos);
-	radiances = radiances * 2.0 / (double)m_num_bounces;
-	radiances = m_attenuation->attenuate(isct.u, radiances);
-	return  radiances;
-
-}
-
-Spectrum ShadowRayPathTracer::trace_ray(const Ray &ray, int depth, unsigned short * Xi) {
 	if (depth > m_max_depth)
 		return Spectrum(0.0);
 
@@ -134,11 +87,13 @@ Spectrum ShadowRayPathTracer::trace_ray(const Ray &ray, int depth, unsigned shor
 
 	// If no hit, return world colour
 	if (!isct.hit) {
-		return 0.0;
+		return Spectrum(0.0);
 	}
 
 	if (isct.m.get_type() == EMIT)  {
-		return m_attenuation->attenuate(isct.u, isct.m.get_spectral_emissions());
+		if(depth == 0)
+			return m_attenuation->attenuate(isct.u, isct.m.get_spectral_emissions());
+		else return Spectrum(0.0);
 	}
 	
 	const Spectrum albedos = isct.m.get_spectral_albedos();
@@ -154,30 +109,9 @@ Spectrum ShadowRayPathTracer::trace_ray(const Ray &ray, int depth, unsigned shor
 
 		indirect_diffuse = indirect_diffuse / (double)m_num_bounces;
 
-		bool use_shadow_ray = false;
-		switch (m_srct) {
-		default:
-		case ALWAYS:
-			use_shadow_ray = true;
-			break;
-		case BEGINNING:
-			if (depth == 0) {
-				use_shadow_ray = true;
-			}
-			break;
-		case END:
-			if (depth == m_max_depth) {
-				use_shadow_ray = true;
-			}
-			break;
-		case NOT_USE:
-			use_shadow_ray = false;
-			break;
-		}
-
 		Spectrum direct_diffuse(0.0);
 
-		if (use_shadow_ray) {
+		if (m_use_shadow_ray) {
 			for (int i = 0; i < m_scene.objects.size(); ++i) {
 				if (m_scene.objects[i]->is_light()) {
 					direct_diffuse = direct_diffuse + m_scene.objects[i]->illuminate(m_scene, x, isct.n, m_num_samples_per_light, Xi);
@@ -195,6 +129,6 @@ Spectrum ShadowRayPathTracer::trace_ray(const Ray &ray, int depth, unsigned shor
 	return Spectrum(0.0);
 }
 
-void ShadowRayPathTracer::set_type(ShadowRayCastType type){
-	m_srct = type;
+void PathTracer::use_shadow_ray(bool use) {
+	m_use_shadow_ray = use;
 }

@@ -31,21 +31,12 @@ public:
 	double * trace_rays();
 };
 
-class PathTracer : public Tracer {
+class PathTracer : public Tracer{
 private:
-	virtual Spectrum trace_ray(const Ray &ray, int depth, unsigned short * Xi);
-};
-
-enum 	ShadowRayCastType {
-	ALWAYS, BEGINNING, END, NOT_USE
-};
-
-class ShadowRayPathTracer : public Tracer{
-private:
-	ShadowRayCastType m_srct;
-
+	bool m_use_shadow_ray;
 	virtual Spectrum trace_ray(const Ray &ray, int depth, unsigned short * Xi);
 
 public:
-	void set_type(ShadowRayCastType type);
+
+	void use_shadow_ray(bool use);
 };
