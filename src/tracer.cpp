@@ -81,7 +81,7 @@ Spectrum PathTracer::trace_ray(const Ray &ray, int depth, unsigned short * Xi) {
 	if (depth > m_max_depth)
 		return Spectrum(0.0);
 
-	ObjectIntersection isct = m_scene.get_intersection(ray);
+	Intersection isct = m_scene.get_intersection(ray);
 
 	// If no hit, return world colour
 	if (!isct.hit) {

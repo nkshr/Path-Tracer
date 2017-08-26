@@ -5,3 +5,5 @@ Test XYZ_color
 Let Cylinder have a thickness.
 Test Laser illuminate.
 Add Spectrum +=, *= /= oeprator.
+Add refraction
+Add specular reflection.

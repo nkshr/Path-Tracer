@@ -10,8 +10,8 @@
 struct Scene;
 class Object;
 
-#include "object_intersection.h"
-#include "objects.h"
+#include "intersection.h"
+#include "object.h"
 #include "color.h"
 #include "observer.h"
 #include "light.h"
@@ -20,9 +20,9 @@ struct Scene {
 	std::vector<Object*> objects;
 	Observer * observer;
 
-	ObjectIntersection get_intersection(const Ray &ray) const {
-		ObjectIntersection isct = ObjectIntersection();
-		ObjectIntersection temp;
+	Intersection get_intersection(const Ray &ray) const {
+		Intersection isct = Intersection();
+		Intersection temp;
 		const size_t size = objects.size();
 
 		for (int i = 0; i<size; i++) {

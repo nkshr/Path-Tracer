@@ -6,7 +6,7 @@ private:
 	Spectrum m_srad;
 public:
 	PointLight(Vec p, Spectrum srad);
-	virtual ObjectIntersection get_intersection(const Ray &r);
+	virtual Intersection get_intersection(const Ray &r);
 	virtual Spectrum illuminate(const Scene &scene, const Vec &p, const Vec &n,
 		const int num_samples, unsigned short *Xi);
 };
@@ -19,7 +19,7 @@ private:
 
 public:
 	SpotLight(Vec p, Vec t, Spectrum srad, double deg);
-	virtual ObjectIntersection get_intersection(const Ray &r);
+	virtual Intersection get_intersection(const Ray &r);
 	virtual Spectrum illuminate(const Scene &scene, const Vec &p, const Vec &n,
 		const int num_samples, unsigned short *Xi);
 };
@@ -34,6 +34,6 @@ private:
 
 public:
 	Laser(Vec p, Vec t, double r, double h, Spectrum srad, Material cover);
-	virtual ObjectIntersection get_intersection(const Ray &r);
+	virtual Intersection get_intersection(const Ray &r);
 	virtual Spectrum illuminate(const Scene &scene, const Vec &p, const Vec &n, const int num_samples, unsigned short *Xi);
 };

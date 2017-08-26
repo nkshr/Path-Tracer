@@ -1,7 +1,7 @@
 #include  "scene.h"
 
-ObjectIntersection PointLight::get_intersection(const Ray &ray) {
-	return ObjectIntersection();
+Intersection PointLight::get_intersection(const Ray &ray) {
+	return Intersection();
 }
 
 PointLight::PointLight(Vec p, Spectrum srad) {
@@ -14,7 +14,7 @@ Spectrum PointLight::illuminate(const Scene &scene, const Vec &p, const Vec &n, 
 	Ray shadow_ray(p, (m_p - p).norm());
 	shift(n, shadow_ray);
 
-	ObjectIntersection isct = scene.get_intersection(shadow_ray);
+	Intersection isct = scene.get_intersection(shadow_ray);
 	const double d = (m_p - p).mag();
 
 	if (!isct.hit || d < isct.u) {
@@ -32,8 +32,8 @@ SpotLight::SpotLight(Vec p, Vec t, Spectrum srad, double deg) {
 	m_is_light = true;
 }
 
-ObjectIntersection SpotLight::get_intersection(const Ray &ray) {
-	return ObjectIntersection();
+Intersection SpotLight::get_intersection(const Ray &ray) {
+	return Intersection();
 }
 
 Spectrum SpotLight::illuminate(const Scene &scene, const Vec  &p, const Vec &n, 
@@ -44,7 +44,7 @@ Spectrum SpotLight::illuminate(const Scene &scene, const Vec  &p, const Vec &n,
 	if (dot < cos(m_rad))
 		return Spectrum(0.0);
 
-	ObjectIntersection isct = scene.get_intersection(shadow_ray);
+	Intersection isct = scene.get_intersection(shadow_ray);
 	const double d = (m_p - p).mag();
 	if (!isct.hit || d < isct.u) {
 		return m_srad * std::max(0.0, n.dot(shadow_ray.direction));
@@ -63,8 +63,8 @@ Laser::Laser(Vec p, Vec t, double r, double h, Spectrum srad, Material cover) {
 	m_is_light = true;
 }
 
-ObjectIntersection Laser::get_intersection(const Ray &r) {
-	ObjectIntersection isct(false, DBL_MAX, Vec(), m_m);
+Intersection Laser::get_intersection(const Ray &r) {
+	Intersection isct(false, DBL_MAX, Vec(), m_m);
 	double u;
 	Vec n;
 
@@ -119,7 +119,7 @@ Spectrum Laser::illuminate(const Scene &scene, const Vec &p, const Vec &n,
 
 		Vec sampled_pt = m_p + x_dir * m_r + z_dir * m_r;
 		Ray shadow_ray(p, (sampled_pt - p).norm());
-		ObjectIntersection isct = scene.get_intersection(shadow_ray);
+		Intersection isct = scene.get_intersection(shadow_ray);
 		if (isct.obj == this) {
 			srad = srad + m_srad;
 		}

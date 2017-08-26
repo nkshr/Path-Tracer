@@ -55,10 +55,3 @@ void Material::set_spectral_emission(Spectrum e) {
 void Material::set_type(MaterialType t) {
 	m_type = t;
 }
-//double Material::sample_albedo(const double lambda) const {
-//	return m_spectral_albedos.sample(lambda);
-//}
-//
-//double Material::sample_emission(const double lambda) const {
-//	return m_spectral_emissions.sample(lambda);
-//}

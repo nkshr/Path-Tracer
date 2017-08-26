@@ -4,12 +4,6 @@
 
 #include "scene.h"
 
-ObjectIntersection::ObjectIntersection(bool hit_, double u_, Vec n_, Material m_)
-{
-	hit=hit_, u=u_, n=n_, m=m_;
-}
-
-
 Sphere::Sphere( Vec p_, double r_, Material m_ ){
 	m_p = p_;
 	m_r = r_;
@@ -35,7 +29,7 @@ Spectrum Sphere::illuminate(const Scene &scene, const Vec &p, const Vec &n, cons
 
 		Vec hit_p = m_p + x_dir * sample.x + y_dir * sample.y + z_dir * sample.z;
 		Ray shadow_ray(p, (hit_p - p).norm());
-		ObjectIntersection isct = scene.get_intersection(shadow_ray);
+		Intersection isct = scene.get_intersection(shadow_ray);
 		if (isct.obj == this) {
 			srad = srad + m_m.get_spectral_emissions();
 		}
@@ -45,9 +39,9 @@ Spectrum Sphere::illuminate(const Scene &scene, const Vec &p, const Vec &n, cons
 	return srad;
 }
 
-// Check if ray intersects with sphere. Returns ObjectIntersection data structure
-ObjectIntersection Sphere::get_intersection(const Ray &ray) {
-	ObjectIntersection isct;
+// Check if ray intersects with sphere. Returns Intersection data structure
+Intersection Sphere::get_intersection(const Ray &ray) {
+	Intersection isct;
 	isct.m = m_m;
 	if (calcRaySphereIntersection(ray, m_p, m_r, isct.u)) {
 		isct.hit = true;
@@ -78,8 +72,8 @@ Vec Cylinder::get_direction() {
 	return m_d;
 }
 
-ObjectIntersection Cylinder::get_intersection(const Ray&ray) {	
-	ObjectIntersection isct(false, DBL_MAX, Vec(), m_m);
+Intersection Cylinder::get_intersection(const Ray&ray) {	
+	Intersection isct(false, DBL_MAX, Vec(), m_m);
 
 	double t;
 	Vec dh_half = m_d * 0.5 * m_h;
@@ -146,8 +140,8 @@ Cuboid::Cuboid(Vec p_, Vec dir_, Vec up_, double w_, double h_, double depth_, M
 
 static int a = 0;
 static int b = 0;
-ObjectIntersection Cuboid::get_intersection(const Ray &r) {
-	ObjectIntersection isct(false, DBL_MAX, Vec(), m_m);
+Intersection Cuboid::get_intersection(const Ray &r) {
+	Intersection isct(false, DBL_MAX, Vec(), m_m);
 
 	Vec p = m_p + m_half_zd;
 	double t;
@@ -214,8 +208,8 @@ Plane::Plane(Vec p, Vec n, Material m) {
 	m_n = n;
 }
 
-ObjectIntersection Plane::get_intersection(const Ray &r) {
-	ObjectIntersection isct;
+Intersection Plane::get_intersection(const Ray &r) {
+	Intersection isct;
 	const double rn = r.direction.dot(m_n);
 	if (abs(rn) < config::eps) {
 		return isct;
@@ -233,12 +227,12 @@ Disc::Disc(Vec p, Vec n, double r, Material m) : Plane(p, n, m) , m_r(r){
 
 }
 
-ObjectIntersection Disc::get_intersection(const Ray &r) {
-	ObjectIntersection isct = Plane::get_intersection(r);
+Intersection Disc::get_intersection(const Ray &r) {
+	Intersection isct = Plane::get_intersection(r);
 	if (isct.hit) {
 		Vec isct_pt = r.origin + r.direction * isct.u;
 		if (isct_pt.mag() > m_r) {
-			isct = ObjectIntersection();
+			isct = Intersection();
 		}
 	}
 

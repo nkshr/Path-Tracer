@@ -26,14 +26,13 @@ set(SOURCE_FILES
 	src/light.cpp
     src/main.cpp
 	src/material.cpp
-    src/objects.cpp
+    src/object.cpp
     src/observer.cpp
     src/scene.cpp
 	src/spectrum.cpp
 	src/tracer.cpp
 	lib/rand48/rand48.c
     lib/lodepng/lodepng.cpp
-    #lib/tiny_obj_loader/tiny_obj_loader.cc
 	)
 
 set(HEADER_FILES
@@ -42,9 +41,10 @@ set(HEADER_FILES
 	src/common.h
 	src/config.h
 	src/geometry.h
+	src/intersection.h
 	src/light.h
 	src/material.h
-    src/objects.h
+    src/object.h
     src/observer.h
 	src/ray.h
     src/scene.h
