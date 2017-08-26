@@ -3,3 +3,4 @@ Add exit condition to path trace algorithm.
 Let loader be separated from Spectrum.
 Test XYZ_color
 Let Cylinder have a thickness.
+Add Laser illuminate.
