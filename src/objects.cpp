@@ -24,12 +24,14 @@ double Sphere::get_radius() { return m_r; }
 
 Spectrum Sphere::illuminate(const Scene &scene, const Vec &p, const Vec &n, const int num_samples, unsigned short *Xi) {
 	Spectrum srad(0.0);
+
+	const Vec y_dir = (m_p - p).norm();
+	
+	Vec x_dir, z_dir;
+	createRightHandCoordinateSystem(y_dir, x_dir, z_dir);
+
 	for (int i = 0; i < num_samples; ++i) {
 		const Vec sample = generateUniformSampleInHemisphere(Xi);
-		const Vec y_dir = (m_p - p).norm();
-
-		Vec x_dir, z_dir;
-		createRightHandCoordinateSystem(y_dir, x_dir, z_dir);
 
 		Vec hit_p = m_p + x_dir * sample.x + y_dir * sample.y + z_dir * sample.z;
 		Ray shadow_ray(p, (hit_p - p).norm());

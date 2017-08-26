@@ -108,5 +108,23 @@ ObjectIntersection Laser::get_intersection(const Ray &r) {
 
 Spectrum Laser::illuminate(const Scene &scene, const Vec &p, const Vec &n, 
 	const int num_samples, unsigned short *Xi) {
-	return Spectrum(0.0);
+	Spectrum srad(0.0);
+
+	Vec x_dir, z_dir;
+	createRightHandCoordinateSystem(m_d, x_dir, z_dir);
+
+	for (int i = 0; i < num_samples; ++i) {
+		double x, z;
+		generateUniformRandInCircle(Xi, x, z);
+
+		Vec sampled_pt = m_p + x_dir * m_r + z_dir * m_r;
+		Ray shadow_ray(p, (sampled_pt - p).norm());
+		ObjectIntersection isct = scene.get_intersection(shadow_ray);
+		if (isct.obj == this) {
+			srad = srad + m_srad;
+		}
+	}
+
+	srad = srad * m_r * m_r * config::pi / (double)num_samples;
+	return srad;
 }
