@@ -1,23 +1,6 @@
+//Except for scene.h, don't include this.
 #ifndef OBJECTS_H
 #define OBJECTS_H
-
-#include "vector.h"
-#include "ray.h"
-#include "material.h"
-#include "geometry.h"
-
-struct Scene;
-class Object;
-
-struct ObjectIntersection {
-	bool hit;	// If there was an intersection
-	double u;	// Distance to intersection along ray
-	Vec n;		// Normal of intersected face
-	Material m;	// Material of intersected face
-	Object * obj;
-	ObjectIntersection(bool hit_=false, double u_=0, Vec n_=Vec(), Material m_=Material());
-};
-
 
 class Object {
 protected:

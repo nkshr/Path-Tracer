@@ -1,9 +1,6 @@
 #pragma once
 #include "ray.h"
 #include "scene.h"
-#include "objects.h"
-#include "observer.h"
-#include "light.h"
 #include "attenuation.h"
 
 class Tracer {

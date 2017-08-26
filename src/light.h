@@ -1,9 +1,5 @@
+//Except for scene.h, don't include this.
 #pragma once
-#include "vector.h"
-#include "spectrum.h"
-#include "objects.h"
-#include "ray.h"
-#include "geometry.h"
 
 class PointLight : public Object {
 private:

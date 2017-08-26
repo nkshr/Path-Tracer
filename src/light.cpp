@@ -1,4 +1,3 @@
-#include "light.h"
 #include  "scene.h"
 
 ObjectIntersection PointLight::get_intersection(const Ray &ray) {

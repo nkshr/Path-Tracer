@@ -1,7 +1,7 @@
 #include <vector>
 
 #include "tracer.h"
-#include "objects.h"
+#include "scene.h"
 #include  "common.h"
 
 double  * Tracer::trace_rays() {

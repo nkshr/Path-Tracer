@@ -17,13 +17,10 @@
 
 #include "vector.h"
 #include "material.h"
-#include "objects.h"
-#include "observer.h"
 #include "common.h"
 #include "tracer.h"
-#include "objects.h"
-#include "attenuation.h"
 #include "scene.h"
+#include "attenuation.h"
 
 int main(int argc, char *argv[]) {
 

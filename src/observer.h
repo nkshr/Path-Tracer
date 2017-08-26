@@ -1,16 +1,5 @@
-#ifndef CAMERA_H
-#define CAMERA_H
-
-#include <vector>
-#include <utility>
-
-#include "../lib/rand48/erand48.h"
-#include "vector.h"
-#include "ray.h"
-#include "common.h"
-#include "spectrum.h"
-#include "color.h"
-#include  "objects.h"
+//Except for scene.h, don't include this. 
+#pragma once
 
 class Observer {
 private:
@@ -132,7 +121,3 @@ public:
 
 	void set_XYZ_color(const XYZColor &XYZ_color);
 };
-
-//Observer * generateObserver(Observer::Config &config);
-
-#endif //CAMERA_H

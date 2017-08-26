@@ -5,7 +5,14 @@
 
 #include "ray.h"
 #include "vector.h"
+#include "material.h"
+
+struct Scene;
+class Object;
+
+#include "object_intersection.h"
 #include "objects.h"
+#include "color.h"
 #include "observer.h"
 #include "light.h"
 

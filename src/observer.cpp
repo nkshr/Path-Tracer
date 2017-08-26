@@ -2,9 +2,9 @@
 #include <iostream>
 
 #include "ray.h"
-#include "observer.h"
 #include "common.h"
 #include "spectrum.h"
+#include "scene.h"
 
 Observer::Observer(){
 }
