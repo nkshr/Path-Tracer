@@ -88,16 +88,18 @@ ObjectIntersection Laser::get_intersection(const Ray &r) {
 		if (u < isct.u) {
 			isct.hit = true;
 			isct.n = m_d;
+			isct.u = u;
 			isct.m.set_type(EMIT);
 			isct.m.set_spectral_emission(m_srad);
 		}
 	}
 
 	disc_position = m_p - m_d * (m_h * 0.5 + config::eps);
-	if (calcRayDiscIntersection(r, disc_position, m_d * -1, m_r, isct.u)) {
+	if (calcRayDiscIntersection(r, disc_position, m_d * -1, m_r, u)) {
 		if (u < isct.u) {
 			isct.hit = true;
 			isct.n = m_d * -1;
+			isct.u = u;
 			isct.m = m_m;
 		}
 	}
