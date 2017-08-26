@@ -12,7 +12,7 @@
 
 #ifdef __linux__
 #define DMSG() DMsg(__PRETTY_FUNCTION__)
-#elseif _WIN32
+#elif _WIN32
 #define DMSG() DMsg(__FUNCSIG__)
 #endif
 
