@@ -38,7 +38,7 @@ int main(int argc, char *argv[]) {
 	//scene.objects.push_back(new Sphere(Vec(3.0, 0.0, 0.0), 3, Material(EMIT, Spectrum("../data/spike700.csv"))));
 
 	//scene.objects.push_back(new PointLight(Vec(3, 3, 0), Spectrum(1.0)));
-	scene.objects.push_back(new Laser(Vec(0, 0, 8), Vec(0, 0, -5), 0.5, 5, Spectrum(1.0), Material(DIFF)));
+	scene.objects.push_back(new TubeLight(Vec(0, 0, 8), Vec(0, 0, -5), 0.5, 5, Spectrum(1.0), Material(DIFF)));
 	//scene.objects.push_back(new SpotLight(Vec(0, 0, 0), Vec(0, 0, -1), Spectrum(1.0), 30));
 	
 

@@ -53,7 +53,7 @@ Spectrum SpotLight::illuminate(const Scene &scene, const Vec  &p, const Vec &n,
 	return Spectrum(0.0);
 }
 
-Laser::Laser(Vec p, Vec t, double r, double h, Spectrum srad, Material cover) {
+TubeLight::TubeLight(Vec p, Vec t, double r, double h, Spectrum srad, Material cover) {
 	m_m = cover;
 
 	m_inner_tube.position = p;
@@ -76,7 +76,7 @@ Laser::Laser(Vec p, Vec t, double r, double h, Spectrum srad, Material cover) {
 	m_is_light = true;
 }
 
-Intersection Laser::get_intersection(const Ray &r) {
+Intersection TubeLight::get_intersection(const Ray &r) {
 	Intersection isct(false, DBL_MAX, Vec(), m_m);
 	Vec n;
 	double u;
@@ -122,7 +122,7 @@ Intersection Laser::get_intersection(const Ray &r) {
 	return isct;
 }
 
-Spectrum Laser::illuminate(const Scene &scene, const Vec &p, const Vec &n, 
+Spectrum TubeLight::illuminate(const Scene &scene, const Vec &p, const Vec &n, 
 	const int num_samples, unsigned short *Xi) {
 	Spectrum srad(0.0);
 
@@ -136,7 +136,7 @@ Spectrum Laser::illuminate(const Scene &scene, const Vec &p, const Vec &n,
 		Vec sampled_pt = m_p + x_dir * m_r + z_dir * m_r;
 		Ray shadow_ray(p, (sampled_pt - p).norm());
 		Intersection isct = scene.get_intersection(shadow_ray);
-		if (isct.hit && isct.obj == this) {
+		if (isct.hit && isct.g == &m_light_source) {
 			srad = srad + m_srad;
 		}
 	}

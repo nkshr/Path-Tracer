@@ -24,7 +24,7 @@ public:
 		const int num_samples, unsigned short *Xi);
 };
 
-class Laser : public Object {
+class TubeLight : public Object {
 private:
 	geo::Tube m_inner_tube;
 	geo::Tube m_outer_tube;
@@ -38,7 +38,7 @@ private:
 	Vec m_d;
 
 public:
-	Laser(Vec p, Vec t, double r, double h, Spectrum srad, Material cover);
+	TubeLight(Vec p, Vec t, double r, double h, Spectrum srad, Material cover);
 	virtual Intersection get_intersection(const Ray &r);
 	virtual Spectrum illuminate(const Scene &scene, const Vec &p, const Vec &n, const int num_samples, unsigned short *Xi);
 };
