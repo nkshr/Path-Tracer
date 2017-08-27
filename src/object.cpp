@@ -30,7 +30,7 @@ Spectrum Sphere::illuminate(const Scene &scene, const Vec &p, const Vec &n, cons
 		Vec hit_p = m_p + x_dir * sample.x + y_dir * sample.y + z_dir * sample.z;
 		Ray shadow_ray(p, (hit_p - p).norm());
 		Intersection isct = scene.get_intersection(shadow_ray);
-		if (isct.obj == this) {
+		if (isct.hit && isct.obj == this) {
 			srad = srad + m_m.get_spectral_emissions();
 		}
 	}

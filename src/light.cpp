@@ -120,7 +120,7 @@ Spectrum Laser::illuminate(const Scene &scene, const Vec &p, const Vec &n,
 		Vec sampled_pt = m_p + x_dir * m_r + z_dir * m_r;
 		Ray shadow_ray(p, (sampled_pt - p).norm());
 		Intersection isct = scene.get_intersection(shadow_ray);
-		if (isct.obj == this) {
+		if (isct.hit && isct.obj == this) {
 			srad = srad + m_srad;
 		}
 	}
