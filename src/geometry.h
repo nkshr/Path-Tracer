@@ -1,11 +1,13 @@
 #pragma once
 #include "ray.h"
+#include "material.h"
 
 namespace geo {
 	struct Geometry {
 	public:
 		Vec position;
-
+		Material *material;
+	
 		virtual bool intersect(const Ray &ray, Vec &n, double &t) const = 0;
 	};
 

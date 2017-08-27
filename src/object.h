@@ -36,6 +36,10 @@ private:
 	double m_r; //Radius
 	double m_h; //Height
 	Vec m_d;
+	geo::Tube m_inner_tube;
+	geo::Tube m_outer_tube;
+	//geo::Disc m_top_cap;
+	//geo::Disc m_bottom_cap;
 
 public:
 	Cylinder(Vec p_, Vec d_, double r_, double h_, Material m_);

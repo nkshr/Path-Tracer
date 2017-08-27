@@ -54,55 +54,71 @@ Spectrum SpotLight::illuminate(const Scene &scene, const Vec  &p, const Vec &n,
 }
 
 Laser::Laser(Vec p, Vec t, double r, double h, Spectrum srad, Material cover) {
-	m_p = p;
-	m_d = (t - m_p).norm();
-	m_r = r;
-	m_h = h;
-	m_srad = srad;
 	m_m = cover;
+
+	m_inner_tube.position = p;
+	m_inner_tube.direction = (t - p).norm();
+	m_inner_tube.radius = r;
+	m_inner_tube.height = h;
+	m_inner_tube.material = &m_m;
+	
+	m_outer_tube.position = p;
+	m_outer_tube.direction = (t - p).norm();
+	m_outer_tube.radius = r + config::eps;
+	m_outer_tube.height = h;
+	m_outer_tube.material = &m_m;
+
+	m_bottom_disc.position = p - m_outer_tube.direction * h * 0.5;
+	m_bottom_disc.normal = m_outer_tube.direction;
+	m_bottom_disc.radius = r;
+	m_bottom_disc.material = &m_m;
+
 	m_is_light = true;
 }
 
 Intersection Laser::get_intersection(const Ray &r) {
 	Intersection isct(false, DBL_MAX, Vec(), m_m);
-	double u;
 	Vec n;
+	double u;
 
-	if (calcRayTubeIntersection(r, m_p, m_d, m_r, m_h, u, n)) {
+	if (m_inner_tube.intersect(r, n, u)) {
 		isct.hit = true;
-		n = n * -1;
+		isct.n = n * -1;
 		isct.u = u;
-		isct.n = n;
+		isct.g = &m_inner_tube;
+		isct.m = *m_inner_tube.material;
 	}
 
-	if (calcRayTubeIntersection(r, m_p, m_d, m_r+config::eps, m_h, u, n)) {
+	if (m_outer_tube.intersect(r, n, u)) {
 		if (u < isct.u) {
 			isct.hit = true;
-			isct.u = u;
 			isct.n = n;
+			isct.u = u;
+			isct.g = &m_outer_tube;
+			isct.m = *m_outer_tube.material;
 		}
 	}
 
-	Vec disc_position = m_p - m_d * (m_h * 0.5);
-	if (calcRayDiscIntersection(r, disc_position, m_d, m_r, u)) {
+	if (m_bottom_disc.intersect(r, n, u)) {
 		if (u < isct.u) {
 			isct.hit = true;
-			isct.n = m_d;
+			isct.n = n;
 			isct.u = u;
-			isct.m.set_type(EMIT);
-			isct.m.set_spectral_emission(m_srad);
+			isct.g = &m_bottom_disc;
+			isct.m = *m_bottom_disc.material;
 		}
 	}
 
-	disc_position = m_p - m_d * (m_h * 0.5 + config::eps);
-	if (calcRayDiscIntersection(r, disc_position, m_d * -1, m_r, u)) {
+	if (m_light_source.intersect(r, n, u)) {
 		if (u < isct.u) {
 			isct.hit = true;
-			isct.n = m_d * -1;
+			isct.n = n;
 			isct.u = u;
-			isct.m = m_m;
+			isct.g = &m_light_source;
+			isct.m = *m_light_source.material;
 		}
 	}
+
 	return isct;
 }
 

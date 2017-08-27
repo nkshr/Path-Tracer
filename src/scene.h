@@ -6,6 +6,7 @@
 #include "ray.h"
 #include "vector.h"
 #include "material.h"
+#include "geometry.h"
 
 struct Scene;
 class Object;

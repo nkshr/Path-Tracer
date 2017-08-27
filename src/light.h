@@ -26,6 +26,11 @@ public:
 
 class Laser : public Object {
 private:
+	geo::Tube m_inner_tube;
+	geo::Tube m_outer_tube;
+	geo::Disc m_bottom_disc;
+	geo::Disc m_light_source;
+
 	double m_r;
 	double m_w;
 	double m_h;

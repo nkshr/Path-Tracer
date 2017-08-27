@@ -52,6 +52,15 @@ Intersection Sphere::get_intersection(const Ray &ray) {
 }
 
 Cylinder::Cylinder(Vec p_, Vec d_, double r_, double h_, Material m_){
+	m_inner_tube.position = p_;
+	m_inner_tube.direction = d_;
+	m_inner_tube.radius = r_;
+	m_inner_tube.height = h_;
+
+	m_outer_tube.position = p_;
+	m_outer_tube.direction = d_;
+	m_outer_tube.radius = r_;
+
 	m_p = p_;
 	m_d = d_.norm();
 	m_r = r_;
@@ -78,7 +87,7 @@ Intersection Cylinder::get_intersection(const Ray&ray) {
 	double t;
 	Vec dh_half = m_d * 0.5 * m_h;
 
-	if (calcRayTubeIntersection(ray, m_p, m_d, m_r, m_h, t, isct.n)) {
+	if (calcRayTubeIntersection(ray, m_p, m_d, m_r, m_h, isct.n, t)) {
 		Vec isct_pt = ray.origin + ray.direction * t;
 		Vec p = m_p - dh_half;
 		Vec a = isct_pt - p;
