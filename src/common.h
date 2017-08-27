@@ -292,7 +292,7 @@ inline bool calcRayTubeIntersection(const Ray &ray, Vec p, Vec dir,
 }
 
 inline bool calcRayTubeIntersection(const Ray &ray, Vec p, Vec dir,
-	double r, double h, double &t, Vec &n) {
+	double r, double h, Vec &n, double &t) {
 	const double hhalf = h * 0.5;
 	const Vec p0 = p - dir * hhalf;
 	const Vec p1 = p + dir * hhalf;

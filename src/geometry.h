@@ -6,7 +6,7 @@ namespace geo {
 	public:
 		Vec position;
 
-		virtual bool intersect(const Ray &ray, double &t) const = 0;
+		virtual bool intersect(const Ray &ray, Vec &n, double &t) const = 0;
 	};
 
 	struct Rectangle : public Geometry {
@@ -17,23 +17,32 @@ namespace geo {
 		double width;
 		double height;
 
-		virtual bool intersect(const Ray &ray, double &t) const;
+		virtual bool intersect(const Ray &ray, Vec &n, double &t) const;
 	};
 
 	struct Sphere : public Geometry {
 	public:
 		double radius;
 
-		virtual bool intersect(const Ray &ray, double &t) const;
+		virtual bool intersect(const Ray &ray, Vec &n, double &t) const;
 	};
 
 	struct Tube : public Geometry {
 	public:
 		Vec direction;
+		
 		double radius;
 		double height;
 		
-		virtual bool intersect(const Ray &ray, double &t) const;
+		virtual bool intersect(const Ray &ray, Vec &n, double &t) const;
+	};
 
+	struct Disc : public Geometry {
+	public:
+		Vec normal;
+
+		double radius;
+
+		virtual bool intersect(const Ray &ray, Vec &n, double &t) const;
 	};
 };

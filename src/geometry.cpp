@@ -3,15 +3,28 @@
 #include "common.h"
 
 namespace geo {
-	bool Rectangle::intersect(const Ray &ray, double &t) const {
-		return calcRayRectangleIntersection(ray, position, normal, up, width, height, t);
+	bool Rectangle::intersect(const Ray &ray, Vec &n, double &t) const {
+		bool calculated =  calcRayRectangleIntersection(ray, position, normal, up, width, height, t);
+		n = normal;
+		return calculated;
 	}
 
-	bool Sphere::intersect(const Ray &ray, double &t) const {
-		return calcRaySphereIntersection(ray, position, radius, t);
+	bool Sphere::intersect(const Ray &ray, Vec &n, double &t) const {
+		bool calculated =  calcRaySphereIntersection(ray, position, radius, t);
+		
+		Vec isct = ray.origin + ray.direction * t;
+		n = (isct - position).norm();
+		
+		return calculated;
 	}
 
-	bool Tube::intersect(const Ray &ray, double &t) const {
-		return calcRayTubeIntersection(ray, position, direction, radius, height, t);
+	bool Tube::intersect(const Ray &ray,  Vec &n, double &t) const {
+		return calcRayTubeIntersection(ray, position, direction, radius, height, n, t);
+	}
+
+	bool Disc::intersect(const Ray &ray, Vec &n, double &t) const {
+		bool calculated =  calcRayDiscIntersection(ray, position, normal, radius, t);
+		n = normal;
+		return calculated;
 	}
 }
