@@ -42,3 +42,18 @@ public:
 	virtual Intersection get_intersection(const Ray &r);
 	virtual Spectrum illuminate(const Scene &scene, const Vec &p, const Vec &n, const int num_samples, unsigned short *Xi);
 };
+
+class Laser : public Object {
+private:
+	geo::Disc m_top_disc;
+	geo::Disc m_bottom_disc;
+	geo::Tube m_tube;
+
+	Spectrum m_srad;
+
+public:
+	Laser(Vec p, Vec t, double r, double h, Spectrum srad, Material cover);
+	virtual Intersection get_intersection(const Ray &r);
+	virtual Spectrum illuminate(const Scene &scene, const Vec &p, const Vec &n,
+		const int num_samples, unsigned short *Xi);
+};

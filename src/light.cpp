@@ -144,3 +144,71 @@ Spectrum TubeLight::illuminate(const Scene &scene, const Vec &p, const Vec &n,
 	srad = srad * m_r * m_r * config::pi / (double)num_samples;
 	return srad;
 }
+
+Laser::Laser(Vec p, Vec t, double r, double h, Spectrum srad, Material cover) {
+	m_m = cover;
+
+	m_tube.position = p;
+	m_tube.direction = (t - p).norm();
+	m_tube.height = h;
+	m_tube.radius = r;
+	m_tube.material = &m_m;
+
+	m_top_disc.position = p + m_tube.direction * h * 0.5;
+	m_top_disc.normal = m_tube.direction;
+	m_top_disc.radius = r;
+	m_top_disc.material = &m_m;
+
+	m_bottom_disc.position = p - (t - p).norm() * h * (0.5);
+	m_bottom_disc.normal = m_tube.direction * -1;
+	m_bottom_disc.radius = r;
+	m_bottom_disc.material = &m_m;
+}
+
+Intersection Laser::get_intersection(const Ray &r) {
+	Intersection isct(false, DBL_MAX, Vec(), m_m);
+	Vec n;
+	double u;
+
+	if (m_tube.intersect(r, n, u)){
+		isct.hit = true;
+		isct.n = n;
+		isct.u = u;
+		isct.g = &m_tube;
+		isct.m = *m_tube.material;
+		m_m.set_spectral_emission(m_srad);
+	}
+
+	if (m_top_disc.intersect(r, n, u)) {
+		if (u < isct.u) {
+			isct.hit = true;
+			isct.n = n;
+			isct.u = u;
+			isct.g = &m_top_disc;
+			isct.m = *m_top_disc.material;
+		}
+	}
+
+	if (m_bottom_disc.intersect(r, n, u)) {
+		if (u < isct.u) {
+			isct.hit = true;
+			isct.n = n;
+			isct.u = u;
+			isct.g = &m_bottom_disc;
+			isct.m = *m_bottom_disc.material;
+		}
+	}
+
+	return isct;
+}
+
+Spectrum Laser::illuminate(const Scene &scene, const Vec &p, const Vec &n,
+	const int num_samples, unsigned short *Xi) {
+	Ray shadow_ray(p, m_top_disc.normal);
+	Intersection isct = scene.get_intersection(shadow_ray);
+	if (isct.g = &m_top_disc) {
+		return m_srad;
+	}
+
+	return Spectrum(0.0);
+}
